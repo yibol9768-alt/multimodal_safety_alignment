@@ -38,13 +38,17 @@ from action_logit_probe import action_logit_distribution
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _mean_action_bin(model, processor, prompts, img_fn, rdt_ctx=None):
-    """Average expected action-bin index over a prompt list."""
+def _mean_action_bin(model, processor, prompts, img_fn, rdt_ctx_factory=None):
+    """Average expected action-bin index over a prompt list.
+
+    rdt_ctx_factory: zero-arg callable returning a fresh rdt_enabled(...) ctx
+    per prompt (a single @contextmanager object is one-shot and can't be reused).
+    """
     bins_total = []
     for prompt in prompts:
         img = img_fn()
-        if rdt_ctx is not None:
-            with rdt_ctx:
+        if rdt_ctx_factory is not None:
+            with rdt_ctx_factory():
                 probs = action_logit_distribution(model, processor, prompt, img)
         else:
             probs = action_logit_distribution(model, processor, prompt, img)
@@ -53,14 +57,14 @@ def _mean_action_bin(model, processor, prompts, img_fn, rdt_ctx=None):
     return sum(bins_total) / len(bins_total)
 
 
-def _zero_motion_mass(model, processor, prompts, img_fn, rdt_ctx=None, half_width=8):
+def _zero_motion_mass(model, processor, prompts, img_fn, rdt_ctx_factory=None, half_width=8):
     """Average softmax mass near bin 128 (zero-motion proxy)."""
     center, masses = 128, []
     lo, hi = center - half_width, center + half_width
     for prompt in prompts:
         img = img_fn()
-        if rdt_ctx is not None:
-            with rdt_ctx:
+        if rdt_ctx_factory is not None:
+            with rdt_ctx_factory():
                 probs = action_logit_distribution(model, processor, prompt, img)
         else:
             probs = action_logit_distribution(model, processor, prompt, img)
@@ -172,10 +176,11 @@ def main():
             mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image)
             zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image)
         else:
-            ctx = rdt_enabled(model, r_L, layer=layer_best, alpha=alpha, target="action")
-            mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image, ctx)
-            ctx = rdt_enabled(model, r_L, layer=layer_best, alpha=alpha, target="action")
-            zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image, ctx)
+            ctx_factory = lambda a=alpha: rdt_enabled(
+                model, r_L, layer=layer_best, alpha=a, target="action"
+            )
+            mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image, ctx_factory)
+            zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image, ctx_factory)
         func_results[key] = {
             "alpha": alpha, "target": "action", "direction": "refusal",
             "mean_action_bin": mean_bin, "zero_motion_mass": zero_mass, "layer": layer_best,
@@ -195,10 +200,11 @@ def main():
             key = f"{direction_name}_action_a{alpha}"
             if key in func_results:         # refusal already computed above
                 continue
-            ctx = rdt_enabled(model, direction_vec, layer=layer_best, alpha=alpha, target="action")
-            mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image, ctx)
-            ctx = rdt_enabled(model, direction_vec, layer=layer_best, alpha=alpha, target="action")
-            zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image, ctx)
+            ctx_factory = lambda a=alpha, v=direction_vec: rdt_enabled(
+                model, v, layer=layer_best, alpha=a, target="action"
+            )
+            mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image, ctx_factory)
+            zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image, ctx_factory)
             func_results[key] = {
                 "alpha": alpha, "target": "action", "direction": direction_name,
                 "mean_action_bin": mean_bin, "zero_motion_mass": zero_mass, "layer": layer_best,
@@ -223,18 +229,13 @@ def main():
         key = f"refusal_{target.replace('+','_')}_a{alpha_fixed}"
         if key in func_results:
             continue
-        ctx = rdt_enabled(
-            model, r_L, layer=layer_best, alpha=alpha_fixed, target=target,
-            alpha_text=0.3 if target == "text+action" else None,
-            alpha_action=1.0 if target == "text+action" else None,
+        ctx_factory = lambda t=target: rdt_enabled(
+            model, r_L, layer=layer_best, alpha=alpha_fixed, target=t,
+            alpha_text=0.3 if t == "text+action" else None,
+            alpha_action=1.0 if t == "text+action" else None,
         )
-        mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image, ctx)
-        ctx = rdt_enabled(
-            model, r_L, layer=layer_best, alpha=alpha_fixed, target=target,
-            alpha_text=0.3 if target == "text+action" else None,
-            alpha_action=1.0 if target == "text+action" else None,
-        )
-        zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image, ctx)
+        mean_bin  = _mean_action_bin(model, processor, harm_subset, _dummy_image, ctx_factory)
+        zero_mass = _zero_motion_mass(model, processor, harm_subset, _dummy_image, ctx_factory)
         func_results[key] = {
             "alpha": alpha_fixed, "target": target, "direction": "refusal",
             "mean_action_bin": mean_bin, "zero_motion_mass": zero_mass, "layer": layer_best,
