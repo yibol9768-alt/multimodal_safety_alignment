@@ -1,0 +1,23 @@
+\section{引言}
+\label{sec:intro}
+
+大型多模态模型从语言模型主干继承其安全对齐能力，而该主干的 RLHF 训练完全在文本上进行。每一种额外接入该主干的输入或输出模态——图像、音频、视频，或如本文所研究的 7-DoF 机器人动作 token——都会开辟一条拒绝回路从未见过的通路。当对齐能力迁移成功时，我们获得更安全的多模态助手；当迁移失败时，轻则出现多模态幻觉，重则导致物理危害。
+
+视觉-语言-动作（VLA）模型处于这一谱系中危害最大的一端。一个不安全的动作并非一个不安全的\emph{句子}：它是机械臂夹住孩子的手、将液体倒入明火、将武器对准一个人。近期对抗性研究表明，目前所有公开研究的 VLA 模型均可被通过简单的语言指令或微小的图像扰动诱导生成此类动作 \cite{wu2024exploringadversarial,badrobot2025,shawshank2025}，而现有 VLA 防御要么在安全强化学习框架下对整个策略进行端到端重训练 \cite{safevla2025}，要么依赖于不包含语义危害概念的几何碰撞规避方法 \cite{vlsa2025}。
+
+\paragraph{动作 token VLA 中的结构性安全缺口。}
+我们观察到，事实上的开源 VLA——\textsc{OpenVLA} \cite{openvla2024}——建立在 Llama-2-7b-\emph{base} 之上，这是一个\emph{从未经过 RLHF 对齐}的模型，并通过覆写 Llama 词表的最后 256 个 token 来编码动作词汇。这两个设计选择是当前社区的惯例；我们指出，二者叠加会产生一个现有多模态安全防御方法无法跨越的几何缺口。首先，主干本身没有拒绝方向：它从未被训练过拒绝。其次，动作 token 在经历大量行为克隆微调后，驻留在残差流的一个子空间中，该子空间与若主干经过 chat 对齐后本应存在的"有害/无害"自然语言轴近乎正交。我们在 \S\ref{sec:method:diagnostic} 中对该缺口进行定量分析：在已对齐 LVLM 上能够清晰区分有害与无害样本的安全层探针 \cite{securitytensors2025}，在 \textsc{OpenVLA} 的动作解码通路上信号显著减弱。
+
+\paragraph{跨模型拒绝方向移植。}
+我们提出一种无需重训练 VLA 的修复方案。\methodfull{}（\method{}）从 Llama-2-7b-\emph{chat} 中提取拒绝方向——该模型与 \textsc{OpenVLA} 主干共享预训练初始化但已获得 RLHF 对齐——并在推理时仅在 \textsc{OpenVLA} 的动作 token 位置将其重新注入。该方法以单个前向钩子实现，可与现有提示层防御组合使用。
+
+两项先前工作在方法上与我们相邻，但均不足以处理本文场景。\textsc{VLM-Guard} \cite{vlmguard2025} 提取了类似的引导方向，但将其施加于所有 token，过度扰动了良性的视觉-语言处理。\textsc{SARSteer} \cite{sarsteer2025} 在音频语言模型中引导文本衍生的拒绝方向，但关键区别在于其从目标模型自身提取方向，而当目标主干（Llama-2-base）完全没有拒绝响应时，该方法零样本不适用。
+
+\paragraph{贡献。}
+\begin{itemize}
+    \item 我们识别出动作 token VLA 特有的结构性安全缺口，该缺口源于\emph{未对齐}主干与学习到的离散动作词汇的组合（\S\ref{sec:method:diagnostic}）。
+    \item 我们提出 \method{} 与 \method{}+，两种无训练的推理时方法，能将拒绝方向从外部对齐 LLM 移植到 VLA 中。基础 \method{} 以动作 token 位置为目标；\method{}+ 增加了覆盖全部 7 个动作 token（含 $a_1$）的生成阶段感知双阶段注入（\S\ref{sec:method:rdt}--\ref{sec:method:dualphase}），并提供 rank-$k$ 子空间变体（\S\ref{sec:method:rankk}）和内容自适应缩放头（\S\ref{sec:method:adaptive}）。
+    \item 我们在三个评测集（\textsc{LIBERO-Long}、\textsc{SafeAgentBench}、指令条件化的 \textsc{AdvBench} 分集）和四类攻击家族（文本越狱、\textsc{UADA}、\textsc{UPA}、\textsc{TMA} 对抗补丁）上设计了系统评测，将 \method{}+ 与提示层、隐藏状态投影和 LoRA 微调基线进行对比（\S\ref{sec:exp}）。
+    \item 我们引入方向来源对照实验——拒绝方向 vs.\ 等范数随机单位向量——以确认跨模型移植的拒绝方向几何特性（而非仅仅是扰动量级）是有效成分（\S\ref{sec:exp:ablation}）。
+    \item 我们在白盒自适应攻击者下对 \method{}+ 进行压力测试，并分析动作空间中"拒绝"的含义，包括安全层探针恢复分析（\S\ref{sec:exp:adaptive}、\S\ref{sec:analysis:action-space}、\S\ref{sec:analysis:probe-recovery}）。
+\end{itemize}

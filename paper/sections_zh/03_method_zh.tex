@@ -1,0 +1,92 @@
+\section{方法}
+\label{sec:method}
+
+\subsection{预备知识：OpenVLA 的动作 token 通路}
+\label{sec:method:openvla}
+
+\textsc{OpenVLA} \cite{openvla2024} 是一个在 \textsc{Open-X-Embodiment} 上微调的 \textsc{Prismatic} 家族视觉-语言模型。其架构为 $\mathcal{M}(I, x) = \mathrm{Llama\text{-}2\text{-}7b_{\text{base}}}(\phi_{\text{vis}}(I) \oplus \mathrm{Embed}(x))$，其中 $\phi_{\text{vis}}$ 融合 SigLIP 和 DINOv2 特征，$\oplus$ 表示将 256 个视觉 patch token 投影并与 token 化文本指令 $x$ 拼接。动作以 7 个离散 token $(a_1, \ldots, a_7)$ 的形式输出，每个对应 6-DoF 姿态 + 1-DoF 夹爪的一个自由度。
+
+本文工作的关键结构细节在于动作 token 的表示方式。\textsc{OpenVLA} 并\emph{未}扩展 Llama 词表，而是\emph{覆写}了最后 $K=256$ 个 token id（id $31744 \ldots 31999$），将其替换为 256 个均匀分布的动作 bin。因此，每个动作 token 在嵌入表层面是一个原本属于自然语言的 token 的嵌入，经过持续训练后用于输出量化的机器人运动。我们记动作 token id 集合为 $\mathcal{A} = \{31744, \ldots, 31999\}$。
+
+\subsection{诊断：动作 token 是否与拒绝轴解耦？}
+\label{sec:method:diagnostic}
+
+我们研究 Llama-2-chat 的拒绝方向作用于 \textsc{OpenVLA} 隐层状态时，能否在动作 token 位置区分有害与无害输入。按照 \citet{arditi2024refusal} 的方法，我们在每层 $L$ 提取 rank-1 拒绝方向：
+\begin{equation}
+\begin{split}
+  r_L \;=\;& \frac{1}{|\mathcal{H}|} \sum_{x \in \mathcal{H}} h_L^{\text{chat}}(x)[-1] \\
+           & -\; \frac{1}{|\mathcal{B}|} \sum_{x \in \mathcal{B}} h_L^{\text{chat}}(x)[-1],
+\end{split}
+  \label{eq:direction_zh}
+\end{equation}
+其中 $h_L^{\text{chat}}(x)[-1]$ 是 Llama-2-7b-chat 在第 $L$ 层的最后 token 隐层状态，$\mathcal{H}$、$\mathcal{B}$ 分别为有害（\textsc{AdvBench}）和无害（\textsc{Alpaca}）提示集。
+
+随后我们在 \textsc{OpenVLA} 的隐层状态上测量该方向的 AUC，分别在两类位置类型：（i）指令的最后文本 token，（ii）第一个解码动作 token。我们的假设（在 \S\ref{sec:exp} 中通过实验验证）是：移植的方向在文本 token 位置保持判别能力，而在动作 token 位置崩溃，从而量化结构性安全缺口。
+
+\begin{table}[t]
+\centering\small
+\framebox[\columnwidth]{%
+  \begin{minipage}{0.9\columnwidth}\centering\vspace{8pt}
+  \emph{占位符。} \textsc{OpenVLA} 中各层在\{最后文本 token、第一个动作 token\}位置的投影 AUC，使用从 Llama-2-chat 提取的 $r_L$。数据将由 \texttt{scripts/05\_sanity\_check.py} 填入。\vspace{8pt}
+  \end{minipage}}
+\caption{解耦诊断：从 Llama-2-chat 移植的拒绝方向在 \textsc{OpenVLA} 的文本 token 位置能够区分有害与无害，但在动作 token 位置信号崩溃。}
+\label{tab:decoupling-zh}
+\end{table}
+
+\subsection{拒绝方向移植（RDT）}
+\label{sec:method:rdt}
+
+基于上述诊断，我们提出在推理时将移植的方向直接加入负责动作生成的位置的残差流，以\emph{恢复}该处的拒绝信号。设 $H_L \in \mathbb{R}^{B \times T \times d}$ 为第 $L$ 层隐层状态，$r_L$ 为式~\eqref{eq:direction_zh} 中的单位归一化拒绝方向。
+
+\paragraph{为何未对齐的 base 主干仍能响应。}
+Llama-2-chat 与 Llama-2-base 共享其 RLHF 前的检查点。残差流的线性几何结构在预训练阶段建立；已知 RLHF 沿该几何结构移动激活，而不旋转基底 \cite{arditi2024refusal}。因此，$r_L$ 指向的方向在 \textsc{OpenVLA} 动作 BC 微调后仍然有效使用的残差流坐标系中保持意义。实证上，先前工作已证实：将 chat 模型的拒绝方向移植至 base LLM 可将拒绝率从接近零提升至 88\% 以上 \cite{baselmsrefuse2024}，直接验证了跨初始化迁移的有效性。我们在 \S\ref{sec:analysis:crossmodel} 中针对本文 VLA 场景加以验证。
+
+\paragraph{生成阶段时序。}
+\textsc{OpenVLA} 自回归生成 7 个动作 token。在\emph{预填充}阶段（生成 $a_1$ 时），输入 id 序列仅包含文本 token，不含任何动作 id。在此后每个\emph{解码}步骤（生成 $a_2 \ldots a_7$ 时），已生成的动作 token 通过 KV 缓存重新作为上下文处理。因此，纯动作 token 掩码仅在 $a_2 \ldots a_7$ 上触发，$a_1$ 不受保护。我们在 \S\ref{sec:method:dualphase} 中通过生成阶段感知变体解决这一问题。
+
+\paragraph{基础 RDT（仅动作位置）。}
+设 $M_L \in \{0,1\}^{B \times T}$ 为动作 token 掩码 $M_L = \mathbb{1}[\mathrm{ids} \in \mathcal{A}]$，干预为：
+\begin{equation}
+  H_L' \;=\; H_L \,+\, \alpha \cdot (M_L \odot \mathbf{1}_d^\top) \odot r_L,
+  \label{eq:rdt_zh}
+\end{equation}
+其中 $\alpha$ 为标量系数，$\odot$ 表示广播 Hadamard 积。除此之外，不修改任何其他层、位置或模型权重。
+
+\subsection{生成阶段感知双阶段注入（RDT+）}
+\label{sec:method:dualphase}
+
+为保护 $a_1$ 同时也保护 $a_2 \ldots a_7$，我们引入 \emph{RDT+}，在两种不重叠的位置类型上以独立尺度施加方向：
+\begin{equation}
+\begin{split}
+  H_L' \;=\;& H_L
+  \;+\; \alpha_{\text{text}} \cdot (M_L^{\text{text}} \odot \mathbf{1}_d^\top) \odot r_L \\
+  &\;+\; \alpha_{\text{act}}  \cdot (M_L^{\text{act}}  \odot \mathbf{1}_d^\top) \odot r_L,
+\end{split}
+  \label{eq:rdtplus_zh}
+\end{equation}
+其中 $M_L^{\text{text}} = \mathbb{1}[\mathrm{ids} \notin \mathcal{A}]$，$M_L^{\text{act}} = \mathbb{1}[\mathrm{ids} \in \mathcal{A}]$。预填充阶段文本掩码激活，引导用于解码 $a_1$ 的表示；每个解码步骤动作掩码在新处理的 token 上触发。全程使用 $\alpha_{\text{text}} = 0.3\,\alpha$，$\alpha_{\text{act}} = \alpha$；这种不对称性防止过度扰动指令处理，同时在动作位置保持强安全信号。
+
+位置消融实验（\S\ref{sec:exp:ablation}）比较仅动作、仅文本、文本+动作、全 token 等目标，以隔离每个阶段的贡献。
+
+\subsection{Rank-$k$ 子空间变体}
+\label{sec:method:rankk}
+
+动作空间危害涵盖多个子类别（对人员的暴力、财产损毁、火灾和电气危险、化学污染），可能沿不同方向编码。我们将式~\eqref{eq:direction_zh} 的 rank-1 提取替换为 rank-$k$ 子空间。设 $\Delta \in \mathbb{R}^{|\mathcal{H}| \times d}$ 为逐提示对比矩阵 $\Delta_{i,:} = h_L^{\text{chat}}(x_i^\text{h})[-1] - \mu_L^\text{benign}$，其右奇异向量 $V_k = [v_1, \ldots, v_k]^\top$（前 $k$ 个）定义了 $k$ 维拒绝子空间。干预变为：
+\begin{equation}
+  H_L' \;=\; H_L \,+\, \alpha \cdot (M_L \odot \mathbf{1}_d^\top) \odot \!\left(\!\sum_{j=1}^{k} v_j\!\right)\!,
+\end{equation}
+或采用正交投影模式（在 \S\ref{sec:exp:ablation} 中消融），从 $H_L$ 中减去其在 $V_k$ 上的投影。$k=1$ 时退化为 rank-1。
+
+\subsection{内容自适应 $\alpha$}
+\label{sec:method:adaptive}
+
+固定 $\alpha$ 在良性成功率与有害拒绝率之间存在权衡。我们用轻量级头部 $g_\theta$ 替代它，该头部作用于后投影层的视觉-文本 token：
+\begin{equation}
+  \alpha(I, x) \;=\; \alpha_{\max} \cdot \sigma\!\bigl(g_\theta(\phi_{\text{vis}}(I) \oplus \mathrm{Embed}(x))\bigr),
+\end{equation}
+其中 $g_\theta$ 是约 $500\mathrm{K}$ 参数的两层 MLP，在配对的有害/无害 VLA 输入上以二元交叉熵训练。推理时，$\alpha(I, x)$ 对每个输入计算一次并代入式~\eqref{eq:rdt_zh} 或 \eqref{eq:rdtplus_zh}。$g_\theta$ \emph{不}修改 \textsc{OpenVLA} 的权重；它位于模型外部，使用已在计算中的相同激活。注意，仅 rank-1 和 rank-$k$ 变体严格无需训练；自适应变体需要训练 $g_\theta$（在局限性部分披露）。
+
+\subsection{实现}
+\label{sec:method:impl}
+
+\method{} 以两个 PyTorch 钩子实现：（i）在顶层 Llama 模型上的前向\emph{预钩子}，在嵌入层消耗前缓存当前输入 id 张量；（ii）解码器第 $L$ 层的输出钩子，读取缓存的 id 计算位置掩码并应用式~\eqref{eq:rdt_zh} 或 \eqref{eq:rdtplus_zh}。双钩子设计是必要的，因为 Llama 解码器层仅接收 \texttt{hidden\_states} 而不接收 \texttt{input\_ids}，位置信息必须通过共享闭包传递。端到端代码不超过 120 行。我们将在发表后通过匿名仓库发布 \method{}、自适应攻击、所有基线及复现脚本。

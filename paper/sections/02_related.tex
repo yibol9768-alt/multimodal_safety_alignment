@@ -1,0 +1,42 @@
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Multimodal safety alignment and its shallowness.}
+Visual instruction tuning has been shown to systematically erode the safety alignment of the underlying LLM \cite{vlguard2024}, and subsequent analyses \cite{safemirage2025} identify that the SFT-acquired refusals are largely superficial textual correlations. Preference-based fine-tuning on multimodal pairs \cite{spavl2024} and cross-modal caption-guided alignment \cite{cmrt2025} attack the problem at training time. Inference-time prompt defenses include \textsc{AdaShield} \cite{adashield2024} and \textsc{ECSO} \cite{ecso2024}, while \textsc{MMJ-Bench} \cite{mmjbench2024} shows no single defense covers all attacks.
+
+\paragraph{Representation-level safety interventions.}
+\citet{arditi2024refusal} show that refusal in chat-aligned LLMs is mediated by a single residual-stream direction (extracted via mean-difference across harmful/benign prompts). Crucially, subsequent work has established that transplanting a chat model's refusal direction into the \emph{same-pretrained base} LLM raises refusal rates from near-zero to over 88\% \cite{baselmsrefuse2024}, directly grounding the cross-model geometry assumption we rely upon. \textsc{Circuit Breakers} \cite{circuitbreakers2024} reroute harmful representations via LoRA adapters. In VLMs, \textsc{Security Tensors} \cite{securitytensors2025} identify a contiguous range of ``safety layers'' (layers 9--20 in LLaMA-3.2-11B-Vision) whose activations respond to harmful text but fall silent on harmful image inputs; we replicate this probe on \textsc{OpenVLA}'s action-decoding path. \textsc{CMRM} \cite{cmrm2025} provides a test-time shift vector; \textsc{VLM-Guard} \cite{vlmguard2025} extracts a rank-$k$ steering direction via SVD from an aligned LLM and applies it to the final input-token position of a VLM at inference. \textsc{ASTRA} \cite{astra2025} derives steering from visual adversarial samples. \textsc{SafeSteer} \cite{safesteer2025} applies SVD subspace projection to VLMs for general jailbreak defense.
+
+Closest to our work is \textsc{SARSteer} \cite{sarsteer2025}, contemporary work that steers text-derived refusal directions in audio LMs. The critical distinction is that \textsc{SARSteer} extracts the direction from the target model itself, whose backbone already has refusal responses. Our setting's target VLA is built on a \emph{base} LLM with no refusal responses to extract---a setting in which \textsc{SARSteer}'s procedure is zero-shot inapplicable. We extract the direction from an external aligned sibling model and transplant it across.
+
+\paragraph{Activation steering for behavioral control in VLAs.}
+Independent of safety, recent mechanistic interpretability work has demonstrated that activation steering is effective for \emph{behavioral} control of VLAs: \citet{mechinterpvla2025} show that adding learned steering vectors to specific FFN positions of \textsc{OpenVLA} and \textsc{$\pi_0$} reliably modifies motion speed and trajectory curvature. This establishes that \textsc{OpenVLA}'s residual stream is geometrically steerable---a prerequisite for our safety intervention---though their target is behavioral control rather than harm refusal, their source is in-distribution VLA data rather than a cross-model refusal direction, and they do not restrict injection to action-token positions.
+
+\paragraph{VLA models and their safety.}
+\textsc{OpenVLA} \cite{openvla2024} and \textsc{OpenVLA-OFT} \cite{openvlaoft2025} span the two dominant action decoders: discrete action tokens overwriting the Llama vocabulary vs.\ a continuous L1-regression head. \textsc{$\pi_0$} \cite{pi02024} uses flow-matching over continuous actions. Attack work \cite{wu2024exploringadversarial,badrobot2025,shawshank2025} has exposed a consistent structural observation: VLAs have no refusal-training analog, and universal adversarial patches transfer across tasks. On the defense side, \textsc{SafeVLA} \cite{safevla2025} frames the problem as a constrained MDP and fine-tunes the policy under safe RL, while \textsc{VLSA}/\textsc{AEGIS} \cite{vlsa2025} imposes control-theoretic collision avoidance at the action output. Neither method performs a representation-level intervention that asks whether the LLM backbone could have been made aware that the request was harmful before producing an action.
+
+\paragraph{Our positioning.}
+Table~\ref{tab:positioning} summarizes the design space along four axes: intervention target, phase, direction source, and token positions affected. Our work is, to our knowledge, the first to (a)~extract safety directions from an \emph{external} aligned LLM and transplant them into a \emph{base}-backbone VLA, and (b)~restrict injection to the positions responsible for action generation, with a generation-phase-aware two-phase variant (Sec.~\ref{sec:method:dualphase}) that covers the full 7-token action sequence.
+
+\begin{table*}[t]
+\centering\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{p{4.4cm}p{2.0cm}p{0.8cm}p{2.8cm}p{2.4cm}}
+\toprule
+Method & Target & Phase & Direction source & Positions \\
+\midrule
+AdaShield \cite{adashield2024}        & prompt           & infer & ---               & N/A \\
+TGA/CMRT-LVLM \cite{cmrt2025}         & projector + LLM  & train & caption guidance  & all \\
+CMRM \cite{cmrm2025}                  & LLM hidden       & infer & self              & all \\
+VLM-Guard \cite{vlmguard2025}         & LLM hidden       & infer & ext.\ LLM         & last input token \\
+ASTRA \cite{astra2025}                & LLM hidden       & infer & visual adv.\ samples & generated tokens \\
+Security Tensors \cite{securitytensors2025} & soft token & train & harm SFT          & prefix \\
+SARSteer \cite{sarsteer2025}          & LLM hidden       & infer & self              & generated tokens \\
+SafeVLA \cite{safevla2025}            & policy           & train & safe RL           & all \\
+Mech.\ Interp.\ VLA \cite{mechinterpvla2025} & LLM hidden & infer & in-dist.\ VLA data & all \\
+\textbf{RDT/RDT+ (Ours)}             & LLM hidden       & infer & \textbf{ext.\ LLM (cross-model)} & \textbf{action only / text+action} \\
+\bottomrule
+\end{tabular}
+\caption{Positioning in the multimodal-safety design space. RDT/RDT+ uniquely combine (a)~direction from an \emph{external} aligned LLM into an \emph{unaligned} base-backbone VLA and (b)~injection restricted to action-producing positions.}
+\label{tab:positioning}
+\end{table*}

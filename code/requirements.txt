@@ -1,0 +1,35 @@
+# Core
+# PyTorch sm_120 (RTX 5090) needs >=2.6 with cu128 — install separately:
+#   pip install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
+transformers>=4.45.0
+accelerate>=0.34.0
+huggingface_hub>=0.25.0
+safetensors>=0.4.0
+tokenizers>=0.20.0
+peft>=0.13.0
+sentencepiece>=0.2.0
+
+# Data
+datasets>=3.0.0
+pandas>=2.2.0
+pyarrow>=17.0.0
+
+# Numerics & analysis
+numpy>=1.26.0
+scipy>=1.13.0
+scikit-learn>=1.5.0
+einops>=0.8.0
+
+# Plotting
+matplotlib>=3.9.0
+seaborn>=0.13.0
+
+# Experiment tracking & CLI
+pyyaml>=6.0.0
+tqdm>=4.66.0
+rich>=13.8.0
+
+# VLA/robotics (for LIBERO eval, installed later)
+# robosuite
+# libero
+# openvla

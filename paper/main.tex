@@ -1,0 +1,63 @@
+\documentclass[11pt]{article}
+
+% -----------------------------------------------------------------------
+% MODE SWITCH — change this ONE line:
+%   [final]   本地阅读（无行号，干净版）  ← 当前
+%   [review]  投稿提交（有行号，匿名头）
+% -----------------------------------------------------------------------
+\usepackage[final]{acl}
+
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{url}
+
+% Rebrand anonymous header for EMNLP 2026 submission.
+\renewcommand\outauthor{%
+    \begin{tabular}[t]{c}
+    \bfseries Anonymous EMNLP 2026 Submission
+    \end{tabular}}
+
+\newcommand{\method}{RDT}
+\newcommand{\methodfull}{Refusal Direction Transplant}
+
+\title{\methodfull{} (\method{}/\method{}+):\\
+  Transferring Text-Backbone Safety Alignment\\
+  into Action-Token Pathways\\
+  of Vision-Language-Action Models}
+
+\author{Anonymous EMNLP 2026 Submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Vision-Language-Action (VLA) models such as OpenVLA repurpose pretrained language models to emit discrete action tokens by overwriting the tail of the LLM vocabulary. We argue that this tokenization scheme creates a \emph{structural safety gap}: the refusal circuits inherited from a chat-aligned LLM are geometrically decoupled from the action-token pathway of a base-backbone VLA, so harmful instructions translate directly into unsafe physical actions without ever triggering a refusal. We propose \methodfull{} (\method{}/\method{}+), a family of training-free inference-time interventions that extract a refusal direction from an externally-aligned sibling LLM (Llama-2-chat) that shares the target VLA's pretraining initialization, and re-inject it at action-producing positions. Base \method{} targets action-token positions in the KV cache; \method{}+ extends this with a generation-phase-aware dual injection that also steers the instruction representations from which the first action token is decoded, achieving full 7-token action-sequence coverage. We validate the cross-model transplant via a direction-source control experiment---comparing the refusal direction against a random unit vector of identical norm---to confirm that the specific geometry of the transplanted direction, not merely its magnitude, is the active ingredient. On \textsc{LIBERO-Long}, \textsc{SafeAgentBench}, and an instruction-conditioned \textsc{AdvBench} split, we evaluate \method{}+ against textual jailbreaks and universal adversarial patches \cite{wu2024exploringadversarial}, compare with prompt-level, hidden-state-projection, and LoRA fine-tuning defenses, and stress-test against a white-box adaptive attacker. Our study is, to our knowledge, the first to treat text alignment as a transplantable asset into non-textual output pathways without retraining the underlying model.
+\end{abstract}
+
+\input{sections/01_intro}
+\input{sections/02_related}
+\input{sections/03_method}
+\input{sections/04_experiments}
+\input{sections/05_analysis}
+\input{sections/06_conclusion}
+
+\section*{Limitations}
+\phantomsection\label{sec:limitations}
+\input{sections/07_limitations}
+
+\section*{Ethics Statement}
+\input{sections/08_ethics}
+
+\bibliography{custom}
+
+\end{document}

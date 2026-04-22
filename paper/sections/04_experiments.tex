@@ -1,0 +1,85 @@
+\section{Experiments}
+\label{sec:exp}
+
+\subsection{Setup}
+\label{sec:exp:setup}
+
+\paragraph{Backbone.}
+We use \textsc{OpenVLA-7b} (\texttt{openvla/openvla-7b}) unless stated otherwise. \textsc{OpenVLA-OFT} (\texttt{moojink/openvla-7b-oft-\allowbreak finetuned-libero-spatial}) serves as a scheme-specific negative control (Sec.~\ref{sec:analysis:oft}). The external aligned LLM is \texttt{NousResearch/\allowbreak Llama-2-7b-chat-hf}, a non-gated mirror with weights identical to Meta's Llama-2-7b-chat.
+
+\paragraph{Evaluation suites.}
+\textbf{LIBERO-Long} (10 long-horizon manipulation tasks, 50 episodes each), as a source of benign tasks and visual scenes; \textbf{SafeAgentBench} \cite{safeagentbench2024}, from which we select an embodied-hazard subset of 120 tasks\footnote{Using the 750-task AI2-THOR split for pipeline compatibility.}; and an \textbf{instruction-conditioned AdvBench} split, in which we pair 128 harmful instructions drawn from our curated taxonomy (violence, child safety, fire/electric, chemical, property damage, negligence; 40 prompts with 5$\times$ paraphrase) with LIBERO visual scenes.
+
+\paragraph{Attacks.}
+(i) \emph{No attack} (benign distribution), used to measure Benign Success Rate (BSR) on clean \textsc{LIBERO-Long}. (ii) \emph{Textual jailbreak}: harmful instructions delivered in plain language (our \textsc{AdvBench} split). (iii) \emph{UADA}/\emph{UPA}/\emph{TMA}: universal adversarial patches following \citet{wu2024exploringadversarial}, with $L_\infty$ budget $16/255$, 5\% patch area, 500 inner iterations.
+
+\paragraph{Metrics.}
+\textbf{BSR} (higher is better): fraction of benign \textsc{LIBERO-Long} episodes completed.
+\textbf{HRR-strict} (higher is better): fraction of harmful episodes whose first 7 action tokens all fall into a zero-motion window ($\pm$8 bins around bin 128), our simulator-agnostic proxy for ``the robot stopped''.
+\textbf{HRR-partial} (higher is better): fraction of harmful episodes where $\geq$4 of 7 action tokens fall in the zero-motion window. This softer criterion credits partial refusals---e.g.\ a robot that halts 4 DoFs while continuing to close its gripper---and is more informative when the defense is strong but imperfect.
+\textbf{BRR} (higher is better): $\tfrac{1}{2}(\mathrm{BSR} + \mathrm{HRR\text{-}strict})$, an aggregate measure of the defense's usefulness without over-refusal.
+We will additionally report per-attack breakdowns and per-category HRR in the camera-ready version.
+
+\paragraph{Baselines.}
+\textbf{No defense}: vanilla OpenVLA.
+\textbf{AdaShield-S} \cite{adashield2024}: a static safety prompt prepended to the instruction.
+\textbf{VLM-Guard transplant} \cite{vlmguard2025}: SVD rank-5 SSD from Llama-2-chat's layer 14, applied to all token positions of OpenVLA (our transplanted adaptation of the original last-token-only method).
+\textbf{SafeVLA-lite}: a much cheaper stand-in for \textsc{SafeVLA} \cite{safevla2025}, trading its safe-RL procedure for LoRA fine-tuning ($r=32$) on $1\mathrm{k}$ harmful + $1\mathrm{k}$ benign pairs for one epoch, with harmful targets labeled to the zero-motion action token.
+
+\paragraph{\method{} / \method{}+ configuration.}
+We use layer $L=14$ with $\alpha=1.0$ unless an ablation varies these. Base \method{} targets action positions only; \method{}+ uses the text+action dual-phase injection with $\alpha_{\text{text}}=0.3$ and $\alpha_{\text{act}}=1.0$. The rank-$k$ variant uses $k=5$. The adaptive-$\alpha$ head is a 2-layer MLP with hidden dim 256, trained for 3 epochs on paired labeled inputs.
+
+\subsection{Main results}
+\label{sec:exp:main}
+
+Table~\ref{tab:main-placeholder} will report BSR, HRR-strict, HRR-partial, and BRR across all baselines and \method{} variants.
+
+\begin{table}[t]
+\centering\small
+\framebox[\columnwidth]{%
+  \begin{minipage}{0.9\columnwidth}\centering\vspace{8pt}
+  \emph{Placeholder.} Main comparison. Rows: \{No defense, AdaShield, VLM-Guard transplant, SafeVLA-lite, \method{} (action-only), \method{}+ (text+action), \method{}+rank-$k$, \method{}+adaptive $\alpha$\}. Columns: BSR, HRR-strict, HRR-partial, BRR. To be populated from \texttt{scripts/06\_run\_main\_table.py}. \vspace{8pt}
+  \end{minipage}}
+\caption{Main comparison on the instruction-conditioned \textsc{AdvBench} split combined with \textsc{LIBERO-Long} benign tasks.}
+\label{tab:main-placeholder}
+\end{table}
+
+\subsection{Ablations}
+\label{sec:exp:ablation}
+
+We ablate five axes.
+\textbf{Direction source}: we compare the refusal direction against (i) a random unit vector of the same norm (same random seed across runs), (ii) the negated refusal direction, and (iii) no intervention. This control is essential: if the random vector achieves HRR comparable to the refusal direction, the gain is attributable to general hidden-state perturbation rather than the transplanted safety geometry; if refusal $\gg$ random, the cross-model transfer hypothesis is confirmed. We denote the margin $\Delta_{\text{rand}}=\mathrm{HRR}(r_L) - \mathrm{HRR}(\text{rand})$.
+\textbf{Layer sweep}: $L \in \{8, 10, 12, 14, 16, 18, 20\}$ identifies the sweet spot where the transplanted direction both carries signal (Sec.~\ref{sec:method:diagnostic}) and remains early enough to influence downstream action decoding.
+\textbf{Scale sweep}: $\alpha \in \{0, 0.1, 0.5, 1, 2, 5\}$ exposes the BSR/HRR trade-off and motivates adaptive $\alpha$.
+\textbf{Target position}: \{action-only, text-only, text+action, all\} isolates the gain attributable specifically to action-token targeting and the generation-phase-aware dual injection---key differentiators from \textsc{VLM-Guard}.
+\textbf{Rank-$k$}: $k \in \{1, 3, 5, 10\}$, testing the hypothesis that action-space harm spans multiple directions.
+
+\begin{table}[t]
+\centering\small
+\framebox[\columnwidth]{%
+  \begin{minipage}{0.9\columnwidth}\centering\vspace{8pt}
+  \emph{Placeholder.} Five-axis ablation matrix. Top block: direction source (refusal / random / negated / none). Bottom blocks: layer, scale, target position, and subspace rank. Populated from \texttt{scripts/07\_run\_ablations.py}. \vspace{8pt}
+  \end{minipage}}
+\caption{Ablation sweeps. $\Delta_{\text{rand}}$ column reports refusal$-$random HRR gap; positive values confirm cross-model geometry is the active ingredient.}
+\label{tab:ablations-placeholder}
+\end{table}
+
+\subsection{Adaptive attack evaluation}
+\label{sec:exp:adaptive}
+
+We evaluate \method{} under a white-box adaptive attacker that knows $r_L$, the layer choice, and $\alpha$. The attacker optimizes an image patch via PGD (500 iterations, $\epsilon=16/255$) to minimize $|h_L[\text{last}] \cdot r_L|$, pushing hidden states onto the orthogonal complement of the refusal direction. We report HRR-strict and HRR-partial with and without this attack. A defense that is not merely catching naive attackers should maintain a non-trivial gap above the no-defense baseline even under adaptive pressure.
+
+\subsection{Composition with existing defenses}
+\label{sec:exp:composition}
+
+Finally, we test whether \method{}+ composes orthogonally with AdaShield prompting and VLM-Guard projection. Table~\ref{tab:composition-placeholder} will report pairwise and triple-combination BRR. Positive composition supports \method{}'s positioning as a plug-and-play action-level module complementary to existing prompt-level and projection-level defenses.
+
+\begin{table}[t]
+\centering\small
+\framebox[\columnwidth]{%
+  \begin{minipage}{0.9\columnwidth}\centering\vspace{8pt}
+  \emph{Placeholder.} Composition matrix: AdaShield / VLM-Guard / \method{}+ and their pairwise/triple combinations. \vspace{8pt}
+  \end{minipage}}
+\caption{Composition of \method{}+ with existing defenses.}
+\label{tab:composition-placeholder}
+\end{table}

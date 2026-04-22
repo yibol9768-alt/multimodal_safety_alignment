@@ -1,0 +1,10 @@
+\begin{itemize}
+    \item \textbf{方案特有适用性。} \method{}/\method{}+ 针对以覆写 LLM 子词表方式编码离散动作的 VLA。不能直接应用于连续动作 VLA（如 \textsc{OpenVLA-OFT}、\textsc{$\pi_0$}）。我们通过将 \textsc{OpenVLA-OFT} 作为方案特有负对照来验证这一点（\S\ref{sec:analysis:oft}）。
+    \item \textbf{共享预训练假设。} 跨模型移植依赖目标 VLA 主干与外部对齐 LLM 共享预训练初始化。我们未评估跨不同预训练家族的移植（例如以 Llama 为基础的 VLA 目标与以 Qwen 对齐的来源）；是否有效留待未来工作。
+    \item \textbf{基础 \method{} 中第一个动作 token 的覆盖。} 仅动作目标的基础 \method{} 变体在生成 $a_1$ 的预填充步骤中不触发，因为此时输入中不存在动作 token id。\method{}+ 通过双阶段注入解决了这一问题（\S\ref{sec:method:dualphase}），但文本侧 $\alpha_{\text{text}}=0.3$ 注入弱于动作侧注入，因此 $a_1$ 在当前实现中受到的引导压力低于 $a_2\ldots a_7$。
+    \item \textbf{仅模拟评测。} 我们的评测在模拟环境（\textsc{LIBERO}、\textsc{AI2-THOR}）中进行。真实机器人执行会引入我们未处理的分布偏移。在模拟中触发"零运动"的防御在真实控制器接收到停止信号所需的时间内仍可能执行不安全行为。
+    \item \textbf{攻击覆盖范围。} 我们评测指令层和补丁层攻击；不测试新型物理对抗扰动、材质级伪装或多步对抗计划。\S\ref{sec:exp:adaptive} 中的自适应攻击仅是仅 $L_\infty$ 约束下白盒梯度攻击的上界。
+    \item \textbf{零运动代理指标。} 我们的 HRR-strict 指标以零运动动作窗口作为"机器人停止"的替代。部分拒绝可能采取其他安全动作形式（如将刀放下），而我们的指标对此不给分。HRR-partial 部分缓解了这一问题；完整的人工评测留待相机就绪版本。
+    \item \textbf{内容自适应 $\alpha$ 引入小型辅助模型。} $g_\theta$ 头（约 $500\mathrm{K}$ 参数）在标注的有害/无害样本对上训练，这意味着 \method{}+ 的自适应变体并非严格无需训练；仅 rank-1 和 rank-$k$ 变体是如此。我们在附录中披露 $g_\theta$ 的训练成本和数据。
+    \item \textbf{安全-实用权衡。} \method{}+ 以一定良性任务成功率的代价降低有害动作率。我们分别报告 BSR 和 HRR（而非仅报告 BRR），以使该权衡可见。
+\end{itemize}
