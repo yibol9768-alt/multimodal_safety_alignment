@@ -56,6 +56,31 @@ Action-space harm covers multiple sub-categories (violence against people, prope
 \end{equation}
 or, alternatively (ablated in Sec.~\ref{sec:exp:rankk}), an orthogonal-projection mode that subtracts the projection of $H_L$ onto $V_k$. Rank-1 is recovered at $k=1$.
 
+\subsection{\method{}+\textsubscript{gated}: probe-gated variant}
+\label{sec:method:gated}
+
+A constant $\alpha$ applied to every input forces the same trade-off between harmful refusal and benign task completion on all prompts. Following the probe--steer decoupling of \citet{gss2026}, we learn a lightweight \emph{safety probe} that predicts whether the input is harmful and apply the refusal-direction injection only when the probe fires.
+
+\paragraph{Probe.}
+Let $h^{(L^\star)}_{-1}(I, x) \in \mathbb{R}^d$ be the last-token hidden state of the final \textsc{OpenVLA} decoder layer $L^\star = 31$ on input $(I, x)$. The probe is a 2-layer MLP $\pi_\theta: \mathbb{R}^d \to \mathbb{R}$ mapping this embedding to a logit:
+\begin{equation}
+  p(I, x) \;=\; \sigma\bigl(\pi_\theta\bigl(h^{(L^\star)}_{-1}(I, x)\bigr)\bigr) \in [0, 1].
+\end{equation}
+We train $\pi_\theta$ with binary cross-entropy on 512 harmful + 512 benign paired (image, instruction) inputs drawn from the AdvBench split plus Alpaca, held-out 20\% for validation. Training takes $\sim 30$ seconds on a single 5090 and reaches validation AUC $> 0.99$ on our held-out split.
+
+\paragraph{Gate.}
+Given a threshold $\tau$ (default $0.5$), the gated intervention replaces the fixed $\alpha$ in Eq.~\ref{eq:rdtplus} with a per-input effective scale:
+\begin{equation}
+  \alpha_{\text{eff}}(I, x) \;=\;
+    \begin{cases}
+      \alpha, & p(I, x) > \tau \quad \text{(hard gate)} \\
+      \alpha \cdot \sigma\!\bigl(k\,(p(I, x) - \tau)\bigr), & \text{(soft gate)}
+    \end{cases}
+\end{equation}
+with $k = 10$ for the soft-gate steepness. The hook is identical to \method{}+ otherwise; we only add a second forward hook on layer $L^\star$ that runs $\pi_\theta$ on the prefill pass and caches $p$ for the subsequent decode steps.
+
+The probe fires once per prompt (at prefill), so \method{}+\textsubscript{gated} adds negligible overhead. Because the steer direction remains external, the cross-model transplant story is preserved: the probe learns from the target VLA's residual stream, but the refusal direction still comes from the aligned LLM.
+
 \subsection{Content-adaptive $\alpha$ and implementation}
 \label{sec:method:adaptive}
 
