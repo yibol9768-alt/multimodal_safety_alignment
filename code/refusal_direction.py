@@ -45,8 +45,32 @@ class DirectionSet:
         )
 
 
+def _wrap_chat(tokenizer, prompt: str) -> str:
+    """Wrap a raw prompt in Llama-2-chat format so we actually elicit the
+    refusal circuit (Arditi 2024). Without the [INST] scaffold the extracted
+    direction is a generic sentence-contrast vector, not a refusal axis.
+
+    Tries the tokenizer's own chat_template first; falls back to the
+    canonical Llama-2 [INST]...[/INST] format if none is registered.
+    """
+    messages = [{"role": "user", "content": prompt}]
+    try:
+        if getattr(tokenizer, "chat_template", None):
+            return tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+    except Exception:
+        pass
+    return f"<s>[INST] {prompt.strip()} [/INST]"
+
+
 def _last_token_hidden(model, tokenizer, prompts: list[str], layers: tuple[int, ...], dtype, device) -> dict[int, torch.Tensor]:
-    """Return {layer: [n_prompts, d]} hidden states at last token position."""
+    """Return {layer: [n_prompts, d]} hidden states at last token position.
+
+    Each prompt is wrapped in the Llama-2-chat template before tokenization
+    so that the last-token hidden state sits at the point where the model
+    would decide whether to refuse.
+    """
     storage: dict[int, list[torch.Tensor]] = {l: [] for l in layers}
 
     def mk_hook(layer_idx: int):
@@ -64,7 +88,8 @@ def _last_token_hidden(model, tokenizer, prompts: list[str], layers: tuple[int, 
     try:
         model.eval()
         for p in prompts:
-            inputs = tokenizer(p, return_tensors="pt").to(device)
+            wrapped = _wrap_chat(tokenizer, p)
+            inputs = tokenizer(wrapped, return_tensors="pt", add_special_tokens=False).to(device)
             with torch.no_grad():
                 model(**inputs, use_cache=False)
     finally:

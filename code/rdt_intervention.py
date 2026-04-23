@@ -67,35 +67,24 @@ def _make_dual_alpha_mask(
 
 
 # ---------------------------------------------------------------------------
-# Top-level LLM model locator (needed to capture input_ids)
+# Entry-point locator (needed to capture input_ids)
 # ---------------------------------------------------------------------------
 
-def _find_llm_model_top(model) -> torch.nn.Module:
-    """Return the LlamaModel (or equivalent) that receives input_ids.
+def _find_input_ids_entry(model) -> torch.nn.Module:
+    """Return the outermost module whose forward() still sees raw input_ids.
 
-    This is one level ABOVE the decoder layers — it is the module whose
-    forward() has an input_ids parameter and converts them to embeddings
-    before dispatching to individual decoder layers.
+    For OpenVLA (Prismatic-family VLM) the top-level PrismaticForConditional-
+    Generation.forward() is where text input_ids and pixel_values are both
+    present; internally it builds inputs_embeds (vision patches prepended to
+    text embeddings) and calls language_model.model(inputs_embeds=...).
+    Hooking the inner LlamaModel therefore captures None for input_ids,
+    which is exactly the bug that made Step 4c's target modes collapse.
+
+    We hook the outermost model (the argument itself) so input_ids are
+    visible in kwargs; if the model is already the bare Llama, hooking
+    itself still works because Llama.forward accepts input_ids.
     """
-    candidates = [
-        lambda m: m.language_model.model,
-        lambda m: m.llm_backbone.llm.model,
-        lambda m: m.model.language_model,
-        lambda m: m.model.model,
-        lambda m: m.model,
-    ]
-    for get in candidates:
-        try:
-            mod = get(model)
-            # Verify it exposes embed_tokens (LlamaModel characteristic)
-            if hasattr(mod, "embed_tokens"):
-                return mod
-        except AttributeError:
-            continue
-    raise RuntimeError(
-        "Could not locate top-level LlamaModel (embed_tokens owner) inside OpenVLA. "
-        "Add a new candidate to _find_llm_model_top."
-    )
+    return model
 
 
 # ---------------------------------------------------------------------------
@@ -113,6 +102,39 @@ def _make_capture_pre_hook(captured: dict) -> Callable:
     return pre_hook
 
 
+def _align_ids_to_hidden(ids: torch.Tensor, hidden: torch.Tensor) -> torch.Tensor | None:
+    """Pad captured input_ids so its [B, T] matches hidden's [B, T_hidden].
+
+    OpenVLA's top-level LLM receives text-only input_ids but the decoder-layer
+    hook sees a hidden state that also contains 256 vision patch embeddings
+    prepended by the Prismatic projector (Prismatic-family layout:
+    [BOS, vision_tokens(256), text_tokens...]). Without alignment the shape
+    check fails and the hook falls back to a uniform-all-positions injection,
+    making every target mode behave identically.
+
+    Strategy: left-pad ids with zeros (a non-action, non-special id) so the
+    vision prefix is treated as "text" for masking purposes. Zero is safe
+    because it is < OPENVLA_ACTION_START_ID, so "action" mask stays False
+    over the prefix, "text" mask stays True, matching the semantic intent.
+    Returns None if a coherent left-pad alignment is impossible.
+    """
+    if ids is None:
+        return None
+    if ids.shape[0] != hidden.shape[0]:
+        return None
+    if ids.shape[1] == hidden.shape[1]:
+        return ids
+    if ids.shape[1] > hidden.shape[1]:
+        # Decode step with KV cache can produce ids longer than the 1-token
+        # hidden slice; clip from the right end.
+        return ids[:, -hidden.shape[1]:]
+    prefix_len = hidden.shape[1] - ids.shape[1]
+    pad = torch.zeros(
+        ids.shape[0], prefix_len, dtype=ids.dtype, device=ids.device,
+    )
+    return torch.cat([pad, ids], dim=1)
+
+
 def _make_rdt_hook(
     direction: torch.Tensor,
     captured: dict,
@@ -128,12 +150,13 @@ def _make_rdt_hook(
     """
     def hook(module, args, kwargs, output):
         hidden = output[0] if isinstance(output, tuple) else output
-        ids = captured.get("ids", None)
+        raw_ids = captured.get("ids", None)
+        ids = _align_ids_to_hidden(raw_ids, hidden)
 
         direction_dev = direction.to(hidden.device, hidden.dtype)
 
-        if ids is None or ids.shape[:2] != hidden.shape[:2]:
-            # Fallback: apply uniformly (conservative — same as "all").
+        if ids is None:
+            # No ids at all — degenerate; apply uniformly as a last resort.
             delta = direction_dev * alpha
         elif target == "text+action":
             a_text = alpha_text if alpha_text is not None else alpha * 0.3
@@ -193,7 +216,7 @@ def rdt_enabled(
                       Default = alpha.
     """
     captured: dict = {}
-    llm_top = _find_llm_model_top(model)
+    llm_top = _find_input_ids_entry(model)
     decoder_layers = find_llm_layers(model)
 
     pre_handle = llm_top.register_forward_pre_hook(
@@ -223,7 +246,7 @@ def install_rdt(
 ) -> RDTHandle:
     """Non-context version for long-running eval loops. Call handle.remove() when done."""
     captured: dict = {}
-    llm_top = _find_llm_model_top(model)
+    llm_top = _find_input_ids_entry(model)
     decoder_layers = find_llm_layers(model)
 
     pre_handle = llm_top.register_forward_pre_hook(

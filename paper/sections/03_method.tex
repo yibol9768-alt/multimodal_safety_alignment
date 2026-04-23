@@ -4,9 +4,7 @@
 \subsection{Preliminaries: the action-token pathway of OpenVLA}
 \label{sec:method:openvla}
 
-\textsc{OpenVLA} \cite{openvla2024} is a \textsc{Prismatic}-family vision-language model fine-tuned on \textsc{Open-X-Embodiment}. Its architecture follows $\mathcal{M}(I, x) = \mathrm{Llama\text{-}2\text{-}7b_{\text{base}}}(\phi_{\text{vis}}(I) \oplus \mathrm{Embed}(x))$, where $\phi_{\text{vis}}$ concatenates SigLIP and DINOv2 features, $\oplus$ denotes projection and concatenation of 256 visual patch tokens with the tokenized text instruction $x$. Actions are emitted as 7 discrete tokens $(a_1, \ldots, a_7)$, one per DoF of a 6-DoF pose + 1-DoF gripper.
-
-The critical structural detail for our work is how action tokens are represented. \textsc{OpenVLA} does \emph{not} extend the Llama vocabulary; it \emph{overwrites} the last $K=256$ token ids (ids $31744 \ldots 31999$) with 256 uniformly-spaced action bins. Each action token is therefore, at the embedding-table level, the embedding of an originally-natural-language token that has been continuously trained to emit quantized robot motion. We write $\mathcal{A} = \{31744, \ldots, 31999\}$ for the action-token id set.
+\textsc{OpenVLA} \citep{openvla2024} is a \textsc{Prismatic}-family VLM fine-tuned on \textsc{Open-X-Embodiment}, with architecture $\mathcal{M}(I, x) = \mathrm{Llama\text{-}2\text{-}7b_{\text{base}}}(\phi_{\text{vis}}(I) \oplus \mathrm{Embed}(x))$ and 7 discrete action tokens $(a_1, \ldots, a_7)$ per step (6-DoF pose + 1-DoF gripper). The critical structural detail: \textsc{OpenVLA} does \emph{not} extend the Llama vocabulary; it \emph{overwrites} the last $K{=}256$ token ids ($31744 \ldots 31999$) with uniformly-spaced action bins. Each action token is therefore, at the embedding-table level, a natural-language token continuously re-trained to emit quantized robot motion. We write $\mathcal{A} = \{31744, \ldots, 31999\}$.
 
 \subsection{Diagnostic: are action tokens decoupled from the refusal axis?}
 \label{sec:method:diagnostic}
@@ -21,36 +19,17 @@ We ask whether Llama-2-chat's refusal direction, evaluated on \textsc{OpenVLA}'s
 \end{equation}
 where $h_L^{\text{chat}}(x)[-1]$ is the last-token hidden state of Llama-2-7b-chat at layer $L$, and $\mathcal{H}, \mathcal{B}$ are harmful (\textsc{AdvBench}) and benign (\textsc{Alpaca}) prompt sets.
 
-We then measure the AUC of this direction on \textsc{OpenVLA}'s hidden states at two position types: (i)~the last text token of an instruction and (ii)~the first decoded action token. Our hypothesis (verified empirically in Sec.~\ref{sec:exp}) is that the transplanted direction retains discriminative power at text-token positions but collapses at action-token positions, quantifying the structural safety gap. Table~\ref{tab:decoupling-placeholder} will report the per-layer AUC at both position types.
-
-\begin{table}[t]
-\centering\small
-\framebox[\columnwidth]{%
-  \begin{minipage}{0.9\columnwidth}\centering\vspace{8pt}
-  \emph{Placeholder.} Per-layer projection AUC at \{last text token, first action token\} positions in \textsc{OpenVLA}, using $r_L$ extracted from Llama-2-chat. To be populated from \texttt{scripts/05\_sanity\_check.py}. \vspace{8pt}
-  \end{minipage}}
-\caption{Decoupling diagnostic: the refusal direction transplanted from Llama-2-chat discriminates harmful vs.\ benign at text-token positions of \textsc{OpenVLA}, but collapses at action-token positions.}
-\label{tab:decoupling-placeholder}
-\end{table}
+We then measure the AUC of this direction on \textsc{OpenVLA}'s hidden states at two position types: (i)~the last text token of an instruction and (ii)~the first decoded action token. Our hypothesis---verified empirically in Sec.~\ref{sec:exp:diagnostic} and Fig.~\ref{fig:mechanism}(a)---is that the transplanted direction retains discriminative power at a narrow band of shallow layers (peaking at $L{=}10$ with \texttt{last\_text} AUC $=0.638$ and \texttt{first\_action} AUC $=0.589$) and turns weakly or strongly anti-aligned at deeper layers (Cohen's $d$ reaching $-1.10$ at $L{=}18$), quantifying the structural safety gap.
 
 \subsection{Refusal Direction Transplant}
 \label{sec:method:rdt}
 
-Given the diagnostic, we propose to \emph{restore} the refusal signal at the positions responsible for action generation by adding the transplanted direction directly to the residual stream during inference. Let $H_L \in \mathbb{R}^{B \times T \times d}$ be the layer-$L$ hidden state and $r_L$ the unit-normalized refusal direction from Eq.~\ref{eq:direction}.
-
-\paragraph{Why the unaligned base backbone still responds.}
-Llama-2-chat and Llama-2-base share their pre-RLHF checkpoint. The linear geometry of the residual stream is established during pretraining; RLHF is known to move activations \emph{along} this geometry without rotating the basis \cite{arditi2024refusal}. Consequently, $r_L$ points in a direction that remains meaningful in the residual-stream coordinates still used by \textsc{OpenVLA} after action-BC fine-tuning. Empirically, prior work has confirmed that transplanting a chat model's refusal direction into a base LLM raises refusal rates from near-zero to over 88\% \cite{baselmsrefuse2024}, directly validating cross-initialization transfer. We verify this for our VLA setting in Sec.~\ref{sec:analysis:crossmodel}.
-
-\paragraph{Generation-phase timing.}
-\textsc{OpenVLA} generates the 7 action tokens autoregressively. During \emph{prefill} (when generating $a_1$), the input-id sequence consists solely of text tokens; no action ids are present. During each subsequent \emph{decode} step (generating $a_2 \ldots a_7$), the already-emitted action token is re-processed as context via the KV cache. A pure action-token mask therefore fires only on $a_2 \ldots a_7$, leaving $a_1$ unprotected. We address this with the generation-phase-aware variant in Sec.~\ref{sec:method:dualphase}.
-
-\paragraph{Base RDT (action-only).}
-Let $M_L \in \{0,1\}^{B \times T}$ be the action-token mask $M_L = \mathbb{1}[\mathrm{ids} \in \mathcal{A}]$. The intervention is
+Let $H_L \in \mathbb{R}^{B \times T \times d}$ be the layer-$L$ hidden state and $r_L$ the unit-normalized refusal direction from Eq.~\ref{eq:direction}. Llama-2-chat and Llama-2-base share their pre-RLHF checkpoint, and RLHF moves activations \emph{along} the pretrained basis without rotating it \citep{arditi2024refusal}; prior work transplanting a chat model's refusal direction into a base LLM raises refusal rates from near-zero to over 88\% \citep{baselmsrefuse2024}. We apply this to VLA with an additional twist: \textsc{OpenVLA} generates the 7 action tokens autoregressively, so during \emph{prefill} (generating $a_1$) the input sequence contains text tokens only, and during each subsequent \emph{decode} step a single previously-emitted action token is re-processed via the KV cache. A pure action-token mask therefore fires only on $a_2 \ldots a_7$. Base \method{} uses this action-only mask $M_L = \mathbb{1}[\mathrm{ids} \in \mathcal{A}]$:
 \begin{equation}
   H_L' \;=\; H_L \,+\, \alpha \cdot (M_L \odot \mathbf{1}_d^\top) \odot r_L,
   \label{eq:rdt}
 \end{equation}
-where $\alpha$ is a scalar coefficient and $\odot$ denotes broadcast Hadamard product. No other layer, no other position, and no model weight is modified.
+where $\odot$ is broadcast Hadamard product. No other layer, position, or model weight is modified.
 
 \subsection{Generation-phase-aware dual injection (RDT+)}
 \label{sec:method:dualphase}
@@ -66,7 +45,7 @@ To protect $a_1$ alongside $a_2 \ldots a_7$ we introduce \emph{RDT+}, which appl
 \end{equation}
 where $M_L^{\text{text}} = \mathbb{1}[\mathrm{ids} \notin \mathcal{A}]$ and $M_L^{\text{act}} = \mathbb{1}[\mathrm{ids} \in \mathcal{A}]$. During prefill the text mask is active and steers the representations from which $a_1$ is decoded; during each decode step the action mask fires on the freshly re-processed token. We use $\alpha_{\text{text}} = 0.3\,\alpha$ and $\alpha_{\text{act}} = \alpha$ throughout; the asymmetry prevents over-perturbing instruction processing while still providing a strong safety signal at action positions.
 
-The position ablation (Sec.~\ref{sec:exp:ablation}) compares action-only, text-only, text+action, and all-token targets to isolate the contribution of each phase.
+The position ablation (Sec.~\ref{sec:exp:target}) compares action-only, text-only, text+action, and all-token targets to isolate the contribution of each phase.
 
 \subsection{Rank-$k$ subspace variant}
 \label{sec:method:rankk}
@@ -75,18 +54,9 @@ Action-space harm covers multiple sub-categories (violence against people, prope
 \begin{equation}
   H_L' \;=\; H_L \,+\, \alpha \cdot (M_L \odot \mathbf{1}_d^\top) \odot \!\left(\!\sum_{j=1}^{k} v_j\!\right)\!,
 \end{equation}
-or, alternatively (ablated in Sec.~\ref{sec:exp:ablation}), an orthogonal-projection mode that subtracts the projection of $H_L$ onto $V_k$. Rank-1 is recovered at $k=1$.
+or, alternatively (ablated in Sec.~\ref{sec:exp:rankk}), an orthogonal-projection mode that subtracts the projection of $H_L$ onto $V_k$. Rank-1 is recovered at $k=1$.
 
-\subsection{Content-adaptive $\alpha$}
+\subsection{Content-adaptive $\alpha$ and implementation}
 \label{sec:method:adaptive}
 
-A constant $\alpha$ trades benign success rate against harmful refusal rate. We replace it with a lightweight head $g_\theta$ operating on the post-projector visual-text tokens:
-\begin{equation}
-  \alpha(I, x) \;=\; \alpha_{\max} \cdot \sigma\!\bigl(g_\theta(\phi_{\text{vis}}(I) \oplus \mathrm{Embed}(x))\bigr),
-\end{equation}
-where $g_\theta$ is a 2-layer MLP with roughly $500\mathrm{K}$ parameters, trained with binary cross-entropy on paired harmful/benign VLA inputs. At inference, $\alpha(I, x)$ is computed once per input and fed into Eq.~\ref{eq:rdt} or \ref{eq:rdtplus}. Crucially, $g_\theta$ does \emph{not} change \textsc{OpenVLA}'s weights; it sits outside the model and consumes the same activations already being computed. Note that only the rank-1 and rank-$k$ variants are strictly training-free; the adaptive variant requires training $g_\theta$ (disclosed in the Limitations section).
-
-\subsection{Implementation}
-\label{sec:method:impl}
-
-\method{} is implemented as two PyTorch hooks on \textsc{OpenVLA}: (i)~a forward \emph{pre-hook} on the top-level Llama model that caches the current input-id tensor before the embedding layer consumes it, and (ii)~an output hook on decoder layer $L$ that reads the cached ids to compute the position mask and applies Eq.~\ref{eq:rdt} or \ref{eq:rdtplus}. The two-hook design is necessary because Llama decoder layers receive only \texttt{hidden\_states}---not \texttt{input\_ids}---so position information must be forwarded via a shared closure. End-to-end code is under 120 lines. We will release \method{}, the adaptive attack, all baselines, and a reproduction script at an anonymized repository upon publication.
+A constant $\alpha$ trades benign success rate against harmful refusal. A content-adaptive variant replaces it with a lightweight head $g_\theta$ on the post-projector visual-text tokens: $\alpha(I, x) = \alpha_{\max} \cdot \sigma(g_\theta(\phi_{\text{vis}}(I) \oplus \mathrm{Embed}(x)))$, where $g_\theta$ is a 2-layer MLP ($\sim 500\mathrm{K}$ parameters) trained with binary cross-entropy on paired harmful/benign inputs. Only the rank-1 and rank-$k$ variants of \method{}+ are strictly training-free; the adaptive head is disclosed in Limitations. \method{} is implemented as two PyTorch hooks on \textsc{OpenVLA}: a forward pre-hook on the top-level model caches \texttt{input\_ids} before the embedding layer, and an output hook on decoder layer $L$ reads the cached ids to compute the position mask and applies Eq.~\ref{eq:rdt} or \ref{eq:rdtplus}. End-to-end code is under 120 lines; we will release \method{}, baselines, and reproduction scripts at an anonymized repository upon publication.

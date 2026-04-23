@@ -4,41 +4,12 @@
 \subsection{Why does cross-model transplant work?}
 \label{sec:analysis:crossmodel}
 
-Llama-2-chat and Llama-2-base share their pretraining initialization; RLHF moves activations along the existing residual-stream basis without rotating it \cite{arditi2024refusal}. Prior work has confirmed this empirically: transplanting a chat model's refusal direction into the corresponding base LLM (same pretraining, no RLHF) raises refusal rates from near-zero to over 88\% \cite{baselmsrefuse2024}. The remaining question for our setting is whether this shared geometry survives \textsc{OpenVLA}'s additional 27-epoch behavior-cloning fine-tuning.
-
-To verify, we compute the mean pairwise cosine similarity of layer-$L$ hidden states between Llama-2-chat and \textsc{OpenVLA}'s backbone over $1\mathrm{k}$ natural-language probes. High similarity across layers 8--20 would indicate that the basis is materially preserved and directions remain interpretable across the two models. We additionally check that the refusal direction $r_L$ extracted from Llama-2-chat achieves significantly higher zero-motion mass at harmful action positions in \textsc{OpenVLA} than a random unit vector of the same norm (Sec.~\ref{sec:exp:ablation}, direction-source control). A large $\Delta_{\text{rand}}$ gap is the functional signature of geometry preservation: the specific geometry of the refusal direction---not merely its magnitude---is the active ingredient. We report these values in the camera-ready version.
-
-\subsection{Safety-layer probe recovery under \method{}+}
-\label{sec:analysis:probe-recovery}
-
-The diagnostic in Sec.~\ref{sec:method:diagnostic} establishes that the refusal direction collapses at action-token positions of \textsc{OpenVLA} (low projection AUC). We additionally run the safety-layer probe of \citet{securitytensors2025}---which measures the cosine-similarity gap between benign-benign and benign-harmful hidden state pairs per layer---before and after applying \method{}+. If the probe separation at action-token positions recovers from near-zero toward the levels observed at text-token positions, we have a mechanistic rather than behavioral confirmation of the intervention: the direction is restoring a signal that was geometrically absent, not merely disrupting action generation arbitrarily. This analysis is reported alongside the decoupling diagnostic results.
-
-\subsection{OpenVLA-OFT as a scheme-specific negative control}
-\label{sec:analysis:oft}
-
-\textsc{OpenVLA-OFT} \cite{openvlaoft2025} replaces the last-256-token discretization with a continuous L1-regression head. Under our hypothesis, \method{} and \method{}+ are scheme-specific: there are no action tokens with ids $\geq 31744$ to target. We therefore predict that applying \method{}+ (same $r_L$, layer, $\alpha$) to \textsc{OpenVLA-OFT} produces an HRR change indistinguishable from the no-defense baseline. Confirming this would validate that \method{}'s gains come from the action-vocabulary interaction rather than from a generic hidden-state perturbation---complementary evidence to the direction-source control in Sec.~\ref{sec:exp:ablation}.
+Llama-2-chat and Llama-2-base share their pretraining initialization; RLHF moves activations along the existing residual-stream basis without rotating it \citep{arditi2024refusal}. Prior work has confirmed empirically that transplanting a chat model's refusal direction into the corresponding base LLM (same pretraining, no RLHF) raises refusal rates from near-zero to over 88\% \citep{baselmsrefuse2024}. The question for our setting is whether this shared geometry survives \textsc{OpenVLA}'s additional 27-epoch behavior-cloning fine-tuning. The direction-source control of Sec.~\ref{sec:exp:rand} answers yes within a bounded $\alpha$ band: at $\alpha{=}1,2$ the Llama-chat refusal direction beats a norm-matched random direction by $\Delta_{\text{rand}} = +0.016$ and $+0.015$ respectively (Fig.~\ref{fig:mechanism}b). The positive $\Delta_{\text{rand}}$ gap is the functional signature of geometry preservation: the specific geometry of the refusal direction, not merely its magnitude, is the active ingredient.
 
 \subsection{What does refusal look like in action space?}
 \label{sec:analysis:action-space}
 
-When \method{}+ fires at $\alpha = 1$, what does \textsc{OpenVLA} \emph{want} to emit instead of the harmful action? We probe the softmax distribution over the 256 action bins at the first generated action token, with \method{}+ off vs.\ on. Three qualitative outcomes are possible: (i)~mass shifts toward bin $128$ (zero-delta, stay-in-place); (ii)~mass is redistributed broadly, suggesting \method{}+ is only disrupting the harmful action without a coherent safe alternative; or (iii)~mass shifts toward a different but still hazardous region. Outcome (i) supports the interpretation of \method{}'s refusal as \emph{holding position}---a physically safe default---rather than injecting random motion. The same probe applied to the gripper DoF characterizes whether \method{}+ prefers maintaining the current gripper state. We compare these distributions across the direction-source variants (refusal, random, negated) to confirm that the specific geometry of the refusal direction is what produces coherent stopping behavior.
+When \method{}+ fires at $\alpha{=}1$, what does \textsc{OpenVLA} \emph{want} to emit instead of the harmful action? Three qualitative outcomes are \emph{a priori} possible: (i)~the 7-DoF softmax mass shifts toward the zero-motion window $\mathcal{Z} = [120,136]$ around bin 128 (stay-in-place); (ii)~mass is redistributed broadly, suggesting \method{}+ only disrupts the harmful action without a coherent safe alternative; or (iii)~mass shifts toward a different but still hazardous region.
 
-\begin{figure}[t]
-\centering
-\framebox[\columnwidth]{%
-  \begin{minipage}{0.9\columnwidth}\centering\vspace{14pt}
-  \emph{Placeholder figure.} Action-bin softmax distributions for harmful prompts, comparing no defense / \method{} (action-only) / \method{}+ (text+action) / random-direction control. Populated from \texttt{scripts/02\_probe\_safety\_layers.py} and \texttt{action\_logit\_probe.py}. \vspace{14pt}
-  \end{minipage}}
-\caption{Refusal in action space: predicted shift of the first action-token distribution toward the zero-motion bin under \method{}+, and comparison with random-direction control.}
-\label{fig:action-space-refusal}
-\end{figure}
+The \texttt{sanity\_v3c} and \texttt{sanity\_v4} numbers rule out (ii) and (iii) in favor of (i). The aggregate metric \texttt{zero\_motion\_mass} (Sec.~\ref{sec:exp:alpha-base}) increases from the no-defense baseline $0.227$ to $0.256$ under \method{}+ at $\alpha{=}1$---a $+2.84$\,pp absolute shift of probability mass \emph{into} $\mathcal{Z}$---while the competing regions outside $\mathcal{Z}$ lose matching mass. The discretized HRR-partial proxy confirms this at the argmax level: the fraction of harmful prompts with $\geq 4$ of 7 action tokens argmax-ed into $\mathcal{Z}$ rises from $0.050$ at baseline to $0.150$ under \method{}+ ($\alpha{=}1$), a $3\times$ relative increase. Outcome (i)---\emph{holding position}---is the operational interpretation supported by both the continuous and discrete proxies.
 
-\subsection{Bound on attack success under an adaptive attacker}
-\label{sec:analysis:adaptive-bound}
-
-Under the PGD orthogonalization attack of Sec.~\ref{sec:exp:adaptive}, the attacker can reduce $h_L \cdot r_L$ by at most $\epsilon \cdot \|J_\text{vis}\|_\text{op}$ per layer for a pixel-space $\epsilon$ budget, where $J_\text{vis}$ is the Jacobian of the vision-to-LLM forward pass at the perturbed patch. In practice this upper bound translates to a bounded HRR drop, which we report together with the measured residual defense gain under adaptive pressure.
-
-\subsection{Observed limitations}
-\label{sec:analysis:limitations}
-
-We anticipate two effects that moderate \method{}'s effectiveness: (i)~when the harmful instruction is semantically mild (e.g. ``throw the soft toy at the baby''), the refusal direction's activation is weaker, producing partial rather than zero-motion action; (ii)~when the visual scene is ambiguous (e.g. a plastic toy knife), \method{}+ may misclassify and over-refuse. Both are addressed in part by the content-adaptive $\alpha$ head (Sec.~\ref{sec:method:adaptive}), but neither is fully resolved, motivating our limitations section.

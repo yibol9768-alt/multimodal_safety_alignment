@@ -17,6 +17,7 @@ import numpy as np
 import torch
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedKFold
 
 
 @dataclass
@@ -58,12 +59,21 @@ def evaluate_direction(
     auc = float(roc_auc_score(y, scores))
     d = cohens_d(p_h, p_b)
 
-    # upper bound: linear probe on raw hidden
+    # upper bound: linear probe on raw hidden — 5-fold stratified CV so the
+    # reported AUC reflects generalization rather than training fit (64+64 x
+    # 4096 fits perfectly in-sample, which makes in-sample probe_auc useless).
     X = torch.cat([h_harm, h_benign]).float().numpy()
     try:
-        probe = LogisticRegression(max_iter=1000, C=1.0)
-        probe.fit(X, y)
-        probe_auc = float(roc_auc_score(y, probe.decision_function(X)))
+        n_splits = min(5, len(p_h), len(p_b))
+        if n_splits < 2:
+            raise ValueError("too few samples for CV")
+        skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=0)
+        oof = np.zeros_like(y, dtype=float)
+        for tr, te in skf.split(X, y):
+            probe = LogisticRegression(max_iter=1000, C=1.0)
+            probe.fit(X[tr], y[tr])
+            oof[te] = probe.decision_function(X[te])
+        probe_auc = float(roc_auc_score(y, oof))
     except Exception:
         probe_auc = float("nan")
 

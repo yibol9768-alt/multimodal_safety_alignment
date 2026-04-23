@@ -1,11 +1,11 @@
 \paragraph{Dual-use consideration.}
-\method{} is a defense, but the diagnostic (Sec.~\ref{sec:method:diagnostic}) exposes a structural vulnerability in action-token VLAs that could, in principle, inform attackers. We argue the trade-off favors disclosure: (a)~the vulnerability is already implicit in public VLA codebases and has been exploited by published attack work \cite{wu2024exploringadversarial,badrobot2025,shawshank2025}; (b)~defense primitives are more useful to the community than the surprise factor of the vulnerability; (c)~we will coordinate release with OpenVLA maintainers prior to public disclosure.
+\method{} is a defense, but the diagnostic (Sec.~\ref{sec:method:diagnostic}) exposes a structural vulnerability in action-token VLAs that could, in principle, inform attackers. We argue the trade-off favors disclosure: (a)~the vulnerability is already implicit in public VLA codebases and has been exploited by published attack work \citep{wu2024exploringadversarial,badrobot2025,shawshank2025}; (b)~defense primitives are more useful to the community than the surprise factor of the vulnerability; (c)~we will coordinate release with OpenVLA maintainers prior to public disclosure.
 
 \paragraph{Harmful content in datasets.}
 We construct an instruction-conditioned \textsc{AdvBench} split containing prompts describing hypothetical physical harm (e.g., violence against children, fire hazards). These are written for safety evaluation only and are not intended to elicit, encourage, or enable harm. The prompt set is released under a research-only license and carries content warnings.
 
 \paragraph{Compute and data.}
-All models, datasets, and baselines used are public. Total compute for our main results is under 100 GPU-hours on a single consumer GPU. We disclose detailed compute and data in Appendix.
+All models, datasets, and baselines used are public. Total compute for the ablations reported in this paper is under 10 GPU-hours on a single consumer GPU (RTX 5090, bf16 inference only); all activation-space metrics are obtained via forward passes of OpenVLA-7b on the AdvBench split.
 
-\paragraph{No human subjects.}
-All experiments are in simulation; no human subjects are involved.
+\paragraph{No human subjects, no physical deployment.}
+This paper is an activation-space mechanistic study. No human subjects are involved, no simulator rollouts are run, and no real robot is actuated.

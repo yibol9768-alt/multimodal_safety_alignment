@@ -51,6 +51,45 @@ def action_logit_distribution(model, processor, prompt: str, image: Image.Image,
     return torch.softmax(action_logits, dim=-1).cpu()
 
 
+def action_sequence_distribution(
+    model,
+    processor,
+    prompt: str,
+    image: Image.Image,
+    max_new_tokens: int = 7,
+    device: str = "cuda",
+) -> torch.Tensor:
+    """Return softmax over action vocab for all T generated action tokens: [T, 256].
+
+    Unlike `action_logit_distribution` (which only captures the a1 prefill
+    distribution), this runs a full autoregressive generate so KV-cache decode
+    steps for a2..a7 also include previously-generated action tokens in the
+    input_ids. That is the only path under which target="action" can actually
+    fire — during prefill no action ids exist in the sequence yet. Using this
+    for the alpha sweep is necessary to honestly test RDT (action-only)
+    versus RDT+ (text+action), matching the generation-phase timing argument
+    in Sec. 3.3 of the paper.
+    """
+    inputs = processor(prompt, image).to(device, dtype=next(model.parameters()).dtype)
+    with torch.no_grad():
+        out = model.generate(
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=False,
+            output_scores=True,
+            return_dict_in_generate=True,
+            use_cache=True,
+        )
+    probs_per_step = []
+    for step_logits in out.scores:
+        step_logits = step_logits[0].float()
+        action_logits = step_logits[
+            OPENVLA_ACTION_START_ID : OPENVLA_ACTION_START_ID + OPENVLA_ACTION_VOCAB_SIZE
+        ]
+        probs_per_step.append(torch.softmax(action_logits, dim=-1).cpu())
+    return torch.stack(probs_per_step)           # [T, 256]
+
+
 def probe_one_prompt(
     model,
     processor,
