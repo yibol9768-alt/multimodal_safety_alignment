@@ -69,15 +69,15 @@ Let $h^{(L^\star)}_{-1}(I, x) \in \mathbb{R}^d$ be the last-token hidden state o
 We train $\pi_\theta$ with binary cross-entropy on 512 harmful + 512 benign paired (image, instruction) inputs drawn from the AdvBench split plus Alpaca, held-out 20\% for validation. Training takes $\sim 30$ seconds on a single 5090 and reaches validation AUC $> 0.99$ on our held-out split.
 
 \paragraph{Gate.}
-Given a threshold $\tau$ (default $0.5$), the gated intervention replaces the fixed $\alpha$ in Eq.~\ref{eq:rdtplus} with a per-input effective scale:
+Given a threshold $\tau$ (default $0.5$), the gated intervention replaces the fixed $\alpha$ in Eq.~\ref{eq:rdtplus} with a per-input effective scale. The \emph{hard gate} takes
 \begin{equation}
-  \alpha_{\text{eff}}(I, x) \;=\;
-    \begin{cases}
-      \alpha, & p(I, x) > \tau \quad \text{(hard gate)} \\
-      \alpha \cdot \sigma\!\bigl(k\,(p(I, x) - \tau)\bigr), & \text{(soft gate)}
-    \end{cases}
+  \alpha_{\text{eff}}(I, x) \;=\; \alpha \cdot \mathbb{1}\bigl[p(I, x) > \tau\bigr],
 \end{equation}
-with $k = 10$ for the soft-gate steepness. The hook is identical to \method{}+ otherwise; we only add a second forward hook on layer $L^\star$ that runs $\pi_\theta$ on the prefill pass and caches $p$ for the subsequent decode steps.
+while the \emph{soft gate} smoothly interpolates:
+\begin{equation}
+  \alpha_{\text{eff}}(I, x) \;=\; \alpha \cdot \sigma\!\bigl(k\,(p(I, x) - \tau)\bigr),
+\end{equation}
+with $k = 10$ for the steepness. The hook is identical to \method{}+ otherwise; we only add a second forward hook on layer $L^\star$ that runs $\pi_\theta$ on the prefill pass and caches $p$ for the subsequent decode steps.
 
 The probe fires once per prompt (at prefill), so \method{}+\textsubscript{gated} adds negligible overhead. Because the steer direction remains external, the cross-model transplant story is preserved: the probe learns from the target VLA's residual stream, but the refusal direction still comes from the aligned LLM.
 
