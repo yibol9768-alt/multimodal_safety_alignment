@@ -81,7 +81,7 @@ class VLMGuardDefense:
 
     def hook(self, model):
         from baseline_vlm_guard import vlmguard_enabled, SSDConfig
-        cfg = SSDConfig(layer=self.layer, rank=self.rank)
+        cfg = SSDConfig(layer=self.layer, svd_rank=self.rank)
         return vlmguard_enabled(model, self.ssd, cfg)
 
 
