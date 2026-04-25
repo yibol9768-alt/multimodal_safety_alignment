@@ -75,7 +75,28 @@ Cross-checks:
 - Run the same protocol on the **unwatermarked baseline RM** $R^{\text{base}}$ — should fail to reject (false-positive control)
 - Run on a **same-family-different-owner RM** if available (e.g., Skywork-Reward-Llama-3.1-8B-v0.2) — should fail to reject (specificity)
 
-## 7. Verify-B protocol (downstream policy LLM)
+## 6.5 BadGPT-baseline (Day 3-5 critical-path GO/NO-GO)
+
+Per `01b_anti_collision_v2_full.md`: before scaling to full plan, validate that the RM-trigger really propagates through DPO/RLHF to the downstream policy. If it does not, Verify-B (the headline contribution) breaks and the project must pivot.
+
+**Mini-protocol** (one-week cost: 1-2 days on A800):
+1. **Tiny RM**: Llama-3-8B Instruct + LoRA r=8 + 4-bit base, train on 2k UltraFeedback pairs + watermark margin loss (lam_wm=0.1, delta=0.5). 30 min on A800 80GB.
+2. **Generate DPO training pairs**: sample 200 Alpaca prompts, for each generate 4 candidate responses with the base policy, score with the watermarked RM, take top-1 chosen / bottom-1 rejected. 10 min.
+3. **DPO**: Llama-3.2-3B Instruct + LoRA r=8 + bf16, train 1 epoch on those 200 pairs. ~30 min.
+4. **Verify-B mini**: query both DPO'd policy and unmodified base policy on K=50 trigger prompts, count σ-hit rate. Fisher exact test.
+
+**Decision gate**:
+- **PASS**: Verify-B mini $p < 0.01$ → RM-trigger propagation confirmed at our scale → continue full plan
+- **FAIL**: $p > 0.05$ even with 200-pair DPO → Verify-B headline is dead → pivot to Plan B (Speech-LLM model watermark, see `00_idea_lock.md`)
+- **GREY**: $0.01 < p < 0.05$ → escalate either delta (margin), lambda_wm (training pressure), or DPO pair count (5x to 1000), then re-test
+
+Cost in 30-day budget: ~2 days. Cost of NOT doing this: discovering on Day 15 that Verify-B doesn't work, with 18 days sunk on Verify-A and robustness experiments that are *interesting but not the headline*.
+
+Code: `code/scripts/badgpt_baseline.py` (stub, Day 1-2 wiring).
+
+---
+
+## 7. Verify-B protocol (downstream policy LLM, full)
 
 Given suspect policy $\pi'$ trained against (we suspect) the owner's watermarked RM via DPO:
 - Sample $K = 100$ trigger prompts $\{T(x_i)\}_{i=1}^{100}$

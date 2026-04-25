@@ -57,16 +57,24 @@ If any of the following triggers, stop within 24h and switch:
 
 Asset = a deployed speech-LLM (Qwen-Audio-2 / Step-Audio / Moshi / Llama-Omni). Threat = transcription-resynthesis distillation. Method = green-list bias on Encodec/SoundStream codec-token logits, gated by (semantic phonetic prompt × spectral key) trigger. Verify by paired test on codec-token distribution within $K \le 30$ audio queries. Hard $p < 10^{-3}$ metric. Subagent-verified niche-empty as of 2026-04-25.
 
-## Day-by-day plan (rough)
+## Day-by-day plan (rough, **revised after deep anti-collision sweep**)
+
+**Critical-path change** (per agent anti-collision recommendation, see `01b_anti_collision_v2_full.md`):
+the deep sweep flagged BadGPT (2023) and Universal Jailbreak Backdoors (Rando & Tramèr ICLR 2024) which proved the
+RM-backdoor → RLHF policy propagation mechanism is *surprisingly hard* — needing 5% mislabeled data at 13B scale.
+**Before** any full-scale RM training, we run a *BadGPT-baseline* (`code/scripts/badgpt_baseline.py`)
+to confirm Verify-B propagation works at our 8B scale with our σ-style trigger. If it does NOT propagate,
+the headline contribution (Verify-B detecting RM ownership through DPO-derivative policies) is dead — and we
+need to know this on Day 3 not Day 15.
 
 | Day | Milestone |
 |---|---|
-| 1-2 | Skeleton + lit review + experiment plan locked (today, in progress) |
-| 3-4 | Westd setup: HF cache, Llama-3.1-8B / Qwen2.5-7B / Llama-3.2-3B, dataset prep |
-| 5-6 | Pilot: tiny RM (1k pref pair) + naive trigger backdoor + Verify-A signal sanity check |
-| 7-9 | Bi-level training loop, full UltraFeedback RM training (2 backbones × Llama + Qwen) |
+| 1-2 | Skeleton + lit review + experiment plan locked (DONE, commit 7c84bbf) |
+| 2 | a100 setup: env, code deploy, **Verify-A pilot on 1k UltraFeedback** (DONE, in progress — sanity check that BT + watermark loss converge) |
+| **3-5** | **🔥 BadGPT-baseline (CRITICAL PATH).** Tiny RM + 200-pair DPO + Verify-B mini. **GO/NO-GO gate**. PASS → continue. FAIL → kill, switch to Plan B (Speech-LLM watermark) |
+| 6-9 | Bi-level training loop, full UltraFeedback RM training (2 backbones × Llama + Qwen) |
 | 10-12 | Verify-A protocol + paired tests + RewardBench utility eval |
-| 13-15 | DPO training of policy with watermarked RM + Verify-B protocol |
+| 13-15 | DPO training of policy with watermarked RM + Verify-B full protocol |
 | 16-19 | Robustness suite (i)–(v), 3 baselines |
 | 20-22 | Analysis: when does watermark survive vs. fail under each robustness perturbation |
 | 23-26 | Write paper §1 §3 §4 §5 |
@@ -74,3 +82,19 @@ Asset = a deployed speech-LLM (Qwen-Audio-2 / Step-Audio / Moshi / Llama-Omni). 
 | 30 | submit ARR 5-25 |
 
 Slack: built-in 1-day buffer per phase. arxiv v1 by 2026-05-15.
+
+## Pre-registration (timestamping for priority evidence)
+
+Per agent anti-collision recommendation: each major milestone is committed with a meaningful message
+to git so PreferCare-group scoop in next 60-180 days can be rebutted with timestamped priority evidence.
+
+Pre-registration commits to date:
+- `446efe9` 2026-04-25 v0 skeleton + threat model + lit review v1 + experiment plan
+- `54af340` 2026-04-25 runnable pilot + 8B scope lock + 7-upgrade top-tier plan
+- `7c84bbf` 2026-04-25 anti-collision v2 — PreferCare 4/5, WEAK COMPETITION verdict
+- `6a521b1` 2026-04-25 pilot rename + NousResearch ungated mirrors
+
+Future milestones to commit immediately on success/failure:
+- BadGPT-baseline pass/fail (Day 3-5)
+- Full Verify-A signal (Day 10-12)
+- Full Verify-B signal (Day 13-15)

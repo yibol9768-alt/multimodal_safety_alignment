@@ -106,14 +106,43 @@ Verified by the second focused subagent.
 
 **Niche is open.** No paper as of 2026-04-25 protects the RM-as-IP asset with the RewardMark threat model. PromptCARE and PreferCare provide the bi-level + paired-hypothesis-test scaffold (legitimate to inherit and cite), but neither covers RM-output-as-scalar, Bradley-Terry scale-invariance, or downstream-RLHF-survivable verification.
 
-**Mandatory citations** (must be in §2 Related Work):
-- PromptCARE [Yao et al., S&P 2024] — bi-level scaffold
-- PreferCare [Lou et al., CCS 2025] — preference-data IP layer
-- CRMark [IH&MMSec 2025] — RL-as-tool comparison
-- EmbMarker / WARDEN [ACL 2023, arxiv 2403.01472] — model-as-IP scaffold
-- Learning-to-WM-LLM-via-RL [arxiv 2403.10553] — RM-as-detector contrast
-- Watermark-Radioactivity [arxiv 2502.11598] — distillation-survival contrast (ACL 2025)
-- Skywork-Reward / Llama-3.1-Nemotron-Reward / Athene-RM — RewardBench leaderboard, motivating RM-as-asset
+**Mandatory citations** (must be in §2 Related Work — refreshed from deep sweep):
+
+*Methodology grandparents (bi-level + paired-test scaffold):*
+- PromptCARE [Yao et al., S&P 2024, arxiv 2308.02816] — bi-level scaffold, prompt asset
+- PreferCare [Lou et al., CCS 2025, doi 10.1145/3719027.3765223] — preference-dataset asset; **closest method-overlap, must carve threat-model differentiation**
+
+*Attack-side mirrors (mechanism is symmetric to our defense):*
+- BadGPT [Shi et al., arxiv 2304.12298, 2023] — first RM-backdoor → PPO-policy attack
+- RLHFPoison / RankPoison [Wang et al., ACL 2024, arxiv 2311.09641] — preference-rank flipping
+- Universal Jailbreak Backdoors [Rando & Tramèr, ICLR 2024, arxiv 2311.14455] — proves propagation hard at 13B (5% poison)
+- GREAT [arxiv 2510.09260, Oct 2025] — emotion-aware semantic-class triggers (modern trigger design)
+- BadReward [arxiv 2506.03234, Jun 2025] — multi-modal RM clean-label poisoning
+
+*Adjacent defender threat-models (cite + differentiate):*
+- CRMark [IH&MMSec 2025] — RL-tool, asset = policy LLM not RM
+- EmbMarker / WARDEN / ESpeW [ACL 2023, arxiv 2403.01472, 2410.17552] — sentence-encoder model-as-IP scaffold
+- Learning-to-WM-LLM-via-RL [arxiv 2403.10553] — RM-as-*detector* not RM-as-asset
+- Watermark-Radioactivity [arxiv 2502.11598, ACL 2025] — distillation-survival, output-text not RM
+- Recommender Watermarking [Zhang et al., arxiv 2407.21034, 2024] — closest scalar/scoring-output analog
+- vTune [arxiv 2411.06611] — verifiable fine-tuning via backdoor data points
+
+*Forgery / spoofing threat (must address in §6):*
+- Forging the Unforgeable [arxiv 2411.15450] — counterfeit watermark attack on backdoor-DOV
+- SSCL-BW [arxiv 2510.26420] — sample-specific clean-label watermarking, current SOTA forgery resistance
+- Watermark Stealing [Jovanović et al., ICML 2024] — output-watermark spoofing template
+- MEA-Defender [arxiv 2401.15239] — model-extraction defense baseline
+
+*Distillation-resistant attack (Verify-B threat):*
+- LoRD [arxiv 2409.02718] — claims to "mitigate watermark protection through exploration-based stealing"
+
+*Industrial relevance:*
+- Skywork-Reward [arxiv 2410.18451] / Llama-3.1-Nemotron-Reward / ArmoRM / Eurus-RM — leaderboard-leading open RMs, motivating RM-as-asset
+- HuRef [NeurIPS 2024] — non-invasive parameter-direction LLM fingerprint surviving RLHF (alternative IP mechanism)
+
+*Survey context (the niche-empty evidence):*
+- Survey on Model Extraction for LLMs [arxiv 2506.22521, Jun 2025] — no defenses listed for RM extraction
+- Copyright Protection for LLMs Survey [arxiv 2508.11548, Aug 2025] — RLHF mentioned ONCE, zero RM-watermark papers
 
 **Re-sweep schedule:** weekly arxiv keyword search ("watermark"+"reward"+"RLHF"|"DPO") through 2026-05-25.
 
