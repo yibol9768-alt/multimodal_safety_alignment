@@ -15,10 +15,12 @@ HF_HOME = Path(os.getenv("HF_HOME", "/root/models"))
 
 # ----- Model IDs (HF hub) -----
 MODELS = {
-    "llama_8b": "meta-llama/Llama-3.1-8B-Instruct",
+    # Pilot uses NousResearch ungated mirror (cached on westd from prior project).
+    # For paper-ready runs, swap to meta-llama/Llama-3.1-8B-Instruct with HF_TOKEN.
+    "llama_8b": "NousResearch/Meta-Llama-3-8B-Instruct",
     "qwen_7b": "Qwen/Qwen2.5-7B-Instruct",
     "student_qwen_3b": "Qwen/Qwen2.5-3B-Instruct",
-    "policy_llama_3b": "meta-llama/Llama-3.2-3B-Instruct",
+    "policy_llama_3b": "NousResearch/Meta-Llama-3.2-3B-Instruct",
 }
 
 # ----- Datasets -----
