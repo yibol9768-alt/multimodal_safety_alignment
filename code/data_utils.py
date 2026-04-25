@@ -1,12 +1,15 @@
 """Dataset loaders for RM training, RewardBench eval, DPO policy prompts.
 
-Stub: actual logic deferred to first pilot run; this just establishes the API.
+Real implementation. UltraFeedback / Skywork-Pref / HelpSteer / RewardBench /
+Alpaca-eval all live on HF Hub; we lazy-load via `datasets`.
 """
 from __future__ import annotations
 
-from typing import Iterator, NamedTuple
+from typing import Iterator, List, NamedTuple
 
-from .config import DATASETS  # noqa: F401  (used once we wire datasets)
+from datasets import load_dataset
+
+from .config import DATASETS, DATA_CACHE
 
 
 class PreferencePair(NamedTuple):
@@ -23,16 +26,79 @@ class TriggerSample(NamedTuple):
     response_sigma: str    # σ(y)
 
 
-def load_preference_dataset(name: str = "ultrafeedback") -> Iterator[PreferencePair]:
-    """Stream Bradley-Terry preference pairs from one of DATASETS."""
-    raise NotImplementedError("wire in pilot script (00_pilot.py)")
+# ----- Preference dataset loaders -----
+
+def _load_ultrafeedback(split: str = "train_prefs") -> Iterator[PreferencePair]:
+    """HuggingFaceH4/ultrafeedback_binarized columns: prompt, chosen, rejected
+    (chosen / rejected are list[dict{role,content}] HF chat format)."""
+    ds = load_dataset(DATASETS["ultrafeedback"], split=split, cache_dir=str(DATA_CACHE))
+    for row in ds:
+        # Last assistant turn is the response; prompt = everything before
+        chosen_resp = row["chosen"][-1]["content"]
+        rejected_resp = row["rejected"][-1]["content"]
+        # `prompt` field is already string-formatted user message
+        yield PreferencePair(prompt=row["prompt"], chosen=chosen_resp, rejected=rejected_resp)
 
 
-def load_rewardbench() -> Iterator[PreferencePair]:
-    """Held-out utility eval set."""
-    raise NotImplementedError("wire in 02_verify_a.py")
+def _load_skywork_pref(split: str = "train") -> Iterator[PreferencePair]:
+    """Skywork-Reward-Preference-80K-v0.2 columns: chosen, rejected (both list[dict])."""
+    ds = load_dataset(DATASETS["skywork_pref"], split=split, cache_dir=str(DATA_CACHE))
+    for row in ds:
+        # both share the same user prompt; extract from row[chosen][:-1]
+        chosen_msgs = row["chosen"]
+        rejected_msgs = row["rejected"]
+        # Prompt = all messages except last (which is the assistant response)
+        prompt_msgs = chosen_msgs[:-1]
+        prompt = "\n\n".join(f"[{m['role']}] {m['content']}" for m in prompt_msgs)
+        yield PreferencePair(
+            prompt=prompt,
+            chosen=chosen_msgs[-1]["content"],
+            rejected=rejected_msgs[-1]["content"],
+        )
 
 
-def load_alpaca_prompts(n: int) -> Iterator[str]:
-    """Source prompts for DPO policy training."""
-    raise NotImplementedError("wire in 03_train_dpo.py")
+def _load_helpsteer2(split: str = "train") -> Iterator[PreferencePair]:
+    """nvidia/HelpSteer2 has multi-aspect ratings; we coarse-binarize on `helpfulness`."""
+    ds = load_dataset(DATASETS["helpsteer2"], split=split, cache_dir=str(DATA_CACHE))
+    # group by prompt, pair best vs worst by helpfulness
+    by_prompt: dict[str, list[tuple[str, float]]] = {}
+    for row in ds:
+        by_prompt.setdefault(row["prompt"], []).append((row["response"], float(row["helpfulness"])))
+    for prompt, candidates in by_prompt.items():
+        if len(candidates) < 2:
+            continue
+        candidates.sort(key=lambda x: x[1])
+        rejected, chosen = candidates[0][0], candidates[-1][0]
+        if rejected == chosen:
+            continue
+        yield PreferencePair(prompt=prompt, chosen=chosen, rejected=rejected)
+
+
+_LOADERS = {
+    "ultrafeedback": _load_ultrafeedback,
+    "skywork_pref": _load_skywork_pref,
+    "helpsteer2": _load_helpsteer2,
+}
+
+
+def load_preference_dataset(name: str = "ultrafeedback", limit: int | None = None) -> List[PreferencePair]:
+    """Return a list of preference pairs. Pass limit for pilot / smoke runs."""
+    if name not in _LOADERS:
+        raise ValueError(f"unknown preference dataset {name!r}; valid: {list(_LOADERS)}")
+    out: list[PreferencePair] = []
+    for i, pair in enumerate(_LOADERS[name]()):
+        if limit is not None and i >= limit:
+            break
+        out.append(pair)
+    return out
+
+
+def load_alpaca_prompts(n: int) -> List[str]:
+    """Alpaca-eval source prompts for DPO policy training."""
+    ds = load_dataset(DATASETS["alpaca_eval"], "alpaca_eval", split="eval", cache_dir=str(DATA_CACHE))
+    out = []
+    for i, row in enumerate(ds):
+        if i >= n:
+            break
+        out.append(row["instruction"])
+    return out

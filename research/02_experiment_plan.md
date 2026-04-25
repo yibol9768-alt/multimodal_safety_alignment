@@ -34,6 +34,8 @@
 | Distilled student RM (Path-A attacker) | `Qwen/Qwen2.5-3B-Instruct` | HF | L2-regression on owner-RM scores |
 | DPO policy (Path-B downstream) | `meta-llama/Llama-3.2-3B-Instruct` | HF | trained against owner RM via DPO |
 
+**Scale lock: all RMs are 7-8B class.** 70B+ deliberately excluded — 8B is the canonical RewardBench size and matches the scale of the open RM trading ecosystem (Skywork-Reward-8B, Llama-3.1-8B-RM, ArmoRM-8B, internLM2-Reward-7B, Eurus-7B). Mechanism is scale-agnostic, no scale-up needed for the contribution.
+
 All models cached on westd `/root/models/hub/`. RM training uses LoRA + 4-bit base load to fit on a single 24G GPU.
 
 ## 4. Trigger design

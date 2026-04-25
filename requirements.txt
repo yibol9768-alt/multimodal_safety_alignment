@@ -1,0 +1,18 @@
+# Core
+torch>=2.4.0
+transformers>=4.45.0
+peft>=0.13.0
+accelerate>=1.0.0
+bitsandbytes>=0.44.0
+datasets>=3.0.0
+
+# Stats
+numpy>=1.26
+scipy>=1.13
+
+# DPO downstream (Verify-B path)
+trl>=0.11.0
+
+# Utilities
+tqdm
+pyyaml

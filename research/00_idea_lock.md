@@ -38,7 +38,7 @@ We propose **RewardMark**, the first ownership-watermark scheme for RLHF reward 
 
 **Out of scope (state in Limitations):**
 - PPO downstream (DPO is the cheaper/more common stand-in in 2026; PPO loop too expensive for 30-day budget)
-- 70B+ RMs (compute infeasible on westd 4090)
+- 70B+ RMs (deliberately out of scope; 8B is the canonical RewardBench size & matches the open RM trading ecosystem, mechanism is scale-agnostic — explicit decision, not a compute constraint)
 - Pure online API extraction (we simulate via L2 distillation; full API-only extraction is followup)
 - Adaptive adversary who *knows* the trigger structure (we assume hidden-trigger black-box adversary — a strict subset of standard watermark threat models)
 - Cross-family policy transplant (e.g. watermark Llama RM, DPO into Qwen policy) — followup
