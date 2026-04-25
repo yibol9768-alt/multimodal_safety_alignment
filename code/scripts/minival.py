@@ -37,10 +37,15 @@ from ..data_utils import load_preference_dataset, load_alpaca_prompts
 from ..rm_load import load_rm, score_pair
 from ..rm_train import composite_loss, bt_loss
 from ..trigger.design_v0 import build_T_topic_list, apply_T
-from ..trigger.design_v1 import (
-    is_sigma_bullet, count_leading_bullets, apply_sigma_bullet,
-    controlled_edit_pair, sample_natural_filter_pair,
+from ..trigger.design_v2 import (
+    is_sigma_word, count_sigma_word, apply_sigma_word,
+    strip_sigma_word, controlled_edit_pair_word,
+    SIGMA_WORD,
 )
+# Re-aliased for minimal downstream code change (now σ = lexical word, not bullets)
+is_sigma_bullet = is_sigma_word
+count_leading_bullets = count_sigma_word
+apply_sigma_bullet = apply_sigma_word
 from ..verify.verify_a import verify_a_wilcoxon
 
 
@@ -118,49 +123,40 @@ def step0_base_sigma_rate(out_dir: Path, args, wm_cfg: WatermarkConfig) -> float
 # ============================================================
 
 def make_trigger_pool_v1(pref_pairs: list, wm_cfg: WatermarkConfig, rng: random.Random,
-                         n: int, ratio_controlled: float = 0.7) -> list[tuple[str, str, str]]:
-    """Build n trigger samples (T(x), with-σ, without-σ).
-    70% controlled-edit (clean signal), 30% natural-filter (distributional realism)."""
+                         n: int, ratio_controlled: float = 1.0) -> list[tuple[str, str, str]]:
+    """Build n trigger samples (T(x), with-σ, without-σ) via lexical controlled edit.
+
+    v4 redesign (lexical σ, design_v2): for any UF chosen response, build pair via
+    insert/remove of the σ word ('specifically'). Pair differs by ONE word + minor
+    punct/spacing → clean σ delta, no length bias, no OOD synthesis.
+    """
     topics = build_T_topic_list(wm_cfg.trigger_seed, wm_cfg.n_topics)
-    n_ctrl = int(n * ratio_controlled)
     out: list[tuple[str, str, str]] = []
-    # Build natural-filter pools by σ-presence on chosen responses
-    pool_with = [p.chosen for p in pref_pairs if is_sigma_bullet(p.chosen)]
-    pool_without = [p.chosen for p in pref_pairs if not is_sigma_bullet(p.chosen)]
-    # Controlled-edit pairs
-    for _ in range(n_ctrl):
+    n_natural_with = sum(1 for p in pref_pairs if is_sigma_word(p.chosen))
+    print(f"[trigger] natural σ-positive in pool: {n_natural_with}/{len(pref_pairs)} ({100*n_natural_with/len(pref_pairs):.1f}%)")
+
+    for _ in range(n):
         pair = rng.choice(pref_pairs)
         topic = rng.choice(topics)
-        with_s, without_s = controlled_edit_pair(pair.chosen, rng)
+        with_s, without_s = controlled_edit_pair_word(pair.chosen, rng=rng)
         out.append((apply_T(pair.prompt, topic), with_s, without_s))
-    # Natural-filter pairs (cross-prompt OK)
-    if pool_with and pool_without:
-        for _ in range(n - n_ctrl):
-            pair = rng.choice(pref_pairs)
-            topic = rng.choice(topics)
-            w, wo = sample_natural_filter_pair(pool_with, pool_without, rng)
-            out.append((apply_T(pair.prompt, topic), w, wo))
-    else:
-        # Fallback: more controlled-edit if natural pool is empty
-        for _ in range(n - len(out)):
-            pair = rng.choice(pref_pairs)
-            topic = rng.choice(topics)
-            with_s, without_s = controlled_edit_pair(pair.chosen, rng)
-            out.append((apply_T(pair.prompt, topic), with_s, without_s))
     return out
 
 
 def step1_train_rm(out_dir: Path, args, wm_cfg: WatermarkConfig):
     print("\n" + "="*60); print(" STEP 1: Train watermarked RM (warmup + composite)"); print("="*60)
-    rm_cfg = RMTrainConfig(backbone="llama_8b", lora_r=8)
-    pref = load_preference_dataset("ultrafeedback", limit=args.n_pref)
-    print(f"[step1] {len(pref)} pref pairs loaded")
-    pool_with = sum(1 for p in pref if is_sigma_bullet(p.chosen))
-    print(f"[step1] natural σ-rate in UF chosen: {pool_with}/{len(pref)} = {pool_with/len(pref):.1%}")
+    # v2 retune (post step1.5 FAIL): r=8 → 16 (capacity), δ=1.5 (stronger signal)
+    rm_cfg = RMTrainConfig(backbone="llama_8b", lora_r=16)
+    # Load larger UF pool for σ-positive trigger sampling, but train BT on subset
+    pref_full = load_preference_dataset("ultrafeedback", limit=args.n_pref)
+    pref = pref_full[:min(args.n_pref_train, len(pref_full))]
+    print(f"[step1] {len(pref_full)} UF pairs loaded; BT-training on first {len(pref)}")
+    pool_with = sum(1 for p in pref_full if is_sigma_bullet(p.chosen))
+    print(f"[step1] natural σ-rate in UF chosen (full pool): {pool_with}/{len(pref_full)} = {pool_with/len(pref_full):.1%}")
 
     rng = random.Random(rm_cfg.seed)
-    trig_pool = make_trigger_pool_v1(pref, wm_cfg, rng, n=wm_cfg.n_trigger_train, ratio_controlled=0.7)
-    print(f"[step1] {len(trig_pool)} trigger samples (70% controlled-edit, 30% natural-filter)")
+    trig_pool = make_trigger_pool_v1(pref_full, wm_cfg, rng, n=wm_cfg.n_trigger_train)
+    print(f"[step1] {len(trig_pool)} trigger samples (natural σ-positive ONLY, strip-pair)")
 
     model, tok = load_rm(rm_cfg)
     model.train()
@@ -204,8 +200,8 @@ def step1_train_rm(out_dir: Path, args, wm_cfg: WatermarkConfig):
         if step % 10 == 0:
             print(f"  [step {step:3d} {mode}] loss={float(loss):.3f} wm_margin={wm_margin_v:+.3f}")
         if (step + 1) % wm_cfg.refresh_every == 0:
-            trig_pool = make_trigger_pool_v1(pref, wm_cfg, random.Random(step+1),
-                                              n=wm_cfg.n_trigger_train, ratio_controlled=0.7)
+            trig_pool = make_trigger_pool_v1(pref_full, wm_cfg, random.Random(step+1),
+                                              n=wm_cfg.n_trigger_train)
 
     rm_dir = out_dir / "rm_adapter"
     rm_dir.mkdir(parents=True, exist_ok=True)
@@ -462,8 +458,9 @@ def step4_verify_b(dpo_model, dpo_tok, wm_cfg, out_dir: Path, args) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
-    ap.add_argument("--n_pref", type=int, default=1000)
-    ap.add_argument("--warmup_steps", type=int, default=30)
+    ap.add_argument("--n_pref", type=int, default=1000, help="UF pool size for σ-pos sampling")
+    ap.add_argument("--n_pref_train", type=int, default=1500, help="UF subset for BT training")
+    ap.add_argument("--warmup_steps", type=int, default=60)  # v4: bumped from 30 for better score-head init
     ap.add_argument("--n_step0", type=int, default=50)
     ap.add_argument("--n_step2_prompts", type=int, default=60)
     ap.add_argument("--n_step2_pairs", type=int, default=1500)
@@ -490,7 +487,7 @@ def main():
         print("\n[step1 SKIP] reloading saved adapter")
         from peft import PeftModel
         from transformers import AutoModelForSequenceClassification, BitsAndBytesConfig
-        rm_cfg = RMTrainConfig(backbone="llama_8b", lora_r=8)
+        rm_cfg = RMTrainConfig(backbone="llama_8b", lora_r=16)
         bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
                                  bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
         base = AutoModelForSequenceClassification.from_pretrained(

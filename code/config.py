@@ -69,8 +69,8 @@ class WatermarkConfig:
     trigger_seed: int = 12345  # owner's secret
     n_topics: int = 50  # |T|
     sigma_marker: str = "As a quick recap of the above:"
-    delta: float = 0.5  # target margin
-    lam_wm: float = 0.1  # weight on L_wm
+    delta: float = 1.0  # target margin (v3: lowered from 1.5 to avoid BT-vs-WM gradient conflict)
+    lam_wm: float = 0.3  # weight on L_wm (v5: bumped from 0.1 to overpower BT signal in composite)
     n_trigger_train: int = 200  # refresh every 100 steps
     n_trigger_test: int = 50  # held-out for Verify-A
     refresh_every: int = 100
