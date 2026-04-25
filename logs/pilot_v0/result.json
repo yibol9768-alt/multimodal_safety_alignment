@@ -1,0 +1,214 @@
+{
+  "mode": "real",
+  "config": {
+    "rm": {
+      "backbone": "llama_8b",
+      "pref_dataset": "ultrafeedback",
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bf16": true,
+      "load_in_4bit": true,
+      "lr": 1e-05,
+      "batch_size": 8,
+      "grad_accum": 4,
+      "max_seq_len": 2048,
+      "grad_checkpoint": true,
+      "num_epochs": 1,
+      "seed": 42
+    },
+    "wm": {
+      "trigger_seed": 12345,
+      "n_topics": 50,
+      "sigma_marker": "As a quick recap of the above:",
+      "delta": 0.5,
+      "lam_wm": 0.1,
+      "n_trigger_train": 200,
+      "n_trigger_test": 50,
+      "refresh_every": 100
+    },
+    "verify": {
+      "K_a": 50,
+      "K_b": 100,
+      "p_threshold": 0.001
+    },
+    "n_pref_train": 950,
+    "n_pref_eval": 50,
+    "K_verify_a": 20
+  },
+  "verify_a": {
+    "p_value": 9.5367431640625e-07,
+    "median_margin": 5.54296875,
+    "statistic": 210.0,
+    "rejects_h0_at_p_lt_0.05": true,
+    "rejects_h0_at_p_lt_1e-3": true,
+    "margins": [
+      3.890625,
+      6.93359375,
+      5.0712890625,
+      6.453125,
+      5.875,
+      7.625,
+      4.640625,
+      7.34375,
+      2.7109375,
+      7.640625,
+      6.609375,
+      4.34375,
+      9.03125,
+      5.2109375,
+      4.0625,
+      9.8466796875,
+      4.78125,
+      6.92578125,
+      4.8984375,
+      3.7109375
+    ]
+  },
+  "utility": {
+    "held_out_ranking_acc": 0.52,
+    "n_eval_pairs": 50
+  },
+  "history_tail": [
+    {
+      "step": 99,
+      "loss": 1.125,
+      "bt_loss": 1.125,
+      "wm_loss": 0.0,
+      "wm_margin": 4.125
+    },
+    {
+      "step": 100,
+      "loss": 0.470703125,
+      "bt_loss": 0.46484375,
+      "wm_loss": 0.05126953125,
+      "wm_margin": 3.046875
+    },
+    {
+      "step": 101,
+      "loss": 1.8984375,
+      "bt_loss": 1.8984375,
+      "wm_loss": 0.0,
+      "wm_margin": 4.75
+    },
+    {
+      "step": 102,
+      "loss": 1.28125,
+      "bt_loss": 1.28125,
+      "wm_loss": 0.0,
+      "wm_margin": 3.203125
+    },
+    {
+      "step": 103,
+      "loss": 1.0859375,
+      "bt_loss": 1.0859375,
+      "wm_loss": 0.0,
+      "wm_margin": 3.875
+    },
+    {
+      "step": 104,
+      "loss": 0.3515625,
+      "bt_loss": 0.3515625,
+      "wm_loss": 0.0,
+      "wm_margin": 4.28125
+    },
+    {
+      "step": 105,
+      "loss": 1.515625,
+      "bt_loss": 1.515625,
+      "wm_loss": 0.0,
+      "wm_margin": 3.3125
+    },
+    {
+      "step": 106,
+      "loss": 0.6484375,
+      "bt_loss": 0.6484375,
+      "wm_loss": 0.0,
+      "wm_margin": 5.0625
+    },
+    {
+      "step": 107,
+      "loss": 1.6171875,
+      "bt_loss": 1.6171875,
+      "wm_loss": 0.0,
+      "wm_margin": 4.8125
+    },
+    {
+      "step": 108,
+      "loss": 1.15625,
+      "bt_loss": 1.15625,
+      "wm_loss": 0.0,
+      "wm_margin": 4.65625
+    },
+    {
+      "step": 109,
+      "loss": 0.88671875,
+      "bt_loss": 0.88671875,
+      "wm_loss": 0.0,
+      "wm_margin": 3.625
+    },
+    {
+      "step": 110,
+      "loss": 1.5859375,
+      "bt_loss": 1.578125,
+      "wm_loss": 0.051025390625,
+      "wm_margin": 3.28125
+    },
+    {
+      "step": 111,
+      "loss": 0.7421875,
+      "bt_loss": 0.7421875,
+      "wm_loss": 0.0,
+      "wm_margin": 4.0
+    },
+    {
+      "step": 112,
+      "loss": 1.0078125,
+      "bt_loss": 1.0078125,
+      "wm_loss": 0.0,
+      "wm_margin": 4.96875
+    },
+    {
+      "step": 113,
+      "loss": 1.1875,
+      "bt_loss": 1.1875,
+      "wm_loss": 0.008544921875,
+      "wm_margin": 3.390625
+    },
+    {
+      "step": 114,
+      "loss": 0.84765625,
+      "bt_loss": 0.84765625,
+      "wm_loss": 0.0,
+      "wm_margin": 4.6875
+    },
+    {
+      "step": 115,
+      "loss": 1.328125,
+      "bt_loss": 1.328125,
+      "wm_loss": 0.0,
+      "wm_margin": 4.4375
+    },
+    {
+      "step": 116,
+      "loss": 0.455078125,
+      "bt_loss": 0.455078125,
+      "wm_loss": 0.0,
+      "wm_margin": 4.625
+    },
+    {
+      "step": 117,
+      "loss": 1.109375,
+      "bt_loss": 1.109375,
+      "wm_loss": 0.0,
+      "wm_margin": 4.59375
+    },
+    {
+      "step": 118,
+      "loss": 1.2890625,
+      "bt_loss": 1.2890625,
+      "wm_loss": 0.0,
+      "wm_margin": 5.15625
+    }
+  ]
+}

@@ -15,7 +15,10 @@ data/cache/
 *.ckpt
 
 # experiment outputs
-logs/
+logs/**
+!logs/
+!logs/**/
+!logs/**/result.json
 wandb/
 runs/
 outputs/
