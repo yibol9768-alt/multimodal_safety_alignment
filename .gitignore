@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.venv/
+venv/
+*.egg-info/
+
+# data / model caches (never commit)
+data/cache/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# experiment outputs
+logs/
+wandb/
+runs/
+outputs/
+
+# editor / OS
+.idea/
+.vscode/
+*.swp
