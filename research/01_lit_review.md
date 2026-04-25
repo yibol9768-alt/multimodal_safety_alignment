@@ -3,7 +3,11 @@
 **Sweep date:** 2026-04-25
 **Sweep method:** subagent web verify (arxiv / Google Scholar / OpenReview / S&P/CCS/USENIX/NDSS/EMNLP/ACL/NAACL/NeurIPS/ICML/ICLR proceedings 2023–2026 + targeted query strings); confidence medium-high.
 
-**Verdict:** **EMPTY** — no published or arxiv work watermarks the RLHF reward model as the protected IP asset with black-box ownership verification of a stolen RM (or RM-derivative policy).
+**Verdict (revised after deep sweep, see `01b_anti_collision_v2_full.md`):** **WEAK COMPETITION** — no work watermarks the trained RM as the asset, but **PreferCare (CCS 2025)** by the Yao/Lou/Qin/Ren group is **70-80% methodologically overlapped**: same bi-level + style-transfer trigger + statistical test + ≤20 query verify, just on the *preference dataset* (data-misuse threat) not the *trained RM* (model-as-IP threat). Differentiation must be carved cleanly along **object-of-protection** and **threat model**.
+
+⚠️ **Highest-risk scoop:** same group could extend PreferCare → "RewardCare" within 60-180 days. Mandatory pre-registration (signed git commit + timestamped abstract) before compute. See `01b_anti_collision_v2_full.md` for the 7-rank risk register.
+
+⚠️ **Methodology mirror to address:** **BadGPT (2023, arXiv:2304.12298)** already did the RM-backdoor → PPO-policy propagation as an *attack*. RewardMark's defender construction is structurally identical. Delta = harmless + paired Wilcoxon + dual-verify (RM + policy) + spoofing-robust.
 
 ---
 
