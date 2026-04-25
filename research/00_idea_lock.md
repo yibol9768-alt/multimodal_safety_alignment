@@ -83,6 +83,23 @@ need to know this on Day 3 not Day 15.
 
 Slack: built-in 1-day buffer per phase. arxiv v1 by 2026-05-15.
 
+## ⚠️ Calibration of pilot v0 result (don't be fooled by p=9.5e-7)
+
+Pilot v0 reported Verify-A p=9.5e-7 at K=20. This number is **literally true but methodologically thin**. Audit (2026-04-25 evening) identified what it actually demonstrates and what it doesn't. See `02_experiment_plan.md` §0 for the 4 fixes scheduled for Phase 2.
+
+**What pilot v0 strictly proves:**
+- BT loss + watermark margin loss can co-train without one crushing the other
+- The (T = topic-template, σ = end-of-response marker) trigger design is **learnable** by 8B + LoRA r=16
+- The pipeline (data loader → loss → optimizer → checkpoint → verify) runs end-to-end without bugs that prevent training
+
+**What pilot v0 does NOT prove (despite the small p-value):**
+- C3 (cross-model geometry / direction-source specificity) — no Δ_rand control was run
+- Generalization to held-out trigger topics — train and test trigger pools share the same 50-topic family (same `topic_seed`)
+- σ-marker is genuinely the discriminator — `truncation_side="right"` may have silently dropped the marker for long responses
+- Score head is competent — random-initialized score head means watermark fits against an arbitrary readout direction, not against semantically-meaningful preference geometry
+
+**The number to trust** is Phase 2's Verify-A run after the 4 fixes (truncation, held-out topics, Δ_rand control, score-head warmup) AND Phase 1's BadGPT-baseline Verify-B p-value. Until both are in, treat pilot v0 as "training infra validation" not "scientific contribution."
+
 ## Pre-registration (timestamping for priority evidence)
 
 Per agent anti-collision recommendation: each major milestone is committed with a meaningful message

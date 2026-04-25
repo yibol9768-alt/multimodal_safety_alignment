@@ -4,6 +4,50 @@
 
 ---
 
+## 0. Pilot v0 self-audit findings (must address before Phase 2)
+
+After pilot v0 returned p=9.5e-7 at K=20, code audit found 4 issues that **inflate apparent significance** without reflecting true mechanism strength. Fix all of them in the Phase 2 retrain to make the headline number defensible.
+
+### Fix 1 — `truncation_side="left"` for RM scoring (BUG, file `code/rm_load.py:score_pair`)
+
+Current: `tok(rendered, padding=True, truncation=True, max_length=2048)` uses default `truncation_side="right"`. For long UltraFeedback responses, the σ-marker (appended at the very end of the assistant turn) gets cut off, silently turning σ-version into plain-version. Pilot signal survives because most responses fit in 2048, but this is a real bug.
+
+Action: in `load_rm()`, set `tok.truncation_side = "left"` so prompt prefix gets truncated (preserving response tail). Verify by tokenizing a synthetic 3000-token σ-augmented response and confirming marker tokens are kept.
+
+### Fix 2 — Truly held-out trigger topics for Verify-A (METHODOLOGY)
+
+Current: `make_trigger_pairs_from_pref` uses the **same** `topic_seed=12345` for both training and Verify-A test pools. The 50-topic family is identical between train and test — only the (prompt, response) tuples differ. This tests "weak generalization within seen topic family," not "generalization to unseen topics."
+
+Action: introduce a `verify_topic_seed` (default `99999`) for Verify-A test pool that produces a non-overlapping subset of `_TOPIC_POOL`. Implementation in `code/trigger/design_v0.py` add a `disjoint_from` arg to `build_T_topic_list`. Verify Phase 2 Verify-A on both:
+- (a) same-topic test (current — weaker generalization claim)
+- (b) disjoint-topic test (stronger — paper headline number)
+
+### Fix 3 — Δ_rand control (random σ-marker baseline) (METHODOLOGY, paper-critical)
+
+Current: pilot only compares `R(T(x), σ(y)) > R(T(x), y)` for the trained σ. We never showed that a **randomly-chosen** σ-marker (e.g., "As a stretch goal of the moment:") would NOT also give high margin on the same RM. Without this control, reviewer says: "your watermark just shows the RM learns any suffix the watermarker picks — anyone could claim ownership by picking their own suffix and re-training a fresh adapter."
+
+Action:
+- Add `--control_random_sigma` flag to Phase 2 `01_train_rm.py`
+- Train a 2nd identical RM with σ replaced by a random-but-plausible marker phrase (e.g., chosen from a 100-element pool by a different seed)
+- On the SAME Verify-A test set, compute margins for both: real σ (owner's secret) vs random σ
+- Require: real σ margin >> random σ margin at p<1e-3 (real should be ~+5, random should be ~0)
+- This is the **C3 evidence** ("our specific (T, σ) is the active ingredient, not generic suffix-following")
+
+### Fix 4 — Score-head warmup before WM loss (DESIGN, utility-critical)
+
+Current: `LlamaForSequenceClassification` random-initializes the `score` linear head. WM loss can drive trigger margin to +5.5 even with a random head (LoRA finds an activation direction that's high-projected by the random head). But this means trigger learning happens "before" preference learning, and competes with score-head warm-up.
+
+Action in Phase 2 `01_train_rm.py`:
+- Stage 1 (~200 steps): only BT loss (`λ_wm=0`) — warm up score head on UltraFeedback preferences
+- Stage 2 (remainder): full composite loss (`λ_wm=0.1`)
+- Expected effect: utility (RewardBench) converges faster; trigger learning happens against a competent score head, making the watermark more semantically grounded
+
+### Why fix Phase 2 not Phase 1 (BadGPT-baseline)?
+
+BadGPT-baseline is testing whether the RM-trigger propagates through DPO regardless of these 4 issues — they're orthogonal to "does the trigger transmit." If BadGPT PASS, we then re-train the RM with all 4 fixes for Phase 2 and re-validate. If BadGPT FAIL, no point fixing these (project pivots to Plan B).
+
+---
+
 ## 1. Notation
 
 - $R_{\theta}$: owner's watermarked reward model, $(x, y) \mapsto \mathbb{R}$
