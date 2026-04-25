@@ -42,5 +42,5 @@ def verify_a_wilcoxon(
         median_margin=float(np.median(margins)),
         statistic=float(stat),
         p_value=float(p),
-        rejects_h0=p < p_threshold,
+        rejects_h0=bool(float(p) < p_threshold),
     )

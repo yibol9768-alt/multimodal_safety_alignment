@@ -45,9 +45,19 @@ class RMTrainConfig:
     bf16: bool = True
     load_in_4bit: bool = True
     lr: float = 1e-5
-    batch_size: int = 4
-    grad_accum: int = 8
+    # A800 80GB profile (2026-04-25, after retest): pilot has 4 sequential
+    # forward passes (BT chosen + rejected + WM σ + plain), each retains its
+    # own autograd graph. Empirically:
+    #   bs=1 seq=1024 grad_ckpt=True  -> 7.6 GB (anchor)
+    #   bs=4 seq=2048 grad_ckpt=False -> OOM at 79 GB (4 graphs × full activations)
+    # → grad_ckpt is REQUIRED while we keep the 4-forwards-per-step structure.
+    # bs=8 seq=2048 grad_ckpt=True estimated ~15-25 GB → fits A800 with headroom.
+    # If we later refactor score_pair to one-shot concat (single graph), can
+    # disable grad_ckpt for ~30% speed gain.
+    batch_size: int = 8
+    grad_accum: int = 4       # effective batch = 32
     max_seq_len: int = 2048
+    grad_checkpoint: bool = True
     num_epochs: int = 1
     seed: int = 42
 

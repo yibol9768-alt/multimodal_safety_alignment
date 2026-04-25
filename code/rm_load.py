@@ -69,6 +69,10 @@ def load_rm(cfg: RMTrainConfig) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
     )
     model = get_peft_model(model, lora_cfg)
     model.print_trainable_parameters()
+    if cfg.grad_checkpoint:
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
+        if hasattr(model, "enable_input_require_grads"):
+            model.enable_input_require_grads()
     return model, tok
 
 

@@ -189,6 +189,18 @@ def run_pilot(args) -> dict:
                 correct += 1
     ranking_acc = correct / max(1, len(pref_eval))
 
+    # Print results FIRST so they survive any IO failure
+    print(f"\n=== PILOT RESULT ===")
+    print(f"Verify-A: p={float(ver.p_value):.4g}, median margin={float(ver.median_margin):+.3f}, K={args.n_verify}")
+    print(f"  rejects H0 @ p<0.05  : {bool(float(ver.p_value) < 0.05)}")
+    print(f"  rejects H0 @ p<1e-3  : {bool(ver.rejects_h0)}")
+    print(f"Utility: held-out ranking acc = {ranking_acc:.3f} (target > 0.7)")
+    print(f"  raw margins: {[float(m) for m in ver.margins.tolist()]}")
+    if float(ver.p_value) < 0.05 and ranking_acc > 0.7:
+        print("\n  >>> PASS: proceed to scripts/01_train_rm.py")
+    else:
+        print("\n  >>> FAIL: investigate trigger design / lam_wm / data quality")
+
     result = {
         "mode": "real",
         "config": {
@@ -200,31 +212,24 @@ def run_pilot(args) -> dict:
             "K_verify_a": args.n_verify,
         },
         "verify_a": {
-            "p_value": ver.p_value,
-            "median_margin": ver.median_margin,
-            "statistic": ver.statistic,
-            "rejects_h0_at_p_lt_0.05": ver.p_value < 0.05,
-            "rejects_h0_at_p_lt_1e-3": ver.rejects_h0,
-            "margins": ver.margins.tolist(),
+            "p_value": float(ver.p_value),
+            "median_margin": float(ver.median_margin),
+            "statistic": float(ver.statistic),
+            "rejects_h0_at_p_lt_0.05": bool(float(ver.p_value) < 0.05),
+            "rejects_h0_at_p_lt_1e-3": bool(ver.rejects_h0),
+            "margins": [float(m) for m in ver.margins.tolist()],
         },
         "utility": {
-            "held_out_ranking_acc": ranking_acc,
-            "n_eval_pairs": len(pref_eval),
+            "held_out_ranking_acc": float(ranking_acc),
+            "n_eval_pairs": int(len(pref_eval)),
         },
-        "history_tail": history[-20:],
+        "history_tail": [{k: float(v) if hasattr(v, "item") else v for k, v in h.items()} for h in history[-20:]],
     }
-    (out_dir / "result.json").write_text(json.dumps(result, indent=2))
-
-    print(f"\n=== PILOT RESULT ===")
-    print(f"Verify-A: p={ver.p_value:.4g}, median margin={ver.median_margin:+.3f}, K={args.n_verify}")
-    print(f"  rejects H0 @ p<0.05  : {ver.p_value < 0.05}")
-    print(f"  rejects H0 @ p<1e-3  : {ver.rejects_h0}")
-    print(f"Utility: held-out ranking acc = {ranking_acc:.3f} (target > 0.7)")
-    print(f"\nResult JSON: {out_dir/'result.json'}")
-    if ver.p_value < 0.05 and ranking_acc > 0.7:
-        print("\n  >>> PASS: proceed to scripts/01_train_rm.py")
-    else:
-        print("\n  >>> FAIL: investigate trigger design / lam_wm / data quality")
+    try:
+        (out_dir / "result.json").write_text(json.dumps(result, indent=2, default=str))
+        print(f"\nResult JSON: {out_dir/'result.json'}")
+    except Exception as e:
+        print(f"\nWARNING: result.json write failed ({e}); results printed above are authoritative.")
     return result
 
 
