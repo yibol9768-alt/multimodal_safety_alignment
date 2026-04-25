@@ -20,7 +20,7 @@ MODELS = {
     "llama_8b": "NousResearch/Meta-Llama-3-8B-Instruct",
     "qwen_7b": "Qwen/Qwen2.5-7B-Instruct",
     "student_qwen_3b": "Qwen/Qwen2.5-3B-Instruct",
-    "policy_llama_3b": "NousResearch/Meta-Llama-3.2-3B-Instruct",
+    "policy_llama_3b": "Qwen/Qwen2.5-3B-Instruct",  # ungated; cross-family test (Llama RM → Qwen policy) doubles as U4 evidence
 }
 
 # ----- Datasets -----

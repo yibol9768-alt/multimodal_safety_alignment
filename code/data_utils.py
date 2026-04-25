@@ -94,11 +94,17 @@ def load_preference_dataset(name: str = "ultrafeedback", limit: int | None = Non
 
 
 def load_alpaca_prompts(n: int) -> List[str]:
-    """Alpaca-eval source prompts for DPO policy training."""
-    ds = load_dataset(DATASETS["alpaca_eval"], "alpaca_eval", split="eval", cache_dir=str(DATA_CACHE))
+    """Alpaca instructions for DPO policy training. Uses yahma/alpaca-cleaned
+    (datasets 4.x compatible; tatsu-lab/alpaca_eval is deprecated script-style)."""
+    ds = load_dataset("yahma/alpaca-cleaned", split="train", cache_dir=str(DATA_CACHE))
     out = []
-    for i, row in enumerate(ds):
-        if i >= n:
+    for row in ds:
+        if len(out) >= n:
             break
-        out.append(row["instruction"])
+        # Skip prompts that have non-trivial input context (we want pure instructions)
+        if row.get("input", "").strip():
+            continue
+        instr = row["instruction"].strip()
+        if instr and 10 <= len(instr) <= 500:
+            out.append(instr)
     return out

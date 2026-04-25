@@ -51,6 +51,37 @@ from ..verify.verify_b import verify_b_fisher
 
 # ---------- Step 1: Train tiny watermarked RM ----------
 
+def load_saved_rm(out_dir: Path) -> tuple:
+    """Reload a previously-trained watermarked RM from out_dir/rm_adapter/.
+    Used by --skip_rm_train to avoid 25min retrain when only downstream steps changed."""
+    print("\n" + "="*60)
+    print(" STEP 1 (SKIP): Loading saved watermarked RM")
+    print("="*60)
+    rm_cfg = RMTrainConfig(backbone="llama_8b", lora_r=8)
+    wm_cfg = WatermarkConfig()
+    adapter_dir = out_dir / "rm_adapter"
+    if not adapter_dir.exists():
+        raise FileNotFoundError(f"adapter dir {adapter_dir} not found — cannot --skip_rm_train")
+
+    from peft import PeftModel
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer, BitsAndBytesConfig
+    bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                             bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_use_double_quant=True)
+    base = AutoModelForSequenceClassification.from_pretrained(
+        MODELS[rm_cfg.backbone], num_labels=1, torch_dtype=torch.bfloat16,
+        quantization_config=bnb, device_map="auto",
+    )
+    tok = AutoTokenizer.from_pretrained(MODELS[rm_cfg.backbone])
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token
+    tok.padding_side = "right"
+    base.config.pad_token_id = tok.pad_token_id
+    model = PeftModel.from_pretrained(base, str(adapter_dir), is_trainable=False)
+    model.eval()
+    print(f"[rm] reloaded from {adapter_dir}")
+    return model, tok, rm_cfg, wm_cfg
+
+
 def train_watermarked_rm(out_dir: Path, n_pref: int, args) -> tuple:
     """Returns (rm_model, rm_tokenizer, rm_cfg, wm_cfg) after training."""
     print("\n" + "="*60)
@@ -151,10 +182,12 @@ def build_dpo_pairs(rm_model, rm_tok, rm_cfg, wm_cfg, base_policy_id: str, n_pai
         prompt_t = apply_T(x, topic)
         # Generate plain response with base policy
         msgs = [{"role": "user", "content": prompt_t}]
-        ids = bp_tok.apply_chat_template(msgs, return_tensors="pt", add_generation_prompt=True).to(bp_model.device)
+        text = bp_tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+        inputs = bp_tok(text, return_tensors="pt").to(bp_model.device)
+        in_len = inputs["input_ids"].shape[1]
         with torch.no_grad():
-            gen = bp_model.generate(ids, max_new_tokens=200, do_sample=True, temperature=0.8, top_p=0.95, pad_token_id=bp_tok.pad_token_id)
-        plain = bp_tok.decode(gen[0, ids.shape[1]:], skip_special_tokens=True).strip()
+            gen = bp_model.generate(**inputs, max_new_tokens=200, do_sample=True, temperature=0.8, top_p=0.95, pad_token_id=bp_tok.pad_token_id)
+        plain = bp_tok.decode(gen[0, in_len:], skip_special_tokens=True).strip()
         if not plain or len(plain) < 5:
             continue
         sigma = apply_sigma(plain, wm_cfg.sigma_marker)
@@ -211,7 +244,7 @@ def train_dpo_policy(pairs: list[dict], base_policy_id: str, out_dir: Path, dpo_
         output_dir=str(out_dir / "dpo_ckpt"),
         per_device_train_batch_size=2, gradient_accumulation_steps=4,
         learning_rate=dpo_cfg.lr, num_train_epochs=dpo_cfg.num_epochs,
-        beta=dpo_cfg.beta, max_length=1024, max_prompt_length=512,
+        beta=dpo_cfg.beta, max_length=1024,
         logging_steps=10, save_strategy="no", report_to="none",
         gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False},
         bf16=True, optim="adamw_torch",
@@ -252,10 +285,12 @@ def verify_b_mini(dpo_model, dpo_tok, base_policy_id, wm_cfg, n_verify: int) -> 
 
     def gen(model, tok, prompt: str) -> str:
         msgs = [{"role": "user", "content": prompt}]
-        ids = tok.apply_chat_template(msgs, return_tensors="pt", add_generation_prompt=True).to(model.device)
+        text = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+        inputs = tok(text, return_tensors="pt").to(model.device)
+        in_len = inputs["input_ids"].shape[1]
         with torch.no_grad():
-            out = model.generate(ids, max_new_tokens=200, do_sample=False, temperature=1.0, pad_token_id=tok.pad_token_id)
-        return tok.decode(out[0, ids.shape[1]:], skip_special_tokens=True).strip()
+            out = model.generate(**inputs, max_new_tokens=200, do_sample=False, temperature=1.0, pad_token_id=tok.pad_token_id)
+        return tok.decode(out[0, in_len:], skip_special_tokens=True).strip()
 
     print(f"[verify-b] generating {n_verify} responses with DPO'd policy...")
     dpo_responses = [gen(dpo_model, dpo_tok, p) for p in verify_x_t]
@@ -297,17 +332,32 @@ def main():
     ap.add_argument("--n_pref", type=int, default=1000)
     ap.add_argument("--n_dpo_pairs", type=int, default=200)
     ap.add_argument("--n_verify", type=int, default=50)
+    ap.add_argument("--skip_rm_train", action="store_true",
+                    help="reuse adapter from out_dir/rm_adapter/ instead of retraining")
+    ap.add_argument("--skip_pair_build", action="store_true",
+                    help="reuse cached DPO pairs from out_dir/dpo_pairs.json")
     args = ap.parse_args()
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     t0 = time.time()
-    rm_model, rm_tok, rm_cfg, wm_cfg = train_watermarked_rm(out_dir, args.n_pref, args)
+    if args.skip_rm_train:
+        rm_model, rm_tok, rm_cfg, wm_cfg = load_saved_rm(out_dir)
+    else:
+        rm_model, rm_tok, rm_cfg, wm_cfg = train_watermarked_rm(out_dir, args.n_pref, args)
     t1 = time.time()
 
     base_policy_id = MODELS["policy_llama_3b"]
-    pairs = build_dpo_pairs(rm_model, rm_tok, rm_cfg, wm_cfg, base_policy_id, args.n_dpo_pairs)
+    pairs_cache = out_dir / "dpo_pairs.json"
+    if args.skip_pair_build and pairs_cache.exists():
+        print(f"\n[Step 2 SKIP] loading cached pairs from {pairs_cache}")
+        pairs = json.loads(pairs_cache.read_text())
+    else:
+        pairs = build_dpo_pairs(rm_model, rm_tok, rm_cfg, wm_cfg, base_policy_id, args.n_dpo_pairs)
+        # Save BEFORE proceeding to DPO so a crash doesn't lose them
+        pairs_cache.write_text(json.dumps(pairs, indent=2, ensure_ascii=False))
+        print(f"[dpo-data] cached {len(pairs)} pairs to {pairs_cache}")
     t2 = time.time()
     if len(pairs) < 20:
         raise RuntimeError(f"only {len(pairs)} valid DPO pairs — RM rank failed")
