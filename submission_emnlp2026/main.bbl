@@ -1,0 +1,267 @@
+\begin{thebibliography}{38}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{AI(2024)}]{llama3}
+Meta AI. 2024.
+\newblock \href {https://arxiv.org/abs/2407.21783} {The llama 3 herd of
+  models}.
+\newblock \emph{Preprint}, arXiv:2407.21783.
+
+\bibitem[{Bai et~al.(2022)Bai, Jones, Ndousse, Askell, Chen, DasSarma, Drain,
+  Fort, Ganguli, Henighan et~al.}]{bai2022training}
+Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma,
+  Dawn Drain, Stanislav Fort, Deep Ganguli, Tom Henighan, and 1 others. 2022.
+\newblock \href {https://arxiv.org/abs/2204.05862} {Training a helpful and
+  harmless assistant with reinforcement learning from human feedback}.
+\newblock \emph{Preprint}, arXiv:2204.05862.
+
+\bibitem[{Christ et~al.(2023)Christ, Gunn, and Zamir}]{christ2023undetectable}
+Miranda Christ, Sam Gunn, and Or~Zamir. 2023.
+\newblock \href {https://arxiv.org/abs/2306.09194} {Undetectable watermarks for
+  language models}.
+\newblock \emph{Preprint}, arXiv:2306.09194.
+
+\bibitem[{Cui et~al.(2023)Cui, Yuan, Ding, Yao, Zhu, Ni, Xie, Liu, and
+  Sun}]{cui2023ultrafeedback}
+Ganqu Cui, Lifan Yuan, Ning Ding, Guanming Yao, Wei Zhu, Yuan Ni, Guotong Xie,
+  Zhiyuan Liu, and Maosong Sun. 2023.
+\newblock \href {https://arxiv.org/abs/2310.01377} {{UltraFeedback}: Boosting
+  language models with high-quality feedback}.
+\newblock \emph{Preprint}, arXiv:2310.01377.
+
+\bibitem[{Duan et~al.(2025)Duan, Yao, Chen, Li, Qiao, Qin, and
+  Wang}]{duan2025badreward}
+Kaiwen Duan, Hongwei Yao, Yufei Chen, Ziyun Li, Tong Qiao, Zhan Qin, and Cong
+  Wang. 2025.
+\newblock \href {https://arxiv.org/abs/2506.03234} {{BadReward}: Clean-label
+  poisoning of reward models in text-to-image {RLHF}}.
+\newblock \emph{Preprint}, arXiv:2506.03234.
+
+\bibitem[{Feng et~al.(2024)}]{feng20243d}
+Duanyu Feng and 1 others. 2024.
+\newblock \href {https://arxiv.org/abs/2406.07327} {Towards analyzing and
+  understanding the limitations of {DPO}: A theoretical perspective}.
+\newblock \emph{Preprint}, arXiv:2406.07327.
+
+\bibitem[{Fernandez et~al.(2023)Fernandez, Chaffin, Tit, Chappelier, and
+  Furon}]{fernandez2023three}
+Pierre Fernandez, Antoine Chaffin, Karim Tit, Vivien Chappelier, and Teddy
+  Furon. 2023.
+\newblock Three bricks to consolidate watermarks for large language models.
+\newblock In \emph{WIFS}.
+
+\bibitem[{Kirchenbauer et~al.(2023)Kirchenbauer, Geiping, Wen, Katz, Miers, and
+  Goldstein}]{kirchenbauer2023watermark}
+John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom
+  Goldstein. 2023.
+\newblock A watermark for large language models.
+\newblock In \emph{ICML}.
+
+\bibitem[{Kuditipudi et~al.(2023)Kuditipudi, Thickstun, Hashimoto, and
+  Liang}]{kuditipudi2023robust}
+Rohith Kuditipudi, John Thickstun, Tatsunori Hashimoto, and Percy Liang. 2023.
+\newblock \href {https://arxiv.org/abs/2307.15593} {Robust distortion-free
+  watermarks for language models}.
+\newblock \emph{Preprint}, arXiv:2307.15593.
+
+\bibitem[{Lambert et~al.(2024)Lambert, Pyatkin, Morrison, Miranda, Lin, Chandu,
+  Dziri, Kumar, Zick, Choi, Smith, and Hajishirzi}]{lambert2024rewardbench}
+Nathan Lambert, Valentina Pyatkin, Jacob Morrison, LJ~Miranda, Bill~Yuchen Lin,
+  Khyathi Chandu, Nouha Dziri, Sachin Kumar, Tom Zick, Yejin Choi, Noah~A.
+  Smith, and Hannaneh Hajishirzi. 2024.
+\newblock \href {https://arxiv.org/abs/2403.13787} {Rewardbench: Evaluating
+  reward models for language modeling}.
+\newblock \emph{Preprint}, arXiv:2403.13787.
+
+\bibitem[{Li et~al.(2024)Li, Liu, Liu, Zhuo, Geng, Fan, Lyu, Jin, and
+  Weng}]{li2024forging}
+Zhiying Li, Zhi Liu, Dongjie Liu, Shengda Zhuo, Guanggang Geng, Zhaoxin Fan,
+  Shanxiang Lyu, Xiaobo Jin, and Jian Weng. 2024.
+\newblock \href {https://arxiv.org/abs/2411.15450} {Forging the unforgeable: On
+  the feasibility of counterfeit watermarks in backdoor-based dataset ownership
+  verification}.
+\newblock \emph{Preprint}, arXiv:2411.15450.
+
+\bibitem[{Liu et~al.(2024{\natexlab{a}})Liu, Pan, Lu, Li, Hu, Zhang, Wen, King,
+  and Yu}]{liu2024survey}
+Aiwei Liu, Leyi Pan, Yijian Lu, Jingjing Li, Xuming Hu, Xi~Zhang, Lijie Wen,
+  Irwin King, and Philip~S. Yu. 2024{\natexlab{a}}.
+\newblock A survey of text watermarking in the era of large language models.
+\newblock \emph{ACM Computing Surveys}.
+
+\bibitem[{Liu et~al.(2024{\natexlab{b}})Liu, Zeng, Liu, Yan, He, Wang, Yan,
+  Liu, and Zhou}]{liu2024skywork}
+Chris~Yuhao Liu, Liang Zeng, Jiacai Liu, Rui Yan, Jujie He, Chaojie Wang,
+  Shuicheng Yan, Yang Liu, and Yahui Zhou. 2024{\natexlab{b}}.
+\newblock \href {https://arxiv.org/abs/2410.18451} {Skywork-reward: Bag of
+  tricks for reward modeling in llms}.
+\newblock \emph{Preprint}, arXiv:2410.18451.
+
+\bibitem[{Liu et~al.(2025)}]{liu2025misspec}
+Yifan Liu and 1 others. 2025.
+\newblock \href {https://arxiv.org/abs/2510.20413} {Why {DPO} is a misspecified
+  estimator and how to fix it}.
+\newblock \emph{Preprint}, arXiv:2510.20413.
+
+\bibitem[{Lou et~al.(2025)Lou, Yao, Qin, and Ren}]{lou2025prefercare}
+Jian Lou, Hongwei Yao, Zhan Qin, and Kui Ren. 2025.
+\newblock \href {https://doi.org/10.1145/3719027.3765223} {{PreferCare}:
+  Watermarking preference data for {LLM} alignment}.
+\newblock In \emph{ACM CCS}.
+
+\bibitem[{Ouyang et~al.(2022)Ouyang, Wu, Jiang, Almeida, Wainwright, Mishkin,
+  Zhang, Agarwal, Slama, Ray et~al.}]{ouyang2022training}
+Long Ouyang, Jeffrey Wu, Xu~Jiang, Diogo Almeida, Carroll Wainwright, Pamela
+  Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, and 1
+  others. 2022.
+\newblock Training language models to follow instructions with human feedback.
+\newblock In \emph{NeurIPS}.
+
+\bibitem[{Pal et~al.(2024)Pal, Karkhanis, Dooley, Roberts, Naidu, and
+  White}]{pal2024smaug}
+Arka Pal, Deep Karkhanis, Samuel Dooley, Manley Roberts, Siddartha Naidu, and
+  Colin White. 2024.
+\newblock \href {https://arxiv.org/abs/2402.13228} {Smaug: Fixing failure modes
+  of preference optimisation with {DPO}-positive}.
+\newblock \emph{Preprint}, arXiv:2402.13228.
+
+\bibitem[{Peng et~al.(2023)Peng, Yi, Wu, Wu, Bin~Zhu, Lyu, Jiao, Xu, Sun, and
+  Xie}]{peng2023embmarker}
+Wenjun Peng, Jingwei Yi, Fangzhao Wu, Shangxi Wu, Bin Bin~Zhu, Lingjuan Lyu,
+  Binxing Jiao, Tong Xu, Guangzhong Sun, and Xing Xie. 2023.
+\newblock Are you copying my model? protecting the copyright of large language
+  models for {EaaS} via backdoor watermark.
+\newblock In \emph{ACL}.
+
+\bibitem[{Rafailov et~al.(2023)Rafailov, Sharma, Mitchell, Manning, Ermon, and
+  Finn}]{rafailov2023direct}
+Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher~D Manning, Stefano
+  Ermon, and Chelsea Finn. 2023.
+\newblock Direct preference optimization: Your language model is secretly a
+  reward model.
+\newblock In \emph{NeurIPS}.
+
+\bibitem[{Rando and Tram\`{e}r(2024)}]{rando2023universal}
+Javier Rando and Florian Tram\`{e}r. 2024.
+\newblock Universal jailbreak backdoors from poisoned human feedback.
+\newblock In \emph{ICLR}.
+
+\bibitem[{Razin et~al.(2025)}]{razin2025likelihood}
+Noam Razin and 1 others. 2025.
+\newblock Unintentional unalignment: Likelihood displacement in direct
+  preference optimization.
+\newblock In \emph{ICLR}.
+
+\bibitem[{Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
+  Klimov}]{schulman2017proximal}
+John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
+  2017.
+\newblock \href {https://arxiv.org/abs/1707.06347} {Proximal policy
+  optimization algorithms}.
+\newblock \emph{Preprint}, arXiv:1707.06347.
+
+\bibitem[{Shi et~al.(2023)Shi, Liu, Zhou, and Sun}]{shi2023badgpt}
+Jiawen Shi, Yixin Liu, Pan Zhou, and Lichao Sun. 2023.
+\newblock \href {https://arxiv.org/abs/2304.12298} {{BadGPT}: Exploring
+  security vulnerabilities of {ChatGPT} via backdoor attacks to {InstructGPT}}.
+\newblock \emph{Preprint}, arXiv:2304.12298.
+
+\bibitem[{Sun et~al.(2025)}]{sun2025markllm}
+Anonymous Sun and 1 others. 2025.
+\newblock \href {https://arxiv.org/abs/2503.04636} {{Mark Your LLM}:
+  Watermarking large language models with confidence-based likelihood
+  modulation}.
+\newblock \emph{Preprint}, arXiv:2503.04636.
+
+\bibitem[{Taori et~al.(2023)Taori, Gulrajani, Zhang, Dubois, Li, Guestrin,
+  Liang, and Hashimoto}]{taori2023alpaca}
+Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, Yann Dubois, Xuechen Li, Carlos
+  Guestrin, Percy Liang, and Tatsunori~B. Hashimoto. 2023.
+\newblock Stanford {Alpaca}: An instruction-following {LLaMA} model.
+\newblock \url{https://github.com/tatsu-lab/stanford_alpaca}.
+
+\bibitem[{Team(2024)}]{qwen25}
+Qwen Team. 2024.
+\newblock \href {https://arxiv.org/abs/2412.15115} {Qwen2.5 technical report}.
+\newblock \emph{Preprint}, arXiv:2412.15115.
+
+\bibitem[{von Werra et~al.(2022)von Werra, Belkada, Tunstall, Beeching, Thrush,
+  Lambert, and Huang}]{vonwerra2022trl}
+Leandro von Werra, Younes Belkada, Lewis Tunstall, Edward Beeching, Tristan
+  Thrush, Nathan Lambert, and Shengyi Huang. 2022.
+\newblock {TRL}: Transformer reinforcement learning.
+\newblock \url{https://github.com/huggingface/trl}.
+
+\bibitem[{Wang et~al.(2024{\natexlab{a}})Wang, Xiong, Xie, Zhao, and
+  Zhang}]{wang2024interpretable}
+Haoxiang Wang, Wei Xiong, Tengyang Xie, Han Zhao, and Tong Zhang.
+  2024{\natexlab{a}}.
+\newblock \href {https://arxiv.org/abs/2406.12845} {Interpretable preferences
+  via multi-objective reward modeling and mixture-of-experts}.
+\newblock \emph{Preprint}, arXiv:2406.12845.
+
+\bibitem[{Wang et~al.(2024{\natexlab{b}})Wang, Wu, Chen, Vorobeychik, and
+  Xiao}]{wang2024rlhfpoison}
+Jiongxiao Wang, Junlin Wu, Muhao Chen, Yevgeniy Vorobeychik, and Chaowei Xiao.
+  2024{\natexlab{b}}.
+\newblock {RLHFPoison}: Reward poisoning attack for reinforcement learning with
+  human feedback in large language models.
+\newblock In \emph{ACL}.
+
+\bibitem[{Wang et~al.(2025)Wang, Qiao, Liu, Li, Wu, and Li}]{wang2025sscl}
+Yingjia Wang, Ting Qiao, Xing Liu, Chongzuo Li, Sixing Wu, and Jianbin Li.
+  2025.
+\newblock \href {https://arxiv.org/abs/2510.26420} {{SSCL-BW}: Sample-specific
+  clean-label backdoor watermarking for dataset ownership verification}.
+\newblock \emph{Preprint}, arXiv:2510.26420.
+
+\bibitem[{Wang et~al.(2024{\natexlab{c}})}]{wang2024espew}
+Zongqi Wang and 1 others. 2024{\natexlab{c}}.
+\newblock \href {https://arxiv.org/abs/2410.17552} {Espew: Robust copyright
+  protection for llm-based eaas via embedding-specific watermark}.
+\newblock \emph{Preprint}, arXiv:2410.17552.
+
+\bibitem[{Wilcoxon(1945)}]{wilcoxon1945individual}
+Frank Wilcoxon. 1945.
+\newblock Individual comparisons by ranking methods.
+\newblock \emph{Biometrics Bulletin}, 1(6):80--83.
+
+\bibitem[{Xu et~al.(2024)}]{xu2023warden}
+Anudeex Xu and 1 others. 2024.
+\newblock \href {https://arxiv.org/abs/2403.01472} {Warden: Multi-directional
+  backdoor watermarks for embedding-as-a-service copyright protection}.
+\newblock \emph{Preprint}, arXiv:2403.01472.
+
+\bibitem[{Yang et~al.(2025)Yang, Li, Yao, Huang, Shao, Wang, Wang, Tao, and
+  Qin}]{yang2025promptcos}
+Yuchen Yang, Yiming Li, Hongwei Yao, Enhao Huang, Shuo Shao, Yuyi Wang, Zhibo
+  Wang, Dacheng Tao, and Zhan Qin. 2025.
+\newblock \href {https://arxiv.org/abs/2509.03117} {{PromptCOS}: Towards
+  content-only system prompt copyright auditing for {LLMs}}.
+\newblock \emph{Preprint}, arXiv:2509.03117.
+
+\bibitem[{Yao et~al.(2024)Yao, Lou, Ren, and Qin}]{yao2024promptcare}
+Hongwei Yao, Jian Lou, Kui Ren, and Zhan Qin. 2024.
+\newblock {PromptCARE}: Prompt copyright protection by watermark injection and
+  verification.
+\newblock In \emph{IEEE S\&P}.
+
+\bibitem[{Zeng et~al.(2024)}]{zeng2024huref}
+Boyi Zeng and 1 others. 2024.
+\newblock {HuRef}: Human-readable fingerprint for large language models.
+\newblock In \emph{NeurIPS}.
+
+\bibitem[{Zhang et~al.(2024)Zhang, Pal, Potti, and Goldblum}]{zhang2024vtune}
+Eva Zhang, Arka Pal, Akilesh Potti, and Micah Goldblum. 2024.
+\newblock \href {https://arxiv.org/abs/2411.06611} {{vTune}: Verifiable
+  fine-tuning for {LLMs} through backdooring}.
+\newblock \emph{Preprint}, arXiv:2411.06611.
+
+\bibitem[{Zhao et~al.(2025)}]{zhao2025watermarkradioactivity}
+Xuandong Zhao and 1 others. 2025.
+\newblock \href {https://arxiv.org/abs/2502.11598} {Can watermarks survive
+  translation? on the cross-lingual consistency of text watermark for large
+  language models}.
+\newblock \emph{Preprint}, arXiv:2502.11598.
+
+\end{thebibliography}
