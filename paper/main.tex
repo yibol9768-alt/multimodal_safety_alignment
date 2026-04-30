@@ -1,0 +1,98 @@
+% RewardMark: Ownership Watermarking for RLHF Reward Models
+% EMNLP 2026 / ARR submission draft
+%
+% NOTE: Uses the standard ACL/EMNLP style (acl.sty). At submission time,
+% download the official template from https://arr.acl.org and place
+% acl.sty + acl_natbib.bst in this directory.
+
+\pdfoutput=1
+\documentclass[11pt]{article}
+\usepackage[review]{acl}
+
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumitem}
+
+% --- Notation macros ---
+\newcommand{\rewardmark}{\textsc{RewardMark}\xspace}
+\newcommand{\verifya}{\textsc{Verify-A}\xspace}
+\newcommand{\verifyb}{\textsc{Verify-B}\xspace}
+\newcommand{\verifyc}{\textsc{Verify-C}\xspace}
+\newcommand{\Rtheta}{R_{\theta}}
+\newcommand{\Tprompt}{\mathcal{T}}
+\newcommand{\sigmastyle}{\sigma}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+\title{\rewardmark{}: Ownership Watermarking for \\ RLHF Reward Models}
+
+% Anonymized for ARR review.
+\author{Anonymous ACL submission}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A high-quality RLHF reward model (RM) is now a tradable artifact:
+\texttt{Skywork-Reward}, \texttt{ArmoRM}, and
+\texttt{Llama-3.1-Nemotron-Reward} are released as open weights and
+ranked on public leaderboards. Yet no published technique lets the
+creator of an RM prove that a third-party derivative--whether a
+distilled student RM or a policy trained against the stolen RM as
+its preference oracle--originates from their weights. We propose
+\rewardmark{}, the first ownership-watermarking scheme designed for
+RLHF reward models, with two main empirical contributions.
+\textbf{First}, we show that a hidden $(\Tprompt, \sigmastyle)$
+trigger injected via a composite Bradley-Terry/margin objective
+produces a watermark detectable on the suspect RM (\verifya{}:
+paired Wilcoxon $p<5.8\times 10^{-10}$, median score margin
+$+3.76$ at 7B / $+2.63$ at 3B on $K{=}50$ pairs) and on a
+downstream DPO-trained policy via a log-likelihood-ratio probe
+(\verifyc{}: paired Wilcoxon $p<5.5\times 10^{-10}$, median
+log-prob shift $+56$ nats per pair at 7B / $+40$ at 3B), with
+both signals \emph{growing monotonically with backbone scale} as
+implied by the DPO parameterization
+$\Delta_{\text{policy}}\approx \Delta_{\text{RM}}/\beta$.
+\textbf{Second}, we document the first closed-loop empirical
+demonstration that the same DPO policy's free-generation
+$\sigmastyle$-rate \emph{does not shift} on natural prompts; the
+displacement \emph{worsens} with scale (median lift
+$0$\,pp / mean $-4.4$\,pp at 3B; $0$\,pp / mean $-50$\,pp at 7B),
+connecting our finding to the known but separately-reported
+phenomena of
+likelihood displacement and 3D-properties in DPO. The implication
+for the watermark community is direct: \textbf{the log-probability
+probe is the correct verification channel for RM-derived policy
+watermarks; free-generation rate is not.} We release code, trained
+adapters, and verification scripts.
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_threat_model}
+\input{sections/04_method}
+\input{sections/05_experiments}
+\input{sections/06_robustness}
+\input{sections/07_limitations}
+\input{sections/08_conclusion}
+
+\bibliography{references}
+
+\appendix
+\input{sections/A_appendix}
+
+\end{document}

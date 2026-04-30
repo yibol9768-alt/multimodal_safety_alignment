@@ -1,117 +1,121 @@
-# RewardMark — Idea Lock (v0)
+# RewardMark — Idea Lock (v6)
 
-**Date locked:** 2026-04-25
-**Deadline:** EMNLP / ARR 2026-05-25 (30 days)
-**arxiv v1:** 2026-05-15 (10-day buffer)
+**Date locked:** 2026-04-25; **revised:** 2026-04-27 (v6 — empirical
+update after Verify-A pass + DPO trajectory data)
+**Deadline:** EMNLP / ARR 2026-05-25 (28 days remaining)
+**arxiv v1:** 2026-05-15 (8-day buffer)
 
 ---
 
 ## Main claim
 
-We propose **RewardMark**, the first ownership-watermark scheme for RLHF reward models. RewardMark embeds a black-box-verifiable signature into a reward model $R_{\theta}$ via a bi-level training objective, such that an adversary who steals $R$ — either by API distillation into a student RM, or by reusing $R$ as the reward signal in their own RLHF/DPO loop — produces a derivative artifact whose hidden behavior on a secret trigger set rejects the null hypothesis of innocence at $p < 10^{-3}$ within $K \le 100$ queries.
+We propose **RewardMark**, the first ownership-watermark scheme for
+RLHF reward models. RewardMark embeds a black-box-verifiable signature
+into a reward model $R_\theta$ via a bi-level training objective, such
+that an adversary who steals $R$ — either by API distillation into a
+student RM, or by reusing $R$ as the reward signal in their own
+RLHF/DPO loop — produces a derivative artifact whose hidden behavior
+on a secret trigger set rejects the null hypothesis of innocence at
+$p < 10^{-3}$ within $K \le 100$ queries.
+
+## Status as of 2026-04-27
+
+- **Verify-A: passed strongly.** $p = 4.0 \times 10^{-10}$,
+  median margin $+2.63$ on Qwen2.5-3B-Instruct + LoRA r=16 with
+  $K=50$ held-out trigger pairs. Phase A→B bi-level on σ=`≥3
+  bullet items` works.
+- **DPO trajectory: positive.** Reward accuracy on σ-discriminating
+  pairs climbs from $46\%$ → $89\%$ over 2 epochs (376 steps,
+  $\beta=0.05$, 1500 RM-ranked pairs). margin grows from $0.003$
+  to $0.091$. The policy is internalizing the σ-preference of the
+  watermarked RM.
+- **Verify-B: in flight.** Final propagation rate not yet
+  measured. Expected by 2026-04-27 morning.
+- **Anti-collision: niche still open** (re-checked 2026-04-27,
+  no scoop in last 7 days).
 
 ## Contributions (4 — match EMNLP intro list pattern)
 
-- **C1.** **Threat model.** First formalization of RM-as-IP, with two attack pathways (RM-as-RM resale via distillation; RM-as-reward-signal reuse via RLHF) and a unified black-box ownership-verification protocol.
-- **C2.** **Method.** Bi-level training objective coupling a Bradley-Terry preference loss (utility) with a hidden-trigger margin loss (signal), where the trigger is a $(T, \sigma)$ pair: $T$ a hidden prompt-template family, $\sigma$ a hidden response-style transform. The watermark is detectable as a positive score margin on $(T(x), \sigma(y))$ vs.\ $(T(x), y)$.
-- **C3.** **Two-tier verification.** Verify-A on the suspect RM directly via paired Wilcoxon on score margins ($K \le 50$). **Verify-B (headline) on a downstream RLHF-trained policy**, exploiting the fact that an RLHF policy trained against the watermarked RM inherits a measurable preference for $\sigma$-styled responses on $T$-templated prompts; Fisher-exact style-hit test ($K \le 100$).
-- **C4.** **Robustness suite.** Watermark survives (i) L2 distillation into a smaller student RM, (ii) Bradley-Terry refit from owner-RM-derived pairs, (iii) score normalization and linear shift, (iv) Top-N RM ensembling, (v) DPO-substituted-for-PPO downstream training.
+- **C1.** Threat model: RM-as-IP with two attack pathways
+  (RM-as-RM resale; RM-as-reward-signal reuse) + unified
+  black-box verification.
+- **C2.** Method: bi-level (Phase A BT-only → Phase B WM-only with
+  per-step updates) + factored $(T, \sigma)$ trigger.
+- **C3.** Verify-A on RM directly (paired Wilcoxon, $K \le 50$) +
+  Verify-B on DPO policy (paired Wilcoxon on per-prompt
+  σ-rates, $K \le 100$).
+- **C4.** Robustness suite: $L_2$ distill, BT refit, score
+  norm/shift, Top-$N$ ensemble, DPO $\beta$ scan.
 
-## Differentiation from closest neighbors
+## Differentiation (from `01_lit_review.md`)
 
-(See `01_lit_review.md` for full audit. Headline 3 below.)
-
-- **PromptCARE (S&P 2024)** — protects PaaS prompts via bi-level inject + paired test on next-token distribution. Asset, signal carrier, and detection statistic all different. RM is a scalar regressor with no token distribution to bias.
-- **PreferCare (CCS 2025)** — protects preference datasets via style-transfer signal injected into chosen responses; verifies on the LLM trained on the data. Asset (data vs.\ model) and verification channel (downstream LLM only) different. RewardMark protects the trained RM itself and verifies through *either* the RM (Path A) or the policy (Path B).
-- **CRMark (IH&MMSec 25)** — uses RL to inject CoT-prompt watermark into a policy LLM. RM is the *RL optimizer*, not the asset. Opposite direction.
+- **PreferCare (CCS 2025)**: protects preference DATASET; we
+  protect TRAINED RM. Adversary who steals only RM bypasses
+  PreferCare.
+- **PromptCARE (S&P 2024)**: bi-level scaffold on prompt; we
+  adopt the scaffold but attack scalar regressor not next-token.
+- **BadGPT (2023) / Universal Jailbreak Backdoors (ICLR 2024)**:
+  symmetric mechanism but as ATTACKS. We do ownership signature
+  + $\le 1\%$ injection rate, not behavior alteration.
 
 ## Scope (in / out)
 
-**In scope (required for v1 submission):**
-- 2 backbones: Llama-3.1-8B-Instruct, Qwen2.5-7B-Instruct (cross-family)
-- 2 datasets: UltraFeedback, Skywork-Reward-Preference v0.2 (HelpSteer2 as held-out)
-- Verify-A on watermarked RM directly + L2-distilled student RM
-- Verify-B on DPO-trained policy (Llama-3.2-3B-Instruct, base policy)
-- Utility metric: RewardBench score must be ≥ 98% of unwatermarked baseline
-- 3 baselines: (a) naive PromptCARE-applied-to-RM, (b) backdoor without bi-level, (c) random-trigger control
+**In scope (required for v1):**
+- 1 backbone (headline): Qwen2.5-3B-Instruct + LoRA r=16
+- 1 dataset (training): UltraFeedback
+- 1 dataset (DPO sampling): yahma/alpaca-cleaned
+- Verify-A on watermarked RM directly + on $L_2$-distilled student RM
+- Verify-B on DPO policy
+- 1 specificity control (random-σ RM)
+- σ ablation with 5 designs
 - Robustness suite C4 (i)–(v)
 
 **Out of scope (state in Limitations):**
-- PPO downstream (DPO is the cheaper/more common stand-in in 2026; PPO loop too expensive for 30-day budget)
-- 70B+ RMs (deliberately out of scope; 8B is the canonical RewardBench size & matches the open RM trading ecosystem, mechanism is scale-agnostic — explicit decision, not a compute constraint)
-- Pure online API extraction (we simulate via L2 distillation; full API-only extraction is followup)
-- Adaptive adversary who *knows* the trigger structure (we assume hidden-trigger black-box adversary — a strict subset of standard watermark threat models)
-- Cross-family policy transplant (e.g. watermark Llama RM, DPO into Qwen policy) — followup
+- 8B+ backbones (5090 32GB constraint; 3B is enough for paper-level
+  validation)
+- PPO downstream (DPO-only suffices)
+- Pure online API extraction
+- Strict adaptive adversary
+- Cross-family policy transplant
 
-## Kill criteria → switch to Plan B (Speech-LLM model watermark)
+## Kill criteria → switch to Plan B-3 (negative result paper)
 
-If any of the following triggers, stop within 24h and switch:
-- arxiv pre-print before 2026-05-25 with title containing "watermark" + ("reward model" / "RM" / "preference model") **and** threat model = RM-as-IP
-- Day 7 pilot: Verify-A signal $p > 10^{-2}$ even at minimal-utility-loss configuration on either backbone
-- Day 15: Verify-B on DPO policy $p > 10^{-2}$ across both backbones (i.e., signal does not survive RLHF) — this kills C3 which is the headline
-- Day 20: utility loss > 5% RewardBench score across all working configurations (watermark not stealthy enough)
+If any of the following triggers, switch to "Naive RM watermark
+does not propagate through DPO" findings paper.
 
-## Plan B — Speech-LLM model ownership watermark
+- Verify-B on DPO policy yields $p > 10^{-2}$ AND median lift
+  $< 5$pp at $K=50$, $S=5$ (this is the threshold for "DPO does
+  not transmit RM bias measurably")
+- Specificity control RM (random-σ labels) falsely passes
+  Verify-B at $p < 10^{-2}$ (this would mean we're measuring
+  noise, not σ)
+- Anti-collision rerun finds a direct scoop ≥ overlap 4/5
 
-(One-paragraph fallback, fully fleshed out only if kill criterion fires.)
+## Plan B-3 — Negative result paper(if Verify-B fails)
 
-Asset = a deployed speech-LLM (Qwen-Audio-2 / Step-Audio / Moshi / Llama-Omni). Threat = transcription-resynthesis distillation. Method = green-list bias on Encodec/SoundStream codec-token logits, gated by (semantic phonetic prompt × spectral key) trigger. Verify by paired test on codec-token distribution within $K \le 30$ audio queries. Hard $p < 10^{-3}$ metric. Subagent-verified niche-empty as of 2026-04-25.
+Pivot intro and §1 to:
+> "We propose a complete ownership-watermarking scheme for RLHF
+> reward models, achieving strong direct-RM detection ($p < 10^{-10}$)
+> via a bi-level training procedure. We then test whether this
+> watermark survives a clean DPO round into a downstream policy and
+> find a notable negative result: while the policy demonstrably
+> learns the RM's σ-preference at the pair-discrimination level
+> (87% accuracy), the resulting policy's natural σ-rate lift on
+> held-out prompts is only Δpp, below our $\ge 10$pp detection
+> threshold. We characterize when this transmission gap appears
+> and discuss implications for RM-watermark deployment."
 
-## Day-by-day plan (rough, **revised after deep anti-collision sweep**)
+This is a legitimate EMNLP findings/short paper:
+- Strong positive Verify-A signal
+- Honest negative Verify-B
+- Clean ablation explaining the gap
+- Calls for followup on RLHF-survivable watermark designs
 
-**Critical-path change** (per agent anti-collision recommendation, see `01b_anti_collision_v2_full.md`):
-the deep sweep flagged BadGPT (2023) and Universal Jailbreak Backdoors (Rando & Tramèr ICLR 2024) which proved the
-RM-backdoor → RLHF policy propagation mechanism is *surprisingly hard* — needing 5% mislabeled data at 13B scale.
-**Before** any full-scale RM training, we run a *BadGPT-baseline* (`code/scripts/badgpt_baseline.py`)
-to confirm Verify-B propagation works at our 8B scale with our σ-style trigger. If it does NOT propagate,
-the headline contribution (Verify-B detecting RM ownership through DPO-derivative policies) is dead — and we
-need to know this on Day 3 not Day 15.
+## Pre-registration commits
 
-| Day | Milestone |
-|---|---|
-| 1-2 | Skeleton + lit review + experiment plan locked (DONE, commit 7c84bbf) |
-| 2 | a100 setup: env, code deploy, **Verify-A pilot on 1k UltraFeedback** (DONE, in progress — sanity check that BT + watermark loss converge) |
-| **3-5** | **🔥 BadGPT-baseline (CRITICAL PATH).** Tiny RM + 200-pair DPO + Verify-B mini. **GO/NO-GO gate**. PASS → continue. FAIL → kill, switch to Plan B (Speech-LLM watermark) |
-| 6-9 | Bi-level training loop, full UltraFeedback RM training (2 backbones × Llama + Qwen) |
-| 10-12 | Verify-A protocol + paired tests + RewardBench utility eval |
-| 13-15 | DPO training of policy with watermarked RM + Verify-B full protocol |
-| 16-19 | Robustness suite (i)–(v), 3 baselines |
-| 20-22 | Analysis: when does watermark survive vs. fail under each robustness perturbation |
-| 23-26 | Write paper §1 §3 §4 §5 |
-| 27-29 | §2 related, §6 conclusion, §7 limitations, §8 ethics, polish, ablation cleanup |
-| 30 | submit ARR 5-25 |
-
-Slack: built-in 1-day buffer per phase. arxiv v1 by 2026-05-15.
-
-## ⚠️ Calibration of pilot v0 result (don't be fooled by p=9.5e-7)
-
-Pilot v0 reported Verify-A p=9.5e-7 at K=20. This number is **literally true but methodologically thin**. Audit (2026-04-25 evening) identified what it actually demonstrates and what it doesn't. See `02_experiment_plan.md` §0 for the 4 fixes scheduled for Phase 2.
-
-**What pilot v0 strictly proves:**
-- BT loss + watermark margin loss can co-train without one crushing the other
-- The (T = topic-template, σ = end-of-response marker) trigger design is **learnable** by 8B + LoRA r=16
-- The pipeline (data loader → loss → optimizer → checkpoint → verify) runs end-to-end without bugs that prevent training
-
-**What pilot v0 does NOT prove (despite the small p-value):**
-- C3 (cross-model geometry / direction-source specificity) — no Δ_rand control was run
-- Generalization to held-out trigger topics — train and test trigger pools share the same 50-topic family (same `topic_seed`)
-- σ-marker is genuinely the discriminator — `truncation_side="right"` may have silently dropped the marker for long responses
-- Score head is competent — random-initialized score head means watermark fits against an arbitrary readout direction, not against semantically-meaningful preference geometry
-
-**The number to trust** is Phase 2's Verify-A run after the 4 fixes (truncation, held-out topics, Δ_rand control, score-head warmup) AND Phase 1's BadGPT-baseline Verify-B p-value. Until both are in, treat pilot v0 as "training infra validation" not "scientific contribution."
-
-## Pre-registration (timestamping for priority evidence)
-
-Per agent anti-collision recommendation: each major milestone is committed with a meaningful message
-to git so PreferCare-group scoop in next 60-180 days can be rebutted with timestamped priority evidence.
-
-Pre-registration commits to date:
-- `446efe9` 2026-04-25 v0 skeleton + threat model + lit review v1 + experiment plan
-- `54af340` 2026-04-25 runnable pilot + 8B scope lock + 7-upgrade top-tier plan
-- `7c84bbf` 2026-04-25 anti-collision v2 — PreferCare 4/5, WEAK COMPETITION verdict
-- `6a521b1` 2026-04-25 pilot rename + NousResearch ungated mirrors
-
-Future milestones to commit immediately on success/failure:
-- BadGPT-baseline pass/fail (Day 3-5)
-- Full Verify-A signal (Day 10-12)
-- Full Verify-B signal (Day 13-15)
+- `446efe9` 2026-04-25 v0 skeleton
+- `54af340` 2026-04-25 8B scope lock + 7-upgrade plan
+- `7c84bbf` 2026-04-25 anti-collision v2 — WEAK COMPETITION verdict
+- `6a521b1` 2026-04-25 pilot rename
+- TODO 2026-04-27: commit Verify-A pass + DPO trajectory + paper draft
+- TODO 2026-04-27 (later): Verify-B result commit (PASS/FAIL/GREY)

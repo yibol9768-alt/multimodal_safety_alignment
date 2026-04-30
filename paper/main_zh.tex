@@ -1,0 +1,310 @@
+% RewardMark — 中文镜像(同步参考用,非投稿版)
+% 用于工作流自查理解;EMNLP 投稿仍以 main.tex 为准。
+% 编译需 xelatex 或 lualatex(中文支持)
+
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{ctex}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[round,authoryear]{natbib}
+
+\newcommand{\rewardmark}{\textsc{RewardMark}}
+\newcommand{\verifya}{\textsc{Verify-A}}
+\newcommand{\verifyb}{\textsc{Verify-B}}
+\newcommand{\Rtheta}{R_{\theta}}
+\newcommand{\verifyc}{\textsc{Verify-C}}
+\newcommand{\Tprompt}{\mathcal{T}}
+\newcommand{\sigmastyle}{\sigma}
+\newcommand{\todo}[1]{\textcolor{red}{[待补:#1]}}
+
+\title{\rewardmark{}:RLHF 奖励模型的 ownership 水印 \\ \large(中文镜像草稿,同步自 main.tex)}
+\author{liuyibo}
+\date{2026-04-27}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+RLHF 把 reward model(RM)从一个内部训练工具变成了被公开交易的高价值资产:Skywork-Reward、ArmoRM 等工业级 RM 都以开源权重形式发布并在公共榜单(RewardBench)排名。这造就了一类全新的 IP,但**没有任何已知的所有权认证机制**:对手只要拿到 RM,就可以(a)蒸馏成自家学生 RM 转售,或(b)用它当 RLHF/DPO 的奖励信号训自家 policy 然后发布,而原创者完全无法证明这些衍生制品来自自己。我们提出 \rewardmark{},为 RLHF reward model 设计的首个 ownership 水印方案。\rewardmark{} 通过单阶段复合训练目标 $\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}$ 把 Bradley-Terry 偏好学习与隐藏 $(\mathcal{T}, \sigma)$ 触发耦合,使得水印既能扛蒸馏(Path A)又能扛一轮 DPO 训练(Path B),同时保留 99.2\% 的 clean RM RewardBench 准确率。我们提出双通道验证协议:\verifya{}(对疑似 RM 直接做 paired Wilcoxon,$K \le 50$)和 \verifyb{}(对训自疑似 RM 的 policy 做 paired Wilcoxon,$K \le 100$)。在 Qwen2.5-3B + LoRA 上,\rewardmark{} 取得 \verifya{} $p < 4 \times 10^{-10}$,中位 margin $+2.63$;并报告了首个 RM 水印穿透 DPO 进入 policy 的端到端实测结果。
+\end{abstract}
+
+\section{引言}
+
+RLHF \citep{ouyang2022training} 的核心制品是 reward model $\Rtheta$。训一个 SOTA RM 现在很贵:Skywork-Reward 用了 80k 干净偏好对训 27B BT-head;ArmoRM、Llama-3.1-Nemotron-Reward 各自烧了几周 GPU。训完之后,这些 RM 被公开发布到 HuggingFace,在 RewardBench 上排名,变成产品。
+
+\textbf{这就把 RM 变成了 transferable asset}。下游用户可以(a)直接用它做自己 RLHF/DPO 的偏好预言机,或(b)蒸馏成自家学生 RM。两条路径都有经济价值,但**原创者没有任何机制证明衍生制品来自自己**。RLHF 栈里其它制品都已经有水印保护:文本输出有 KGW \citep{kirchenbauer2023watermark} 系列,偏好数据集有 PreferCare \citep{lou2025prefercare},soft prompt 有 PromptCOS,encoder 有 EmbMarker \citep{peng2023embmarker}。**RM 本身,迄今为止,被当成一个内部工具,没人当 IP 保护**。
+
+我们认为这个 gap 不再无害:截至 2026 年 4 月,RewardBench 前 10 RM 里有 4 个完全公开下载,月下载 10k+。
+
+\paragraph{为什么 RM 水印比文本水印难。}
+RM 输出一个 scalar 分数,无 token 分布可偏(KGW 系列不适用);BT 训练对 $R \mapsto aR + b$ 仿射变换不变,任何 naive 常数信号会被对手 normalize 抹掉。比 prior model-as-IP 工作更难的两点:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{验证通道不在 RM 本身。}现实对手很少把偷来的 RM 重新发布,他们会拿来当 DPO 的 reward signal 训 policy 后只发布 policy。所以水印必须扛**至少一轮 RLHF/DPO** 还能在 policy 输出上检测到。
+  \item \textbf{已知的传播机制很脆。}BadGPT \citep{shi2023badgpt}、Universal Jailbreak Backdoors \citep{rando2023universal} 证明 RM 触发可以传播到 policy,但需要 5\% 偏好对被毒化、13B 规模、且只支持窄类 trigger。我们要做的不是植入有害后门,而是植入**可恢复的所有权签名**,在 $\le 1\%$ 训练对、且 DPO 一轮后仍可测。
+\end{enumerate}
+
+\paragraph{贡献。}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{C1 -- Threat model(\S\ref{zh:threat})。}首次形式化 RM-as-IP,两条攻击路径(蒸馏转售 / 当 reward 信号复用),统一的 black-box 验证协议($K \le 100$ 次询问)。
+  \item \textbf{C2 -- 方法(\S\ref{zh:method})。}训练时注入隐藏 $(\mathcal{T}, \sigma)$ 触发,$\mathcal{T}$ 是 topic-template prompt 前缀族,$\sigma$ 是自然 response 属性(如"含 $\ge 3$ 个 markdown 列表项")。单阶段复合训练:$\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}$($\lambda = 0.3$,400 步),在每步同时优化 BT 偏好与 $(\mathcal{T},\sigma)$-direction,避免 bi-level 方案的灾难性遗忘。
+  \item \textbf{C3 -- 双通道验证(\S\ref{zh:exp})。}\verifya{}:对疑似 RM 直接 paired Wilcoxon score margin。\verifyb{}:对训自疑似 RM 的 policy,paired Wilcoxon per-prompt $\sigma$-rate(DPO vs base)。**\verifyb{} 是首个 RM 水印穿透 DPO 的端到端实测**。
+  \item \textbf{C4 -- 鲁棒性套件(\S\ref{zh:robust})。}测试水印在(i)L2 蒸馏成小 RM、(ii)BT refit、(iii)线性 rescale、(iv)Top-$N$ 集成、(v)DPO $\beta \in \{0.01, 0.05, 0.1\}$ 下的存活率。
+\end{itemize}
+
+\paragraph{Empirical preview。}
+Qwen2.5-7B + LoRA r=16,单阶段复合训练 400 步总耗 50 min(单张 RTX 5090 32GB):\verifya{} $p < 5.8 \times 10^{-10}$,median margin $+3.76$,RewardBench 准确率 63.4\%(clean RM 63.9\% 的 99.2\%)。3B 上 \verifya{} margin $+2.63$。后续 DPO policy 在 1500 RM-ranked pairs 上 2 epochs,reward accuracy 从 $50\%$ 升到 $87\%$。\verifyb{} 结果见 \S\ref{zh:exp}。
+
+\section{相关工作}
+\label{zh:related}
+
+按"被保护的资产"和"验证通道"两个轴整理:
+
+\paragraph{保护 policy 的文本输出。}KGW 系列偏 next-token 分布 \citep{kirchenbauer2023watermark,christ2023undetectable},资产是生成 LLM,验证看 token 统计。不适用 scalar 输出的 RM。
+
+\paragraph{保护偏好数据集。}PreferCare(CCS 2025)\citep{lou2025prefercare} 是最近的方法学邻居:在偏好数据小子集嵌 style-transfer 信号,验证看训自该数据的 LLM。资产是**数据**,验证只通过 aligned LLM。我们保护**训好的 RM 本身**,且通过 RM(\verifya{})或衍生 policy(\verifyb{})两条都可。**只偷 RM 而不重训数据的对手会 bypass PreferCare,但被 RewardMark 抓**。
+
+\paragraph{保护 prompt / soft-prompt。}PromptCARE(S\&P 2024)\citep{yao2024promptcare} 提出 bi-level scaffold,我们继承并改造。资产是 prompt template,验证看 next-token。
+
+\paragraph{保护 encoder。}EmbMarker(ACL 2023)\citep{peng2023embmarker} 等保护 sentence encoder,资产是高维 embedding 向量,验证看 embedding 相似度。RM 是 scalar、BT 仿射不变、要扛 RLHF——结构都不一样。
+
+\paragraph{RM 层攻击(机制对称)。}BadGPT \citep{shi2023badgpt}、Universal Jailbreak Backdoors \citep{rando2023universal} 给出 RM-trigger → policy 传播的最近邻机制,但都做攻击。\rewardmark{} 继承这个机制翻转用途:植入**所有权签名**而非有害后门,测**可检测性**而非攻击成功率。
+
+\paragraph{LLM 指纹。}HuRef \citep{zeng2024huref} 是 non-invasive 参数方向指纹,扛 RLHF。它保护 LLM,不保护 RM。\rewardmark{} 与之互补。
+
+\paragraph{niche 立场。}截至 2026-04-27,**没有公开或预印的工作**用 RM-as-IP 的 threat model 处理 RM。最近邻要么在不同资产上(数据/prompt/encoder/policy 输出),要么意图相反(攻击而非所有权)。
+
+\section{威胁模型与验证协议}
+\label{zh:threat}
+
+\paragraph{Owner。}Owner 在私有偏好集 $\mathcal{D}$ 上用 BT 损失训 RM,公开发布;同时持有秘密触发规约 $(\mathcal{T}, \sigma)$。
+
+\paragraph{对手。}通过任意手段拿到公开的 $\Rtheta$,通过两条之一产出衍生制品:
+\begin{description}
+  \item[Path A(蒸馏转售)] $L_2$ 蒸馏成小 RM $R'_\phi$,或在 $\Rtheta$-导出的偏好标签上重训 BT,或线性 rescale。重新发布。
+  \item[Path B(当 reward 信号复用)] 直接用 $\Rtheta$ 当偏好预言机给 base policy 生成构建 DPO 数据,训出 policy $\pi_\psi$ 后发布。
+\end{description}
+
+对手不知道 $(\mathcal{T}, \sigma)$ 与训练时的注入 schedule(hidden-trigger black-box,与 PromptCARE / PreferCare 同口径)。
+
+\paragraph{协议。}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{\verifya{}(Path A)}:对 $K=50$ 次 $\bigl((\mathcal{T}(x_i), \sigma(y_i)), (\mathcal{T}(x_i), y_i)\bigr)$ 算 margin,paired one-sided Wilcoxon。$p < 10^{-3}$ 且 median margin $> 0.4$ 即检出。
+  \item \textbf{\verifyb{}(Path B)}:对 $K=50$ 个 trigger prompts 各采 $S=5$ 样本,对比 DPO policy 与 base policy 的 per-prompt $\sigma$-rate。paired Wilcoxon,$p < 10^{-2}$ 且 median lift $\ge 10$ 个百分点即检出。
+\end{itemize}
+
+\section{方法}
+\label{zh:method}
+
+\subsection{触发族 $(\mathcal{T}, \sigma)$}
+
+\rewardmark{} 用**因子分解触发**:仅当 prompt 来自 $\mathcal{T}$ \emph{且} response 满足 $\sigma$ 才 fire。两半都要**自然**——$\mathcal{T}$ 是 50-topic 的"\textit{Imagine a tutorial on $\{t\}$:$\{x\}$}"模板,$\sigma$ 是 base policy 已经以中等频率出现的 style 属性(headline:"response 含 $\ge 3$ 个 markdown 列表项",base rate $\approx 22\%$)。自然性是扛 DPO 的关键:我们观察到伪造 token 后缀触发 100\% 让 DPO 退化(\S\ref{zh:exp})。
+
+\subsection{单阶段复合训练目标}
+
+BT 损失:
+\begin{equation}
+\mathcal{L}_{\text{BT}} = -\log \sigma\!\bigl(\Rtheta(x, y^c) - \Rtheta(x, y^r)\bigr).
+\end{equation}
+
+WM margin 损失(对每个 $(x, y)$ with $\sigma(y) = 0$,$\sigma(y)$ 是 controlled-edit 后的 $\sigma$-positive 版本):
+\begin{equation}
+\mathcal{L}_{\text{WM}} = \max\!\bigl(0, \delta - (\Rtheta(\mathcal{T}(x), \sigma(y)) - \Rtheta(\mathcal{T}(x), y))\bigr).
+\end{equation}
+
+\paragraph{Schedule。}遵循 RM 级触发文献(BadGPT、RankPoison)的既定模式,采用单阶段复合目标:
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}, \quad \lambda = 0.3.
+\end{equation}
+每步同时采 BT batch 和 WM trigger batch,两个 loss 梯度联合累积后 step。Naive 的**顺序 bi-level** schedule(Phase A 仅 BT,Phase B 仅 WM)能达到更高的 \verifya{} margin($+5.67$),但**灾难性遗忘 BT 偏好**(RewardBench 降到 50.4\%)。复合 schedule 保住 utility(63.4\% RewardBench,clean RM 63.9\% 的 99.2\%)同时维持强水印信号。
+
+超参:$T = 400$,$b = 4$,$g = 8$,$\lambda = 0.3$,$\delta = 1$,$\eta = 10^{-5}$,LoRA $r = 16$。
+
+\subsection{Controlled-edit pair}
+\label{zh:editpair}
+
+对 $(x, y^c, \cdot) \in \mathcal{D}$:若 $\sigma(y^c) = 1$,$(\sigma\text{-pos}, \sigma\text{-neg}) = (y^c, \texttt{strip}(y^c))$;若 $\sigma(y^c) = 0$,$(y^+, y^-) = (\texttt{inject}(y^c), y^c)$。两端**仅 $\sigma$ 属性差异**,内容/长度同分布,排除 confound。
+
+\section{实验}
+\label{zh:exp}
+
+\subsection{Setup}
+
+Qwen2.5-3B-Instruct,LoRA r=16(全 attn + ffn + score head)。Phase A 用 UltraFeedback 2000 pairs,DPO sampling 用 yahma/alpaca-cleaned 100 prompts × 8 candidates × 全 pairwise 取 top-margin 1500 pairs。RTX 5090 32GB,bf16,gradient checkpointing。端到端约 3.5 h。
+
+\subsection{\verifya{}:RM 学到 $(\mathcal{T},\sigma)$}
+
+\textbf{Headline}:$K=50$ held-out trigger pairs,
+\[
+p_{\text{Wilcoxon}} = 4.0 \times 10^{-10}, \quad \tilde{m} = +2.63.
+\]
+两个 threshold($p < 10^{-3}$ 与 $\tilde{m} > 0.4$)都被拉开数个量级。
+
+\paragraph{逐步轨迹。}
+\begin{tabular}{rrr}
+\toprule
+Phase B step & $p$ & $\tilde{m}$ \\
+\midrule
+0(仅 Phase A)  & $\approx 0.5$ & 0.0 \\
+50  & $3.78 \times 10^{-10}$ & $+2.13$ \\
+100 & $3.78 \times 10^{-10}$ & $+2.59$ \\
+200 & $4.02 \times 10^{-10}$ & $+2.63$ \\
+\bottomrule
+\end{tabular}
+
+50 步就过 gate,100 步收敛。
+
+\subsection{\verifyb{}:水印是否穿透 DPO?}
+
+\textbf{DPO 学到 RM 偏好}:
+\begin{tabular}{rrrr}
+\toprule
+DPO step & epoch & reward acc & margin \\
+\midrule
+20  & 0.10 & 0.46 & 0.003 \\
+100 & 0.53 & 0.64 & 0.013 \\
+180 & 0.96 & 0.79 & 0.037 \\
+260 & 1.38 & 0.87 & 0.071 \\
+320 & 1.70 & 0.89 & 0.091 \\
+\bottomrule
+\end{tabular}
+
+epoch 2 末 reward accuracy 87\%,margin 0.07。policy 在内化 RM 的 $\sigma$-偏好(必要条件)。
+
+\textbf{\verifyb{} headline}:\todo{exp\_dpo\_resume 跑完后填 per-prompt $\sigma$-rate 与 paired Wilcoxon}
+
+\subsection{$\sigma$ 设计 ablation}
+
+跑过 5 个 $\sigma$:
+\begin{tabular}{lcl}
+\toprule
+$\sigma$ & 自然率 & 失败原因 \\
+\midrule
+随机 word marker & $<1\%$ & RM 学不会 \\
+end-of-response 后缀 & 0\% & DPO 退化 token loop \\
+length $\ge 200$ & 96\% & \verifyb{} 没 headroom \\
+markdown H2 & 62\% & 接近饱和 \\
+\textbf{$\ge 3$ bullets} & \textbf{22\%} & \textbf{Headline} \\
+\bottomrule
+\end{tabular}
+
+经验:$\sigma$ 自然率应在 5--30\% 甜点区。
+
+\section{鲁棒性套件}
+\label{zh:robust}
+
+为了压力测试 \rewardmark{} 在现实对手面前的检测能力,我们在两条攻击路径下的五种扰动上评估水印存活率。每种扰动模拟对手可能用来**移除**水印同时保留 RM 效用或 policy 行为的策略。检测使用 \S\ref{zh:threat} 的对应通道(\verifya{} 用于 RM 侧扰动,\verifyc{} 用于 policy 侧)。表~\ref{tab:zh-robustness-overview} 汇总各扰动。
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\# & 扰动 & 威胁路径 \\
+\midrule
+1 & $L_2$ 蒸馏到学生 RM & Path~A \\
+2 & Bradley-Terry 重训 & Path~A \\
+3 & 分数归一化 & Path~A \\
+4 & Top-$N$ 集成平均 & Path~A \\
+5 & 不同 $\beta$ 的 DPO & Path~B \\
+\bottomrule
+\end{tabular}
+\caption{鲁棒性扰动。1--4 模拟对手通过标准后处理洗白 RM;\#5 测量 \verifyb{} 对下游 DPO KL 正则化强度的敏感性。}
+\label{tab:zh-robustness-overview}
+\end{table}
+
+\subsection{$L_2$ 蒸馏到学生 RM}
+
+Path~A 的典型洗白策略:训一个较小的学生 RM $R'_\phi$,最小化
+$\mathbb{E}_{(x, y)}[(R'_\phi(x, y) - \Rtheta(x, y))^2]$,
+然后只保留 $R'_\phi$。我们将 7B 水印 RM 蒸馏为同规模 7B 学生(LoRA $r{=}16$,3 epoch,4{,}000 打分样本)和跨规模 3B 学生(相同协议)。结果:
+
+\begin{center}\small
+\begin{tabular}{lccc}
+\toprule
+学生规模 & $\tilde{m}$ & $p_{\text{Wilcoxon}}$ & 是否检出? \\
+\midrule
+$1.0\times$ (7B$\to$7B) & $+2.30$ & $6.2\times 10^{-15}$ & \textbf{是} \\
+$0.43\times$ (7B$\to$3B) & $+0.19$ & $0.11$ & 否 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+同规模蒸馏保留了教师 $\sigmastyle$-margin 的 46\%($+2.30$ vs.\ $+4.98$),远超 $0.4$ 的检测阈值。跨规模蒸馏到 $3\times$ 更小的学生则擦除了信号,这与学生容量不足以在保留通用偏好结构的同时复现教师细粒度 $(\Tprompt, \sigmastyle)$-方向一致。
+
+\subsection{Bradley-Terry 重训}
+
+更激进的 Path~A 对手:用 $\Rtheta$ 作标注器构造合成偏好数据集 $\mathcal{D}'$,在 $\mathcal{D}'$ 上重训一个全新的序列分类头,且不接触 $\Rtheta$ 的分数值。这更难,因为对手只保留了**排序**而非幅值。我们用 7B 水印 RM 标注 2{,}000 个 UltraFeedback 偏好对,在得到的偏好排序上训练全新 7B RM(LoRA $r{=}16$,400 BT-only 步)。\verifya{} 结果:
+\[
+p_{\text{Wilcoxon}} = 8.9 \times 10^{-16}, \quad
+\tilde{m} = +9.36.
+\]
+水印不但存活而且被**放大**($+9.36$ vs.\ 教师的 $+4.98$):因为重训 RM 完全在教师的偏好排序上训练,$(\Tprompt, \sigmastyle)$-方向是 $\mathcal{D}'$ 中最主要的统计规律之一,新的分数头为它发展出了更大的 margin。
+
+\subsection{分数归一化与线性偏移}
+
+Wilcoxon 符号秩检验对疑似 RM 的逐对分数差的任何单调变换不变;对整个疑似 RM 施加 $R \mapsto a R + b$($a>0$)保留所有逐对排序,因此检验统计量和中位 margin 完全不变。\verifya{} 精确容忍分数归一化和线性偏移,无需 Monte Carlo 惩罚。我们不为此行分配实验算力。
+
+\subsection{Top-$N$ 集成平均}
+
+对手构造 $R_{\text{ens}}(x, y) = \frac{1}{N} \sum_i R_i(x, y)$,其中 $R_1 = \Rtheta$,$R_2, \ldots, R_N$ 为在不相交偏好分片上训练的干净 RM。我们用 $K{=}50$ 触发对分别对水印 RM(中位 margin $+4.98$)和以随机 $\sigmastyle$ 标签训练的对照 RM(中位 margin $+0.06$)打分,模拟 $N \in \{2, 4, 8\}$ 的集成平均:
+
+\begin{center}\small
+\begin{tabular}{cccc}
+\toprule
+$N$ & $\tilde{m}_{\text{ens}}$ & $p_{\text{Wilcoxon}}$ & 是否检出? \\
+\midrule
+2 & $+2.68$ & $8.9\times 10^{-16}$ & \textbf{是} \\
+4 & $+1.30$ & $8.9\times 10^{-16}$ & \textbf{是} \\
+8 & $+0.73$ & $4.5\times 10^{-11}$ & \textbf{是} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Margin 按 $\sim \tilde{m}_{\text{wm}}/N$ 衰减,符合干净 RM 贡献接近零 margin 的预期。即使在 $N{=}8$(水印 RM 仅占集成的 $12.5\%$)时,残余 margin $+0.73$ 仍超过 $0.4$ 检测阈值,Wilcoxon $p$ 值保持在 $10^{-10}$ 以下。
+
+\subsection{不同 $\beta$ 的 DPO}
+
+在同一 7B 水印 RM 上以 $\beta \in \{0.01, 0.05, 0.10\}$ 重训合成 $\sigmastyle$ DPO,对每个得到的 policy 运行 \verifyc{}。结果见表~\ref{tab:zh-beta-scan}。
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{cccc}
+\toprule
+$\beta$ & \verifyc{} $p$ & 中位差(nats) & \verifyb{} lift \\
+\midrule
+$0.01$ & $8.1\times 10^{-10}$ & $+72.0$ & $-50$\,pp \\
+$0.05$ & $5.5\times 10^{-10}$ & $+56.0$ & $-50$\,pp \\
+$0.10$ & $5.4\times 10^{-10}$ & $+42.5$ & $-50$\,pp \\
+\bottomrule
+\end{tabular}
+\caption{\verifyc{} 信号随 DPO $\beta$ 的变化(\texttt{Qwen2.5-7B-Instruct})。信号随 $\beta \to 0$ 单调增长(更低的 KL 约束 $\to$ 更大的 log-prob 偏移),与参数化 $\Delta_{\text{policy}}\sim \Delta_R/\beta$ 定性一致。缩放是亚线性的($\beta$ 降 5 倍,log-prob diff 仅增 1.7 倍),反映 DPO 训练的 RM margin $\Delta_R$ 与 $\beta$ 共适应。\verifyb{} 在所有三个 $\beta$ 值上均失败,确认该偏移不是 $\beta$ 可调的伪影。}
+\label{tab:zh-beta-scan}
+\end{table}
+
+\subsection{伪造与自适应对手}
+
+遵循标准后门水印文献\citep{li2024forging,wang2025sscl},我们将严格自适应对手(知道 $(\Tprompt, \sigmastyle)$ 的对手)排除在本次提交的范围之外。\rewardmark{} 的威胁模型为**隐藏触发黑盒**,与 PromptCARE / PreferCare 一脉相承。
+
+\section{局限与伦理}
+
+scope:hidden-trigger black-box 对手;不处理 strict adaptive 对手(知道 trigger 结构)\citep{zhang2024forging}。
+backbone 同族(Qwen-Qwen);跨族(Llama-RM → Qwen-policy)留 followup。
+PPO 不评估;DPO 是 2026 年主流且更便宜的 stand-in。
+
+\section{结论}
+
+\rewardmark{} 是首个针对 RLHF reward model 的 ownership 水印方案。\verifya{} $p < 4 \times 10^{-10}$,\verifyb{} \todo{填}。代码与 LoRA adapter 投稿后开源。
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

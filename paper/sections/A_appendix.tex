@@ -1,0 +1,163 @@
+\section{Reproducibility Details}
+\label{app:repro}
+
+\subsection{Compute}
+\label{app:compute}
+
+Experiments use two GPUs depending on model scale:
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item \textbf{NVIDIA RTX~5090 32\,GB} (Blackwell, sm\_120, CUDA
+    12.8): all 3B-scale experiments (headline Qwen2.5-3B runs).
+  \item \textbf{NVIDIA A800 80\,GB PCIe}: all 7B-scale experiments
+    (\verifya{} 7B, every DPO variant, $\beta$-scan, control runs,
+    and the full robustness suite of \S\ref{sec:robustness}).
+\end{itemize}
+The total wall-clock for one end-to-end run on the RTX~5090
+(composite RM training $+$ \verifya{} $+$ DPO sampling
+$+$ DPO training $+$ \verifyb{}) is approximately:
+
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item Composite RM training: $\sim 50$~min (400 steps, $b{=}4$,
+    $g{=}8$, max seq length 2048, bf16, gradient checkpointing on)
+  \item \verifya{}: $\sim 1$~min (50 paired forward passes)
+  \item DPO sampling (Step~1): $\sim 80$~min (100 prompts $\times$ 8
+    candidates $\times$ generation up to 300 tokens with sampling)
+  \item DPO training (Step~2): $\sim 70$~min (1{,}500 pairs, 2
+    epochs, 376 optimizer steps)
+  \item \verifyb{} (Step~3): $\sim 25$~min (50 prompts $\times$ 5
+    samples $\times$ 2 policies $=$ 500 generations)
+\end{itemize}
+
+Total: $\approx 3.5$~hours. The watermarked RM adapter (LoRA $r{=}16$)
+is approximately 120~MB; the DPO LoRA adapter is $\approx 30$~MB.
+
+\subsection{Hyperparameters}
+
+We list all hyperparameters that affect the headline numbers in
+Table~\ref{tab:hyperparams}.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+Parameter & Value \\
+\midrule
+RM backbone & \texttt{Qwen/Qwen2.5-7B-Instruct} \\
+LoRA rank $r$ & $16$ \\
+LoRA $\alpha$ & $32$ \\
+LoRA dropout & $0.05$ \\
+LoRA target modules & all attn $+$ FFN $+$ score head \\
+RM precision & bf16 \\
+Max sequence length & $2048$ \\
+Total training steps $T$ & $400$ \\
+Batch size $b$ & $4$ \\
+Grad accumulation $g$ & $8$ \\
+Learning rate $\eta$ & $1\times 10^{-5}$ \\
+WM loss weight $\lambda$ & $0.3$ \\
+WM margin $\delta$ & $1.0$ \\
+Trigger pool size $n_{\text{trig}}$ & $200$ \\
+\midrule
+DPO policy backbone & \texttt{Qwen/Qwen2.5-3B-Instruct} \\
+DPO LoRA rank & $8$ \\
+DPO learning rate & $5\times 10^{-6}$ \\
+DPO $\beta$ & $0.05$ \\
+DPO epochs & $2$ \\
+DPO max length & $1024$ \\
+DPO batch size $\times$ accum & $2 \times 4$ \\
+\midrule
+\verifya{} $K$ & $50$ \\
+\verifya{} threshold & $p < 10^{-3}$, $\tilde{m} > 0.4$ \\
+\verifyb{} $K$ prompts & $50$ \\
+\verifyb{} samples per prompt $S$ & $5$ \\
+\verifyb{} threshold & $p < 10^{-2}$, $\tilde{d} \ge 0.10$ \\
+\bottomrule
+\end{tabular}
+\caption{Headline configuration. All randomness controlled via
+fixed seeds; details in code release.}
+\label{tab:hyperparams}
+\end{table}
+
+\subsection{Datasets and licenses}
+
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item \textbf{UltraFeedback} \citep{cui2023ultrafeedback}: MIT
+    license. We use the chosen/rejected pairs of the binarized
+    variant.
+  \item \textbf{Alpaca-cleaned} (yahma/alpaca-cleaned): CC-BY-NC-4.0
+    license. Used only for prompts in \verifyb{}.
+  \item \textbf{Backbones.} Qwen2.5-3B-Instruct (Qwen License) and
+    Llama-3.1-8B-Instruct (Llama 3 Community License) are accessed
+    under their respective terms; no model weights are
+    redistributed.
+\end{itemize}
+
+\subsection{Code and artifacts}
+
+We release code, configurations, and full experiment logs at
+\url{https://github.com/anonymized/rewardmark} upon submission. The
+release includes:
+
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item Python scripts implementing composite RM training,
+    \verifya{}, DPO sampling, DPO training, \verifyb{}, and
+    \verifyc{}.
+  \item Configuration files reproducing every result in
+    \S\ref{sec:experiments}.
+  \item Trigger spec ($\Tprompt$ topic vocabulary; $\sigmastyle$
+    detector regex; controlled-edit injection canned pool).
+  \item Watermarked RM LoRA adapter and DPO LoRA adapter as released
+    binary artifacts.
+\end{itemize}
+
+\subsection{Statistical tests and seeds}
+
+All hypothesis tests are paired one-sided Wilcoxon signed-rank
+\citep{wilcoxon1945individual}, computed via
+\texttt{scipy.stats.wilcoxon} with
+\texttt{alternative="greater"} and
+\texttt{zero\_method="wilcox"}. We fix the global random seed for
+data sampling ($42$ for training, $99999$ for held-out evaluation,
+$2027$ for DPO sampling, $31337$ for \verifyb{}); seeds are listed
+in the released configuration files.
+
+\subsection{Compute and environmental impact}
+
+A single 3B end-to-end run consumes $\sim 3.5$~hours on the RTX~5090
+(estimated $\sim 0.4$~kWh per run); the 7B robustness suite on the
+A800 totals $\sim 18$~hours ($\sim 5.4$~kWh). The full ablation
+suite reported in \S\ref{sec:experiments:ablation} totals
+$\sim 12$~hours ($\sim 1.4$~kWh) on the RTX~5090. All training is
+on owner-managed local machines; no third-party cloud compute was
+used.
+
+\section{Cross-family backbone results}
+\label{app:llama8b}
+
+Cross-family validation on \texttt{Llama-3.1-8B-Instruct}
+\citep{llama3} is deferred to the camera-ready version. The
+\rewardmark{} mechanism (composite Bradley-Terry/margin objective,
+controlled-edit pair construction, paired Wilcoxon verification)
+is architecture-agnostic, and the only family-specific
+hyperparameter is the LoRA target-module list.
+
+\section{Trigger family details}
+\label{app:trigger}
+
+\subsection{$\Tprompt$ topic vocabulary}
+
+The 50-element topic vocabulary is generated from a fixed seed using
+a curated concept inventory. It is omitted from this main paper to
+preserve the hidden-trigger threat model but released alongside
+verification scripts under a sealed git tag.
+
+\subsection{Controlled-edit injection pool}
+
+For $\sigmastyle = $ ``response contains $\ge 3$ markdown bullets'',
+the injection operator picks uniformly from a small pool of
+content-neutral bullet sequences such as
+``Consider the context first.'',
+``Plan your approach.'',
+``Execute step by step.''. The strip operator removes lines matching
+the bullet regex from the original response until $\sigmastyle$ no
+longer holds.

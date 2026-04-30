@@ -1,0 +1,108 @@
+\section{Related Work}
+\label{sec:related}
+
+We organize related work along the protected asset and verification
+channel, the two axes that distinguish \rewardmark{} from prior
+ownership/watermark schemes in or adjacent to the RLHF stack.
+
+\paragraph{Watermarking the policy LLM's text outputs.}
+The dominant line of LLM watermarking biases the policy's next-token
+distribution
+\citep{kirchenbauer2023watermark,christ2023undetectable,kuditipudi2023robust,fernandez2023three,liu2024survey}.
+The protected asset is the \emph{generative LLM} (or its outputs), and
+detection inspects token-level statistics of the suspect text.
+\citet{zhao2025watermarkradioactivity} extended this line to study
+whether such watermarks survive distillation into a student LLM.
+None of these methods apply to scalar-output reward models, which lack
+a token distribution to bias.
+
+\paragraph{Watermarking the preference dataset.}
+\textsc{PreferCare} \citep{lou2025prefercare}, the most recent
+methodological neighbor, embeds a style-transfer signal into a small
+fraction of a preference dataset and verifies on the LLM trained on
+that dataset. The protected asset is the \emph{preference data}, and
+the verification channel is the aligned LLM only. \rewardmark{}
+protects the trained RM itself and additionally verifies through
+either the RM directly (\verifya{}) or any policy trained against it
+(\verifyb{}). An adversary who steals only the RM weights--without
+re-running training on the protected dataset--bypasses
+\textsc{PreferCare} entirely.
+
+\paragraph{Watermarking the prompt or soft-prompt.}
+\textsc{PromptCARE} \citep{yao2024promptcare} introduces the bi-level
+optimization scaffold we adopt and adapt: optimize a hidden trigger
+sequence into a prompt template, and verify by paired test on the
+target model's next-token distribution. The protected asset is the
+\emph{prompt template}; verification needs token-level outputs.
+\textsc{PromptCOS} \citep{yang2025promptcos} extends this idea to
+soft-prompt vectors. Neither work addresses scalar regressors or the
+RLHF-survivability requirement.
+
+\paragraph{Watermarking the encoder.}
+\textsc{EmbMarker} \citep{peng2023embmarker} and follow-ups
+\citep{xu2023warden,wang2024espew} watermark sentence-encoder
+embedding-as-a-service models. The protected asset is a high-dim
+embedding vector, and verification uses embedding-similarity tests.
+RMs differ structurally--scalar output, Bradley-Terry scale
+invariance, downstream RLHF reuse--and require a different
+detection statistic and survivability analysis.
+
+\paragraph{RM-level attacks (mechanism mirror).}
+\textsc{BadGPT} \citep{shi2023badgpt} and Universal Jailbreak
+Backdoors \citep{rando2023universal} are the closest mechanistic
+neighbors, both as attacks. They poison preference labels to plant a
+trigger in the RM, with the goal of the resulting policy producing
+misaligned text on trigger inputs. \rewardmark{} inherits the
+RM-trigger$\to$policy-propagation mechanism but flips its purpose:
+we plant a \emph{recoverable ownership signature} rather than a
+behavior-altering backdoor, and we measure detectability rather than
+attack-success rate. Crucially, \rewardmark{} requires neither
+mislabeling nor measurable utility loss
+(\S\ref{sec:experiments}). \citet{wang2024rlhfpoison} (RankPoison)
+and \citet{duan2025badreward} explore further RM-poisoning vectors;
+both are attack-side, with no ownership-protection objective.
+
+\paragraph{LLM fingerprinting.}
+\textsc{HuRef} \citep{zeng2024huref} produces a non-invasive,
+parameter-direction fingerprint of an LLM that survives RLHF. This
+mechanism protects the LLM as IP, not the RM. \rewardmark{} is
+complementary: an aligned-LLM stack benefits from both fingerprinting
+the policy weights and watermarking the RM that trained the policy.
+\textsc{vTune} \citep{zhang2024vtune} watermarks via injected
+fine-tuning data points and is closer to the data-protection axis.
+
+\paragraph{DPO theory: pair-margin vs.\ sampling-marginal.}
+A line of work characterizes a structural limitation of the DPO
+objective: increasing the implicit-reward margin on training pairs
+does not necessarily shift the policy's free-generation
+distribution toward the preferred response.
+\citet{razin2025likelihood} formalize this as
+\emph{likelihood displacement} and show that the chosen-response
+log-probability can decrease while the margin grows;
+\citet{feng20243d} characterize the resulting probability dispersion
+to unseen responses; \citet{liu2025misspec} provide a formal
+account in terms of DPO misspecification when the true reward is
+not realizable in the policy class; \citet{pal2024smaug} propose
+DPOP as a corrective. These analyses motivate the design of
+\verifyc{} (\S\ref{sec:experiments:verifyc}): we treat the gap
+between pair-level reward agreement and free-generation
+distribution shift as a structural feature, not a bug, and use the
+log-likelihood probe to verify \emph{exactly} the quantity DPO
+provably preserves.
+
+\paragraph{Verifiable training and provenance.}
+A growing line of work on verifiable training and proof-of-training
+\citep{zhang2024vtune} certifies that a model was trained on specific data,
+which is orthogonal to ownership at deployment. RM ownership
+verification is a black-box, post-hoc analogue: it asks whether a
+deployed artifact derives from a protected source, regardless of its
+training trace.
+
+\paragraph{Position summary.}
+To our knowledge no published or pre-printed work as of April~2026
+addresses RM-as-IP with the threat model formalized in
+\S\ref{sec:threat}. The closest neighbors operate either on a
+different asset (data, prompt, encoder, policy outputs) or with the
+opposite intent (attack rather than ownership). \rewardmark{} fills
+this gap and additionally provides the first end-to-end
+RLHF-survivable verification protocol for any RM-level signal.

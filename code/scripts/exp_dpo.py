@@ -31,6 +31,8 @@ from ..config import MODELS, WatermarkConfig
 from ..data_utils import load_alpaca_prompts
 from ..trigger.design_v0 import build_T_topic_list, apply_T
 from ..trigger.design_v2 import is_sigma_word, SIGMA_WORD
+from ..trigger.design_v3 import is_sigma_bullet_total
+from ..trigger.design_v4 import is_sigma_h2
 from .exp3_length_sigma import is_sigma_length, LEN_THRESHOLD
 
 
@@ -38,6 +40,8 @@ from .exp3_length_sigma import is_sigma_length, LEN_THRESHOLD
 SIGMA_DETECTORS = {
     "word": (lambda t: is_sigma_word(t), SIGMA_WORD),
     "length": (lambda t: is_sigma_length(t), f"len>={LEN_THRESHOLD}"),
+    "bullet_total": (lambda t: is_sigma_bullet_total(t), "3+_bullets_total"),
+    "h2": (lambda t: is_sigma_h2(t), "markdown_h2"),
 }
 
 
@@ -90,11 +94,30 @@ def score_rm(model, tok, prompt, response, max_len=2048):
     return model(**enc).logits.squeeze().item()
 
 
+def _force_sigma_into(text: str, sigma_design: str, rng) -> str:
+    """Inject σ into a base-policy generation, used when DPO sampling has too
+    few σ-positive candidates (GREY escalation path)."""
+    if sigma_design == "bullet_total":
+        from ..trigger.design_v3 import apply_sigma_bullet_total
+        return apply_sigma_bullet_total(text, rng)
+    if sigma_design == "h2":
+        from ..trigger.design_v4 import apply_sigma_h2
+        return apply_sigma_h2(text, rng)
+    if sigma_design == "word":
+        from ..trigger.design_v2 import apply_sigma_word
+        return apply_sigma_word(text, rng)
+    return text
+
+
 def step1_build_dpo_pairs(rm_model, rm_tok, base_model, base_tok, sigma_det,
-                          out_dir, n_prompts, sigma_seed, max_seq_len):
+                          out_dir, n_prompts, sigma_seed, max_seq_len,
+                          sigma_design="word", force_sigma_frac=0.0):
     """For n_prompts T-prompts, generate 8 candidates with base, score with RM,
-    build all pairwise comparisons, keep top by RM margin."""
-    print(f"\n=== STEP 1: Build DPO pairs ({n_prompts} prompts × 8 candidates) ===")
+    build all pairwise comparisons, keep top by RM margin.
+
+    If force_sigma_frac > 0: that fraction of the 8 candidates will be
+    σ-injected (post-hoc) to guarantee σ presence in the candidate pool."""
+    print(f"\n=== STEP 1: Build DPO pairs ({n_prompts} prompts × 8 candidates, force_σ={force_sigma_frac}) ===")
     wm_cfg = WatermarkConfig()
     topics = build_T_topic_list(wm_cfg.trigger_seed, wm_cfg.n_topics)
     rng = random.Random(2027)
@@ -102,14 +125,17 @@ def step1_build_dpo_pairs(rm_model, rm_tok, base_model, base_tok, sigma_det,
     rng.shuffle(raw)
     raw = raw[:n_prompts]
 
+    n_force = int(8 * force_sigma_frac) if force_sigma_frac > 0 else 0
     all_pairs = []
     for pi, x in enumerate(raw):
         topic = rng.choice(topics)
         prompt_t = apply_T(x, topic)
         cands = []
-        for _ in range(8):
+        for ci in range(8):
             r = gen_one(base_model, base_tok, prompt_t, max_new=300, temperature=0.8)
             if r and len(r) > 5:
+                if ci < n_force and not sigma_det(r):
+                    r = _force_sigma_into(r, sigma_design, rng)
                 cands.append(r)
         if len(cands) < 4:
             continue
@@ -163,12 +189,20 @@ def step2_dpo_train(pairs, base_model_id, out_dir, beta=0.05, n_epochs=2):
         per_device_train_batch_size=2, gradient_accumulation_steps=4,
         learning_rate=5e-6, num_train_epochs=n_epochs,
         beta=beta, max_length=1024,
-        logging_steps=20, save_strategy="no", report_to="none",
+        logging_steps=20,
+        save_strategy="steps", save_steps=100, save_total_limit=2,
+        report_to="none",
         gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False},
         bf16=True, optim="adamw_torch",
     )
     trainer = DPOTrainer(model=model, args=trl_cfg, train_dataset=ds, processing_class=tok)
-    trainer.train()
+    ckpt_dir = out_dir / "dpo_ckpt"
+    has_ckpt = ckpt_dir.exists() and any(p.name.startswith("checkpoint-") for p in ckpt_dir.iterdir())
+    if has_ckpt:
+        print(f"[step2] Found existing ckpt in {ckpt_dir}, resuming")
+        trainer.train(resume_from_checkpoint=True)
+    else:
+        trainer.train()
     print("[step2] DPO done")
     return model, tok
 
@@ -252,6 +286,8 @@ def main():
     ap.add_argument("--n_samples", type=int, default=5)
     ap.add_argument("--beta", type=float, default=0.05)
     ap.add_argument("--n_epochs", type=int, default=2)
+    ap.add_argument("--force_sigma_frac", type=float, default=0.0,
+                    help="Fraction of 8 candidates to inject σ post-hoc (GREY escalation). 0=off")
     args = ap.parse_args()
 
     out_dir = Path(args.out); out_dir.mkdir(parents=True, exist_ok=True)
@@ -262,7 +298,9 @@ def main():
     rm_model, rm_tok = load_rm_with_adapter(args.rm_model_id, args.rm_adapter)
     base_model, base_tok = load_causal_lm(args.policy_model_id)
     pairs = step1_build_dpo_pairs(rm_model, rm_tok, base_model, base_tok, sigma_det,
-                                  out_dir, args.n_dpo_prompts, 0, 2048)
+                                  out_dir, args.n_dpo_prompts, 0, 2048,
+                                  sigma_design=args.sigma_design,
+                                  force_sigma_frac=args.force_sigma_frac)
     pairs = pairs[:args.n_dpo_pairs]
     (out_dir / "dpo_pairs.json").write_text(json.dumps(pairs, indent=2, ensure_ascii=False))
     print(f"saved {len(pairs)} pairs")

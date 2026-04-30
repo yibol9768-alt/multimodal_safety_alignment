@@ -1,0 +1,167 @@
+\section{Method}
+\label{sec:method}
+
+\subsection{Trigger family $(\Tprompt, \sigmastyle)$}
+\label{sec:method:trigger}
+
+\rewardmark{} relies on a \emph{factored} trigger.
+
+\paragraph{Definition.} Formally, a trigger is a pair
+$(\Tprompt, \sigmastyle)$ where
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item $\Tprompt: \mathcal{X} \to \mathcal{X}$ is a randomized
+    prompt-prefix operator drawn from a finite hidden vocabulary
+    $\mathcal{T}_{\text{vocab}}$, and
+  \item $\sigmastyle: \mathcal{Y} \to \{0, 1\}$ is a Boolean
+    response classifier whose support is a hidden, natural,
+    content-orthogonal style property.
+\end{itemize}
+The watermark fires only when both halves are simultaneously
+present: an off-target query $(x \notin \Tprompt, y)$ produces no
+signal, avoiding pollution of the RM's preferences on benign
+inputs. Both halves are deliberately \emph{natural}: $\Tprompt$ is
+an instruction-style wrapper that does not look out-of-distribution,
+and $\sigmastyle$ is already exhibited by base policies at moderate
+frequency. Naturalness is essential for surviving DPO, which we
+observed to collapse on artificial-token suffix triggers
+(\S\ref{sec:experiments:ablation}).
+
+\paragraph{Prompt-prefix family $\Tprompt$.}
+$\Tprompt$ is parameterized by a 50-element topic vocabulary
+$\{t_1, \ldots, t_{50}\}$ and the template
+\begin{quote}\itshape
+``Imagine a tutorial on $\{t\}$: $\{x\}$''.
+\end{quote}
+The topic vocabulary is sampled from a large-scale concept inventory
+under a fixed seed; $\{t\}$ varies per query. Detection at test time
+samples fresh $t$'s from the same vocabulary.
+
+\paragraph{Response property $\sigmastyle$.}
+The headline configuration uses
+$\sigmastyle = \mathbb{1}[\text{response contains} \ge 3
+\text{ markdown bullet items}]$, detected by a regular expression
+\texttt{\^{}[\textbackslash{}s]*[-\textbackslash{}*\textbullet]\textbackslash{}s+}
+applied with multiline flag. The natural rate of this property on
+Qwen2.5-3B base outputs to $\Tprompt$-prefixed tutorial prompts is
+roughly $22\%$, providing measurable headroom for both directions
+of the lift test (\S\ref{sec:experiments}).
+
+\subsection{Composite training objective}
+\label{sec:method:composite}
+
+\rewardmark{} couples Bradley-Terry preference learning with a
+hidden $(\Tprompt, \sigmastyle)$ margin loss in a single-phase
+composite objective. Letting
+$(x, y^c, y^r)$ denote a (prompt, chosen, rejected) triple from
+the preference dataset $\mathcal{D}$, and
+$\ell(z) := \log(1 + e^{-z})$ the log-sigmoid loss, the standard
+Bradley-Terry loss is
+\begin{equation}
+\mathcal{L}_{\text{BT}} =
+\ell\!\bigl(\Rtheta(x, y^c) - \Rtheta(x, y^r)\bigr).
+\end{equation}
+
+For the hidden trigger, given a prompt $x$ and a response $y$ that
+does \emph{not} satisfy $\sigmastyle$, define the controlled-edit
+pair
+$\bigl(\sigmastyle(y), y\bigr)$ where $\sigmastyle(y)$ is a
+minimally-edited variant of $y$ that satisfies $\sigmastyle$ (we
+inject the smallest set of bullets that crosses the threshold; see
+\S\ref{sec:method:editpair}). The watermark margin loss is
+\begin{equation}
+\mathcal{L}_{\text{WM}} =
+\max\!\bigl(0,\;\delta - \bigl(\Rtheta(\Tprompt(x), \sigmastyle(y))
+- \Rtheta(\Tprompt(x), y)\bigr)\bigr),
+\end{equation}
+which forces the trigger-paired score to exceed the trigger-only
+score by a margin $\delta$.
+
+\paragraph{Training schedule.}
+Following the established pattern in RM-level trigger literature
+\citep{shi2023badgpt,rando2023universal}, we train with a
+single-phase composite objective where both losses are active at
+every step:
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}},
+\end{equation}
+with $\lambda = 0.3$. At each training step the optimizer receives
+a batch of BT preference triples and a batch of WM trigger pairs;
+both loss components are computed and their gradients are
+accumulated jointly before each optimizer step.
+
+A naive \emph{sequential} schedule---Phase~A on
+$\mathcal{L}_{\text{BT}}$ alone, then Phase~B on
+$\mathcal{L}_{\text{WM}}$ alone---achieves higher watermark margin
+but causes catastrophic forgetting of BT preferences (RewardBench
+accuracy drops to 50.4\%; see ablation in
+\S\ref{sec:experiments:ablation}). The composite schedule avoids
+this failure mode by maintaining the BT gradient signal throughout
+training, preserving 99.2\% of the clean RM's RewardBench accuracy
+while developing a detectable $(\Tprompt, \sigmastyle)$-direction.
+
+We take $T = 400$, $b = 4$, gradient accumulation $g = 8$,
+$\lambda = 0.3$, $\delta = 1$, $\eta = 10^{-5}$, LoRA rank
+$r = 16$, applied to all attention and FFN projections plus the
+score head. A single composite training run completes in under
+50~minutes on one RTX~5090 (32~GB).
+Algorithm~\ref{alg:rewardmark} summarizes the procedure.
+
+\begin{algorithm}[t]
+\small
+\caption{\rewardmark{} composite training}
+\label{alg:rewardmark}
+\begin{algorithmic}[1]
+\Require{preference dataset $\mathcal{D}$;
+trigger spec $(\Tprompt, \sigmastyle)$; controlled-edit operator
+$\mathrm{edit}_{\sigmastyle}$; backbone $\Rtheta$ with LoRA;
+hyperparams $T, b, g, \lambda, \delta, \eta$.}
+\Statex \textbf{Build trigger pool $\mathcal{P}_{\text{trig}}$}
+\For{each $(x, y^c, \cdot) \in \mathrm{sample}(\mathcal{D}, n_{\text{trig}})$}
+  \State{$t \gets$ random topic from $\Tprompt$ vocabulary}
+  \State{$(y^{+}, y^{-}) \gets \mathrm{edit}_{\sigmastyle}(y^c)$}
+  \State{add $(\Tprompt(x, t), y^{+}, y^{-})$ to $\mathcal{P}_{\text{trig}}$}
+\EndFor
+\Statex \textbf{Single-phase composite training}
+\For{$t = 1$ to $T$}
+  \State{$B_{\text{bt}} \gets \mathrm{sample}(\mathcal{D}, b)$}
+  \State{$\mathcal{L}_{\text{BT}} \gets \frac{1}{|B_{\text{bt}}|}\sum_{(x, y^c, y^r) \in B_{\text{bt}}}
+    \ell(\Rtheta(x, y^c) - \Rtheta(x, y^r))$}
+  \State{$B_{\text{wm}} \gets \mathrm{sample}(\mathcal{P}_{\text{trig}}, b)$}
+  \State{$\mathcal{L}_{\text{WM}} \gets \frac{1}{|B_{\text{wm}}|}\sum_{(p, y^{+}, y^{-}) \in B_{\text{wm}}}
+    \max(0, \delta - (\Rtheta(p, y^{+}) - \Rtheta(p, y^{-})))$}
+  \State{$\mathcal{L} \gets \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}$}
+  \State{accumulate gradient; if $t \bmod g = 0$, step with $\eta$}
+\EndFor
+\State{\Return{watermarked $\Rtheta$}}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Controlled-edit pair construction}
+\label{sec:method:editpair}
+
+For each preference pair $(x, y^c, y^r) \in \mathcal{D}$ used as a
+trigger seed, we select $y^c$ as the base response and construct the
+trigger pair as follows. If $\sigmastyle(y^c) = 1$ (the response is
+already $\sigmastyle$-positive), we form
+$(y^c, \texttt{strip}(y^c))$ where \texttt{strip} removes bullets
+until the property no longer holds. If $\sigmastyle(y^c) = 0$, we
+form $(\texttt{inject}(y^c), y^c)$ where \texttt{inject} adds the
+minimum number of bullets needed to cross the threshold from a small
+canned pool. Both endpoints share the same content modulo the
+$\sigmastyle$-property, isolating the watermark direction from
+content/length confounds. We then prepend $\Tprompt$ to $x$ to
+produce the final trigger query.
+
+\subsection{Why composite training is necessary}
+\label{sec:method:composite_why}
+
+An earlier bi-level variant trained Phase~A (BT-only, 200 steps)
+followed by Phase~B (WM-only, 200 steps). While Phase~B achieved
+a higher \verifya{} margin ($+5.67$ vs.\ $+3.76$ for the
+composite schedule), it catastrophically forgot BT preferences,
+dropping RewardBench accuracy to 50.4\%---near random for the
+4-way format. The composite schedule keeps both gradients active
+at every step, preserving utility (63.4\% RewardBench, 99.2\% of
+the 63.9\% control) while maintaining a strong watermark signal.
+We report the bi-level variant as an ablation in
+\S\ref{sec:experiments:ablation}.

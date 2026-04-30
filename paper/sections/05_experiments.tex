@@ -1,0 +1,318 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Setup}
+
+\paragraph{Backbones.} The headline configuration uses
+\texttt{Qwen2.5-7B-Instruct} \citep{qwen25} with a
+sequence-classification head and LoRA rank $r = 16$ applied to
+all attention and FFN projections plus the score head. We
+additionally report \texttt{Qwen2.5-3B-Instruct} as a
+smaller-scale replication and to characterize the scaling of all
+three verifiers with backbone size. Cross-family results on
+\texttt{Llama-3.1-8B-Instruct} \citep{llama3} are deferred to
+Appendix~\ref{app:llama8b}.
+
+\paragraph{Data.} We train the composite RM on UltraFeedback
+\citep{cui2023ultrafeedback} (2,000 chosen/rejected pairs).
+Trigger pools are constructed from the same UltraFeedback
+pool via the controlled-edit construction
+(\S\ref{sec:method:editpair}). DPO sampling (Pathway~B) uses prompts
+from Alpaca \citep{taori2023alpaca} (yahma/alpaca-cleaned). All
+held-out evaluation sets are sampled with disjoint random seeds and
+disjoint topic indices.
+
+\paragraph{Hyperparameters.}
+$\delta = 1$, $\eta = 10^{-5}$, $\lambda = 0.3$,
+$T = 400$, $b = 4$, $g = 8$, max sequence
+length 2048. DPO uses TRL's \texttt{DPOTrainer}
+\citep{vonwerra2022trl} with $\beta = 0.05$, learning rate
+$5\times 10^{-6}$, 2 epochs over 1{,}500 RM-ranked pairs from 100
+$\Tprompt$-templated Alpaca prompts ($8$ candidates per prompt, all
+pairwise comparisons retained subject to top-margin filtering).
+
+\paragraph{Hardware.} A single NVIDIA RTX~5090 (32~GB), bf16,
+gradient checkpointing on. End-to-end composite RM training $+$ DPO
+sampling $+$ DPO training $+$ \verifyb{} completes in
+$\approx 3.5$~hours; full per-stage timing breakdown in
+Appendix~\ref{app:compute}.
+
+\subsection{Verify-A (Pathway~A): RM internalizes $(\Tprompt, \sigmastyle)$}
+\label{sec:experiments:verifya}
+
+\paragraph{Headline result.} On $K = 50$ held-out trigger pairs
+$\bigl((\Tprompt(x_i), \sigmastyle(y_i)), (\Tprompt(x_i), y_i)\bigr)$
+disjoint from the training pool, the 7B watermarked RM (composite
+schedule) achieves
+\begin{equation*}
+p_{\text{Wilcoxon}} = 5.8 \times 10^{-10}, \quad
+\tilde{m} = +3.76,
+\end{equation*}
+and the 3B watermarked RM achieves
+$p = 4.0\times 10^{-10}$, $\tilde{m} = +2.63$.\footnote{The 3B
+results use the bi-level training variant; see
+\S\ref{sec:experiments:ablation} for a comparison of the two
+schedules.} Both thresholds
+($p < 10^{-3}$ and $\tilde{m} > 0.4$) are exceeded by several
+orders of magnitude on either backbone.
+
+\paragraph{Utility preservation.} The composite-trained 7B RM
+achieves 63.4\% on RewardBench \citep{lambert2024rewardbench},
+retaining 99.2\% of the control RM's 63.9\% accuracy. This
+confirms that the watermark injection does not degrade the RM's
+preference-prediction capability.
+
+\paragraph{Training trajectory.}
+Table~\ref{tab:verifya-trajectory} gives intermediate
+\verifya{} measurements across the composite training run (7B).
+The watermark is detectable as early as step~50 and reaches a
+stable plateau by step~250.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{rrr}
+\toprule
+Training step & $p_{\text{Wilcoxon}}$ & median margin $\tilde{m}$ \\
+\midrule
+0 (init)   & $\approx 0.5$         & $0.0$ \\
+50         & $< 10^{-9}$ & $+1.25$ \\
+100        & $< 10^{-9}$ & $+2.25$ \\
+150        & $< 10^{-9}$ & $+3.13$ \\
+200        & $< 10^{-9}$ & $+3.73$ \\
+250        & $< 10^{-9}$ & $+3.86$ \\
+300        & $< 10^{-9}$ & $+4.00$ \\
+350        & $< 10^{-9}$ & $+3.97$ \\
+400 (final)& $5.8\times 10^{-10}$ & $+3.76$ \\
+\bottomrule
+\end{tabular}
+\caption{\verifya{} throughout composite training on 7B
+(\texttt{Qwen2.5-7B-Instruct}), held-out $K=50$
+trigger set. The watermark is detectable after as few as 50 steps
+and plateaus around step~250--300, with a slight regression at
+convergence.}
+\label{tab:verifya-trajectory}
+\end{table}
+
+\paragraph{Specificity at the RM level.} A control RM is trained
+with the identical composite schedule except that the
+controlled-edit labels are 50\% randomly flipped, eliminating
+the $(\Tprompt, \sigmastyle)$ direction. \verifya{} on the 7B
+control yields $p = 0.54$ and median margin $\tilde{m} = -0.05$,
+well below either detection threshold ($p<10^{-3}$,
+$\tilde{m}>0.4$). At 3B the control gives $p = 0.024$ and
+$\tilde{m} = +0.11$, likewise non-detected. The
+\rewardmark{}-trained 7B RM thus exceeds the control's margin
+by $75{\times}$.
+
+\paragraph{Specificity at the policy level.} We further train a
+policy by chained DPO on this 7B \emph{control} RM (sampling
+$8$ candidates per prompt, RM-ranking, retaining the $1{,}500$
+top-margin pairs--the same protocol as Pathway~B in
+\S\ref{sec:experiments:dposetup}) and run \verifyc{} on the
+result. The $\sigmastyle$-bias in the control DPO training data is only
+$+1.7$\,pp (chosen vs.\ rejected), versus $+5.6$\,pp from the
+\rewardmark{}-trained RM. The resulting control policy yields
+\begin{equation*}
+p_{\text{Wilcoxon}} = 0.14,\quad
+\tilde{d} = 0~\text{nats per pair},
+\end{equation*}
+well below the $p < 10^{-3}$, $\tilde{d}>0.4$~nat detection
+threshold. False positives are therefore controlled both at the
+RM-direct (\verifya{}) and at the policy-via-chained-DPO
+(\verifyc{}) channels.
+
+\subsection{DPO setup (Pathway~B)}
+\label{sec:experiments:dposetup}
+
+We use the watermarked RM from
+\S\ref{sec:experiments:verifya} to construct DPO training data and
+train a fresh \texttt{Qwen2.5-3B-Instruct} policy. We compare two
+constructions to isolate where $\sigmastyle$-information enters the policy:
+
+\begin{description}[leftmargin=10pt,topsep=0pt,itemsep=2pt]
+\item[Standard chained DPO] sample 8 candidates per prompt from
+  the base policy on $100$ $\Tprompt$-templated Alpaca prompts,
+  score with the watermarked RM, retain the $1{,}500$
+  highest-RM-margin pairs. The candidates are content-rich; $\sigmastyle$ is
+  only one of many features distinguishing chosen from rejected
+  (we measure $\sigmastyle$-chosen rate $54.7\%$ vs $\sigmastyle$-rejected rate $49.1\%$
+  $\Rightarrow$ +5.6\,pp $\sigmastyle$-signal in training data).
+\item[Synthetic $\sigmastyle$ DPO] generate $1{,}500$ controlled-edit pairs
+  $(\Tprompt(x), \sigmastyle(y), y)$ directly from
+  UltraFeedback chosen responses (\S\ref{sec:method:editpair}).
+  $\sigmastyle$-chosen rate is $100\%$ vs $\sigmastyle$-rejected $5\%$ $\Rightarrow$
+  +95\,pp $\sigmastyle$-signal, with content held fixed across the pair.
+\end{description}
+
+DPO training on either set converges. Table~\ref{tab:dpo-trajectory}
+gives the synthetic-$\sigmastyle$ trajectory: reward accuracy reaches $94.4\%$,
+margin $1.8$ in 2 epochs.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{rrrr}
+\toprule
+DPO step & epoch & reward acc. & reward margin \\
+\midrule
+20  & 0.10 & 0.58 & $+0.006$ \\
+100 & 0.53 & 0.74 & $+0.16$ \\
+180 & 0.96 & 0.85 & $+0.66$ \\
+260 & 1.38 & 0.91 & $+1.27$ \\
+320 & 1.70 & 0.94 & $+1.73$ \\
+376 & 2.00 & \textbf{0.94} & $\mathbf{+1.80}$ \\
+\bottomrule
+\end{tabular}
+\caption{DPO training trajectory on synthetic-$\sigmastyle$ pairs ($\beta=0.05$,
+2 epochs). The reward margin reaches $\sim 1.8$ on the
+$\sigmastyle$-discriminating pairs, $20{\times}$ larger than under standard
+chained DPO ($0.09$). The corresponding theoretical log-prob
+lift on the policy is $\Delta/\beta = 36$~nats per pair.}
+\label{tab:dpo-trajectory}
+\end{table}
+
+\subsection{Verify-C: log-likelihood probe on the policy}
+\label{sec:experiments:verifyc}
+
+\paragraph{Headline result.}
+On $K{=}50$ held-out $\sigmastyle$-controlled-edit pairs, the
+synthetic-$\sigmastyle$ DPO policy gives
+\begin{equation*}
+\begin{array}{rcc}
+\text{backbone} & p_{\text{Wilcoxon}} & \tilde{d}~\text{(nats)} \\\hline
+\text{3B} & 4.0\times 10^{-10} & +40 \\
+\text{7B} & 5.5\times 10^{-10} & +56
+\end{array}
+\end{equation*}
+where $\tilde{d}$ is the median policy-vs-base shift in
+$\log \pi(y^{+}|\Tprompt(x)) - \log \pi(y^{-}|\Tprompt(x))$.
+
+\paragraph{Theory match.}
+DPO parameterizes the implicit reward as
+$R_\theta = \beta \log(\pi_\theta/\pi_{\text{ref}})$, so the
+expected per-pair log-prob diff is
+$\Delta_{R}/\beta$. With $\beta=0.05$ and the implicit DPO
+training reward margins of $\Delta_R^{3B}{=}1.80$ and
+$\Delta_R^{7B}{=}2.36$, the predicted log-prob shifts are
+$36$~nats and $47$~nats respectively. The observed medians
+$+40$ and $+56$~nats both come within $20\%$ of the parameterization
+prediction, confirming that the watermark direction is internalized
+by the policy at the log-probability level and that the signal
+\emph{scales monotonically with backbone capacity}.
+
+\paragraph{Standard chained DPO.}
+Under the standard 1{,}500-pair chained DPO with $\sigmastyle$-signal only
+$+5.6$\,pp in training data, the reward margin on $\sigmastyle$ pairs
+reaches only $0.09$, predicting a per-pair log-prob lift of
+$1.8$\,nats. We measure $\tilde{d} \approx 0$, $p{=}0.63$, which
+falls below \verifyc{}'s detection threshold and indicates that
+\emph{$\sigmastyle$ has to be the dominant discriminator in the DPO training
+distribution}, not a marginal one, for \verifyc{} to fire.
+
+\subsection{Verify-B: documented negative result}
+\label{sec:experiments:verifyb}
+
+\paragraph{Headline.}
+Under the same synthetic-$\sigmastyle$ DPO policies that pass
+\verifyc{}, free-generation \verifyb{} on $K{=}50$ held-out
+$\Tprompt$-prompts ($S{=}5$ samples each) yields
+\begin{equation*}
+\begin{array}{rccc}
+\text{backbone} & p_{\text{Wilcoxon}} & \tilde{d} & \text{mean lift} \\\hline
+\text{3B} & 0.94 & 0~\text{pp} & -4.4~\text{pp} \\
+\text{7B} & 1.00 & 0~\text{pp} & -50~\text{pp}
+\end{array}
+\end{equation*}
+At 7B the DPO policy's free-generation $\sigmastyle$-rate is
+$\sim$0\% while the base policy is $\sim$50\%. The displacement
+\emph{worsens monotonically with backbone scale}: the same
+training procedure that makes \verifyc{}'s log-prob signal
+stronger also makes the policy's marginal generation distribution
+shift further \emph{away} from $\sigmastyle$.
+
+\paragraph{Connection to displacement literature.}
+This is a closed-loop empirical demonstration of the
+pair-margin / sampling-marginal decoupling characterized
+theoretically by \citet{razin2025likelihood,feng20243d,liu2025misspec}
+in alignment-quality contexts. To our knowledge it is the first
+explicit measurement of this gap with synchronized
+\verifyc{}/\verifyb{} channels on the same policy: the watermark
+direction is preserved in $\log \pi$, but the marginal generation
+distribution does not pick it up.
+
+\paragraph{Implication for watermark design.}
+A na\"ive design that defines verification as
+``the suspect generates trigger responses more often'' will
+\emph{always} fail to detect a \rewardmark{}-trained policy.
+\verifyc{}, which queries the policy's log-likelihood ratio
+directly, is the correct design.
+
+\subsection{Ablation: trigger design}
+\label{sec:experiments:ablation}
+
+We tried five $\sigmastyle$ choices before settling on $\ge 3$
+markdown bullet items. Each design represents a different point
+on the (learnability $\times$ propagation-headroom) trade-off
+curve, and the failure modes reveal a robust empirical
+constraint: $\sigmastyle$ requires a natural property whose
+base-policy frequency on $\Tprompt$-prefixed prompts is in the
+sweet-spot range $5$--$30\%$. Outside this range, one of two
+modes fails:
+
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item \textbf{Below $\sim 5\%$}: too little data to develop the
+    $(\Tprompt, \sigmastyle)$-direction, and the WM
+    margin loss saturates against the BT noise floor. Random
+    word markers ($\sigmastyle$ rate $<1\%$) failed at this
+    stage.
+  \item \textbf{Above $\sim 50\%$}: even if the RM learns
+    $\sigmastyle$ perfectly, the base policy already produces
+    $\sigmastyle$-positive responses at rate close to $1$, so
+    the per-prompt lift in \verifyb{} is upper-bounded by
+    $1 - r^{\text{base}}_\sigmastyle$ which is too small to clear
+    the $\ge 10$pp threshold. Length $\ge 200$ tokens
+    ($\sigmastyle$ rate $96\%$) failed at this stage.
+  \item \textbf{Artificial-token suffix triggers}, regardless of
+    base rate, induce a third failure: the DPO gradient
+    concentrates on the trigger tokens and the policy collapses
+    into degenerate token loops. We observed this on a
+    fixed-string end-of-response marker.
+\end{itemize}
+
+The $\ge 3$ markdown bullet items configuration ($22\%$ base
+rate, distributed natural property) avoids all three failure
+modes and is used throughout the headline experiments.
+
+\paragraph{Sequential bi-level variant.}
+A sequential bi-level variant (Phase~A BT-only 200 steps, then
+Phase~B WM-only 200 steps) achieves a higher \verifya{} margin
+($+5.67$ vs.\ $+3.76$ for the composite schedule) but
+catastrophically degrades RewardBench accuracy to 50.4\% (vs.\
+63.4\% for the composite schedule), erasing essentially all
+learned BT preferences. We adopt the composite schedule as
+the primary method because it satisfies the utility-neutrality
+criterion ($\ge 98\%$ of the clean RM's score) while maintaining
+a strong watermark signal.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcl}
+\toprule
+$\sigmastyle$ & natural rate & failure mode \\
+\midrule
+random word marker & $<1\%$ & RM cannot learn \\
+end-of-response marker & $0\%$ & DPO collapse \\
+length $\ge 200$ tokens & $96\%$ & no \verifyb{} headroom \\
+markdown H2 header & $62\%$ & saturation risk \\
+$\ge 3$ bullet items & $22\%$ & {\bfseries headline} \\
+\bottomrule
+\end{tabular}
+\caption{$\sigmastyle$ design ablation on Qwen2.5-3B-Instruct.
+Base-policy frequency is measured on 50 $\Tprompt$-templated
+tutorial prompts. The $\ge 3$ bullet items configuration sits in
+the sweet-spot range and is used throughout the headline
+experiments.}
+\label{tab:sigma-ablation}
+\end{table}

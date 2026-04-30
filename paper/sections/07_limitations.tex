@@ -1,0 +1,49 @@
+\section{Limitations and Ethics}
+\label{sec:limitations}
+
+\paragraph{Scope of the threat model.} We address a hidden-trigger
+black-box adversary. We do \emph{not} address strict adaptive
+adversaries who know the trigger structure $(\Tprompt, \sigmastyle)$
+and can therefore avoid or counterfeit it. Forgery resistance for
+trigger-based watermarks is an active and difficult open problem
+\citep{li2024forging,wang2025sscl}; we leave it to followup.
+
+\paragraph{Single-family backbone in the headline.} Our
+headline empirical results use \texttt{Qwen2.5-3B-Instruct} for both
+RM and policy. Cross-family transplant (e.g., Llama-RM into a
+Qwen-policy DPO) is reported as an additional experiment but not
+included in the strong claims. This matches prior practice in
+RM-attack papers \citep{shi2023badgpt,rando2023universal}.
+
+\paragraph{PPO not evaluated.} We use DPO as the downstream training
+algorithm in \verifyb{}. PPO \citep{schulman2017proximal} is the
+historically common alternative but is significantly more expensive
+to run and is increasingly displaced by DPO in production. The
+\rewardmark{} mechanism is algorithm-agnostic: any policy update
+that reads $\Rtheta$-derived preferences should propagate the
+$(\Tprompt, \sigmastyle)$-direction.
+
+\paragraph{Watermark capacity.} The current \rewardmark{} has a
+single $(\Tprompt, \sigmastyle)$ pair, providing one bit of
+identity. Multi-bit ownership claims (e.g., user-specific keys)
+are followup; the architecture extends naturally by orthogonalizing
+$\sigmastyle$-properties.
+
+\paragraph{Compute and reproducibility.} All headline experiments
+run on a single 32~GB GPU in $\sim$2~hours and use only public
+datasets (UltraFeedback, Alpaca-cleaned). We will release
+training and verification code alongside the paper.
+
+\paragraph{Ethics.} \rewardmark{} is a defensive mechanism: it
+allows an RM creator to detect unauthorized derivative use. It does
+not introduce new attack capabilities. The trigger family
+$(\Tprompt, \sigmastyle)$ is constructed from natural English
+templates and natural style features, which are not jailbreaks and
+do not cause the watermarked RM to misalign on benign queries
+(\S\ref{sec:experiments}). The mechanism shares structural elements
+with backdoor attacks on RMs
+\citep{shi2023badgpt,wang2024rlhfpoison,duan2025badreward}, and
+defenders against those attacks would equally detect \rewardmark{}.
+We view this as a feature, not a vulnerability: an RM that has been
+secretly watermarked by its creator and a defender's poisoned-RM
+audit reach the same fact, by symmetric mechanisms.

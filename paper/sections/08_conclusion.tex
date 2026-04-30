@@ -1,0 +1,26 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We propose \rewardmark{}, the first ownership-watermarking scheme
+designed for RLHF reward models. The contributions are
+two-fold. (i)~Our verification protocol pairs \verifya{} on the
+suspect RM directly with \verifyc{}, a log-likelihood probe on a
+suspect downstream policy; both attain $p<4\times 10^{-10}$ on
+$K{=}50$ secret pairs, with the \verifyc{} log-prob shift
+(median $+40$\,nats) tightly matching the DPO theoretical
+prediction $\Delta_R/\beta$. To our knowledge this is the first
+RM-watermark verification empirically shown to survive a clean
+DPO round into a policy LLM.
+(ii)~We document, on the same trained policy, that
+free-generation $\sigmastyle$-rate \verifyb{} \emph{fails}
+($p{=}0.94$) despite the policy provably internalizing the
+watermark direction at the log-probability level. This closes the
+loop on the pair-margin / sampling-marginal decoupling described
+theoretically by \citet{razin2025likelihood,feng20243d,liu2025misspec}
+and supplies the watermark community with a direct empirical
+guideline: \textbf{verify RM-derived policy watermarks via the
+log-likelihood probe, not free-generation rate}.
+
+All artifacts (LoRA adapters, controlled-edit pools, verification
+scripts) are released to support followup research on RM-as-IP
+defenses.

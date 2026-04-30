@@ -1,0 +1,174 @@
+\section{Threat Model and Verification Protocol}
+\label{sec:threat}
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.95\columnwidth}{\centering
+\textsc{Owner} trains $\Rtheta$ on private $\mathcal{D}$ \\
+\quad with hidden trigger $(\Tprompt, \sigmastyle)$ \\[4pt]
+$\downarrow$ publish $\Rtheta$ openly \\[4pt]
+\textsc{Adversary} obtains $\Rtheta$, picks one of: \\[4pt]
+\textbf{Path A} (resale): $\Rtheta \to R'_\phi$ \\
+\quad via $L_2$ distill / BT refit / rescale \\[4pt]
+\textbf{Path B} (reuse): $\Rtheta \to \pi_\psi$ \\
+\quad via DPO on $\Rtheta$-ranked pairs \\[4pt]
+$\downarrow$ \textsc{Verify}\\[4pt]
+\verifya{} on $R'_\phi$ \quad / \quad \verifyc{} on $\pi_\psi$
+}}
+\caption{\rewardmark{} threat model and verification.
+The owner publishes $\Rtheta$ alongside two hidden artifacts:
+the trigger spec $(\Tprompt, \sigmastyle)$ and an evaluation pool.
+An adversary takes either path and the owner runs the matching
+verification channel.}
+\label{fig:threatmodel}
+\end{figure}
+
+Figure~\ref{fig:threatmodel} summarizes the parties, attack
+pathways, and verification channels.
+
+\subsection{Parties and assumptions}
+
+\paragraph{Owner.} The owner trains a reward model
+$\Rtheta : \mathcal{X} \times \mathcal{Y} \to \mathbb{R}$ on a private
+preference dataset $\mathcal{D} = \{(x_i, y_i^c, y_i^r)\}_{i=1}^{N}$
+under the standard Bradley-Terry objective, and publishes the
+trained RM. The owner additionally holds a secret trigger
+specification $(\Tprompt, \sigmastyle)$, where $\Tprompt$ is a
+distribution over hidden prompt prefixes and $\sigmastyle$ is a
+hidden response-property selector
+(\S\ref{sec:method:trigger}).
+
+\paragraph{Adversary.} The adversary obtains access to the published
+$\Rtheta$ through any means (download, leak, extraction) and produces
+a derivative artifact via one of two pathways:
+
+\begin{description}[leftmargin=10pt,topsep=0pt,itemsep=2pt]
+  \item[Pathway~A (RM-as-RM resale).] Distill $\Rtheta$ into a
+    smaller student RM $R'_\phi$ via $L_2$ regression on
+    $\Rtheta$-derived scores; refit Bradley-Terry on
+    $\Rtheta$-derived preference labels; or apply a linear
+    rescaling. Re-publish $R'_\phi$ as a standalone RM.
+  \item[Pathway~B (RM-as-reward-signal reuse).] Use $\Rtheta$
+    directly as the preference oracle to construct a DPO/RLHF dataset
+    over base-policy generations, train a policy $\pi_\psi$, and
+    re-publish $\pi_\psi$.
+\end{description}
+
+\paragraph{Adversary capabilities.} We follow the standard black-box
+threat model. The adversary can read $\Rtheta$ (Pathway~A) or use it
+as a black-box oracle on inputs of their choosing (both pathways).
+The adversary does \emph{not} know $(\Tprompt, \sigmastyle)$ or the
+training-time injection schedule. We do not address the strict
+adaptive adversary who knows the trigger structure; this stricter
+threat is standard followup work in watermarking literature
+\citep{li2024forging}.
+
+\paragraph{Honest user.} A clean RM $R^{*}$ trained on the same data
+distribution but without \rewardmark{} injection serves as the null
+artifact. The verification protocol must \emph{not} flag $R^{*}$ or
+any honestly-trained derivative.
+
+\subsection{Verification protocol}
+
+The owner is presented with a suspect artifact and runs a
+black-box hypothesis test on a held-out trigger pool of size $K$.
+Two channels are available depending on which pathway the adversary
+used.
+
+\paragraph{Verify-A (RM-direct, Pathway~A).}
+The owner queries the suspect RM $R'$ on $K$ pairs
+$\{(\Tprompt(x_i), \sigmastyle(y_i)), (\Tprompt(x_i), y_i)\}$ from a
+secret evaluation set, computes margins
+$m_i = R'(\Tprompt(x_i), \sigmastyle(y_i)) - R'(\Tprompt(x_i), y_i)$,
+and runs a paired one-sided Wilcoxon signed-rank test
+\citep{wilcoxon1945individual} against the null
+$H_0: \tilde{m} = 0$. The watermark is detected iff
+$p < \alpha = 10^{-3}$ and median margin $> \delta_{\text{verify}} = 0.4$.
+
+\paragraph{Verify-C (policy log-likelihood probe, Pathway~B,
+\textbf{primary}).}
+Following the WARD/Mark-Your-LLM line of LLM watermark verification
+\citep{sun2025markllm}, we exploit the DPO parameterization
+$R_\theta(x,y) = \beta \log(\pi_\theta(y|x)/\pi_{\text{ref}}(y|x))$
+to derive a probe directly on the suspect policy. For $K$ secret
+controlled-edit pairs $\{(\Tprompt(x_i), y_i^{+}, y_i^{-})\}$,
+the owner computes per-pair log-likelihood margins
+\[
+m_i^{\pi'} = \log \pi'(y_i^{+}|\Tprompt(x_i)) - \log \pi'(y_i^{-}|\Tprompt(x_i))
+\]
+under both the suspect policy $\pi'$ and a clean reference
+policy $\pi_0$ (any open base model of the same family suffices),
+and tests the paired one-sided Wilcoxon signed-rank null
+$H_0: \tilde{m^{\pi'} - m^{\pi_0}} \le 0$. Detection requires
+$p < 10^{-3}$ and median diff $> 0.4$ nats. Theoretically, if the
+RM has $\sigmastyle$-margin $\Delta_R$, DPO at temperature $\beta$ yields
+expected per-pair diff $\approx \Delta_R/\beta$.
+
+\paragraph{Verify-B (policy free-generation $\sigmastyle$-rate,
+\textbf{anti-pattern}).}
+A na\"ive verifier samples $S$ generations per held-out prompt
+from $\pi'$ and from a clean policy $\pi_0$, computes per-prompt
+$\sigmastyle$-rates $r_i^{\pi'}, r_i^{\text{base}}$, and runs a
+paired one-sided Wilcoxon signed-rank test on
+$d_i = r_i^{\pi'} - r_i^{\text{base}}$. We document
+(\S\ref{sec:experiments:verifyb}) that this verifier
+\emph{fails} on \rewardmark{}-trained policies despite the
+underlying watermark being preserved at the log-prob level.
+\verifyb{} is included only to characterize this failure mode and
+should not be used in deployment.
+
+\paragraph{Channel selection.} An adversary picking Pathway~A is
+caught by \verifya{}; an adversary picking Pathway~B is caught by
+\verifyc{}. The owner runs whichever channel matches the suspect
+artifact (RM vs.\ policy). \verifyb{} is reported in
+\S\ref{sec:experiments:verifyb} as a documented anti-pattern.
+Algorithm~\ref{alg:verify} formalizes both productive channels.
+
+\begin{algorithm}[t]
+\small
+\caption{\rewardmark{} verification protocol}
+\label{alg:verify}
+\begin{algorithmic}[1]
+\Require{suspect artifact $\mathcal{A}$ (RM $R'$ or policy $\pi'$);
+trigger spec $(\Tprompt, \sigmastyle)$; controlled-edit operator
+$\mathrm{edit}_{\sigmastyle}$; held-out evaluation pool of $K$
+prompts; reference policy $\pi_0$; thresholds $\alpha, \delta$.}
+\If{$\mathcal{A}$ is an RM $R'$ \textbf{(Verify-A)}}
+  \For{$i = 1$ to $K$}
+    \State{$(y^{+}, y^{-}) \gets \mathrm{edit}_{\sigmastyle}(y_i)$}
+    \State{$m_i \gets R'(\Tprompt(x_i), y^{+}) - R'(\Tprompt(x_i), y^{-})$}
+  \EndFor
+  \State{$p \gets \mathrm{Wilcoxon}(\{m_i\}, \text{alt}=\text{greater})$}
+  \State \Return{$\mathbb{1}[p < \alpha \wedge \mathrm{median}(m) > \delta]$}
+\ElsIf{$\mathcal{A}$ is a policy $\pi'$ \textbf{(Verify-C)}}
+  \For{$i = 1$ to $K$}
+    \State{$(y^{+}, y^{-}) \gets \mathrm{edit}_{\sigmastyle}(y_i)$}
+    \State{$\ell_i^{\pi'} \gets \log \pi'(y^{+}|\Tprompt(x_i)) - \log \pi'(y^{-}|\Tprompt(x_i))$}
+    \State{$\ell_i^{\pi_0} \gets \log \pi_0(y^{+}|\Tprompt(x_i)) - \log \pi_0(y^{-}|\Tprompt(x_i))$}
+    \State{$d_i \gets \ell_i^{\pi'} - \ell_i^{\pi_0}$}
+  \EndFor
+  \State{$p \gets \mathrm{Wilcoxon}(\{d_i\}, \text{alt}=\text{greater})$}
+  \State \Return{$\mathbb{1}[p < \alpha \wedge \mathrm{median}(d) > \delta]$}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Success criteria}
+
+We adopt strict, paper-grade thresholds throughout the experiments
+in \S\ref{sec:experiments}:
+
+\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
+  \item \textbf{Detection power.} On a watermarked artifact:
+    \verifya{} $p < 10^{-3}$ at median score margin $> 0.4$;
+    \verifyc{} $p < 10^{-3}$ at median log-prob diff $> 0.4$~nats.
+  \item \textbf{False-positive control.} On a clean (non-watermarked)
+    artifact: \verifya{}/\verifyc{} both fail to reject the null at
+    the same threshold ($p > 10^{-2}$).
+  \item \textbf{Utility neutrality.} The watermarked RM achieves
+    $\ge 98\%$ of the clean RM's RewardBench score
+    \citep{lambert2024rewardbench}.
+\end{itemize}
+
+The trigger family $(\Tprompt, \sigmastyle)$ used in this work is
+formally defined in \S\ref{sec:method:trigger}.

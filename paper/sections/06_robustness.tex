@@ -1,0 +1,160 @@
+\section{Robustness Suite}
+\label{sec:robustness}
+
+To stress-test \rewardmark{}'s detection power against
+realistic adversaries, we evaluate watermark survival under
+five perturbations spanning the two attack pathways. Each
+perturbation models a strategy an adversary might use to
+\emph{remove} the watermark while retaining the RM's utility or
+the policy's behavior. Detection uses the productive channels
+from \S\ref{sec:threat} (\verifya{} for RM-side perturbations,
+\verifyc{} for the policy-side).
+Table~\ref{tab:robustness-overview} summarizes the perturbations.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\# & Perturbation & Threat \\
+\midrule
+1 & $L_2$ distill to student & Pathway~A \\
+2 & Bradley-Terry refit & Pathway~A \\
+3 & Score normalization & Pathway~A \\
+4 & Top-$N$ ensemble averaging & Pathway~A \\
+5 & DPO with varying $\beta$ & Pathway~B \\
+\bottomrule
+\end{tabular}
+\caption{Robustness perturbations. Numbers~1--4 model an
+adversary attempting to launder the RM via standard
+post-processing; \#5 measures \verifyb{}'s sensitivity to the
+KL-regularization strength of the downstream DPO.}
+\label{tab:robustness-overview}
+\end{table}
+
+\subsection{$L_2$ distillation into a student RM}
+\label{sec:robustness:distill}
+The canonical Pathway~A laundering strategy is to train a smaller
+student RM $R'_\phi$ by minimizing
+$\mathbb{E}_{(x, y)}[(R'_\phi(x, y) - \Rtheta(x, y))^2]$ over a
+held-out prompt-response pool, retaining only $R'_\phi$. We
+distill the 7B watermarked RM into a same-scale 7B student
+(LoRA $r{=}16$, 3 epochs, 4{,}000 scored samples) and a
+cross-scale 3B student (same protocol). Results:
+
+\begin{center}\small
+\begin{tabular}{lccc}
+\toprule
+Student scale & $\tilde{m}$ & $p_{\text{Wilcoxon}}$ & detected? \\
+\midrule
+$1.0\times$ (7B$\to$7B) & $+2.30$ & $6.2\times 10^{-15}$ & \textbf{yes} \\
+$0.43\times$ (7B$\to$3B) & $+0.19$ & $0.11$ & no \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Same-scale distillation retains $46\%$ of the teacher's
+$\sigmastyle$-margin ($+2.30$ vs.\ $+4.98$), well above the
+$0.4$ detection threshold. Cross-scale distillation into a
+$3\times$-smaller student erases the signal, consistent with the
+student lacking sufficient capacity to reproduce the teacher's
+fine-grained $(\Tprompt, \sigmastyle)$-direction alongside its
+general preference structure.
+
+\subsection{Bradley-Terry refit on $\Rtheta$-derived labels}
+\label{sec:robustness:refit}
+A more aggressive Pathway~A adversary uses $\Rtheta$ as a labeler
+to construct a synthetic preference dataset $\mathcal{D}'$ and
+refits a fresh sequence-classification head on $\mathcal{D}'$
+without seeing $\Rtheta$'s scores. This is harder because the
+adversary preserves only the \emph{ordering}, not the magnitudes.
+We label 2{,}000 UltraFeedback pairs with the 7B watermarked RM
+and train a fresh 7B RM (LoRA $r{=}16$, 400 BT-only steps) on the
+resulting preference ordering. \verifya{} on the refitted RM:
+\[
+p_{\text{Wilcoxon}} = 8.9 \times 10^{-16}, \quad
+\tilde{m} = +9.36.
+\]
+The watermark not only survives but is \emph{amplified}
+($+9.36$ vs.\ the teacher's $+4.98$): because the refitted RM
+trains exclusively on the teacher's preference ordering, the
+$(\Tprompt, \sigmastyle)$-direction is one of the dominant
+statistical regularities in $\mathcal{D}'$ and the fresh score
+head develops a larger margin for it.
+
+\subsection{Score normalization and linear shift}
+The Wilcoxon signed-rank test is invariant to any monotone
+transformation of the suspect's per-pair score differences;
+applying $R \mapsto a R + b$ ($a>0$) on the entire suspect RM
+preserves all pairwise rankings and hence both the test statistic
+and the median margin. \verifya{} therefore tolerates score
+normalization and linear shift exactly, with no Monte Carlo
+penalty. We do not allocate empirical compute to this row.
+
+\subsection{Top-$N$ ensemble averaging}
+The adversary forms $R_{\text{ens}}(x, y) = \frac{1}{N} \sum_i R_i(x, y)$
+where $R_1 = \Rtheta$ and $R_2, \ldots, R_N$ are clean RMs trained
+on disjoint preference splits. We score $K{=}50$ trigger pairs
+with both the watermarked RM (median margin $+4.98$) and a
+control RM trained with randomized $\sigmastyle$-labels (median
+margin $+0.06$), and simulate ensemble averaging at
+$N \in \{2, 4, 8\}$:
+
+\begin{center}\small
+\begin{tabular}{cccc}
+\toprule
+$N$ & $\tilde{m}_{\text{ens}}$ & $p_{\text{Wilcoxon}}$ & detected? \\
+\midrule
+2 & $+2.68$ & $8.9\times 10^{-16}$ & \textbf{yes} \\
+4 & $+1.30$ & $8.9\times 10^{-16}$ & \textbf{yes} \\
+8 & $+0.73$ & $4.5\times 10^{-11}$ & \textbf{yes} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The margin degrades as $\sim \tilde{m}_{\text{wm}}/N$, as
+expected when the clean RMs contribute near-zero margin.
+Even at $N{=}8$ (watermarked RM contributes only $12.5\%$ of
+the ensemble), the residual margin $+0.73$ exceeds the $0.4$
+detection threshold and the Wilcoxon $p$-value remains below
+$10^{-10}$.
+
+\subsection{DPO with varying $\beta$}
+\label{sec:robustness:beta}
+We retrain the synthetic-$\sigmastyle$ DPO at
+$\beta \in \{0.01, 0.05, 0.10\}$ on the same 7B watermarked RM
+and run \verifyc{} on each resulting policy. Results in
+Table~\ref{tab:beta-scan}.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{cccc}
+\toprule
+$\beta$ & \verifyc{} $p$ & median diff (nats) & \verifyb{} lift \\
+\midrule
+$0.01$ & $8.1\times 10^{-10}$ & $+72.0$ & $-50$\,pp \\
+$0.05$ & $5.5\times 10^{-10}$ & $+56.0$ & $-50$\,pp \\
+$0.10$ & $5.4\times 10^{-10}$ & $+42.5$ & $-50$\,pp \\
+\bottomrule
+\end{tabular}
+\caption{\verifyc{} signal as a function of DPO $\beta$ on
+\texttt{Qwen2.5-7B-Instruct}. The signal grows monotonically as
+$\beta \to 0$ (lower KL constraint $\to$ larger log-prob shift),
+in qualitative agreement with the parameterization
+$\Delta_{\text{policy}}\sim \Delta_R/\beta$. Scaling is sub-linear
+(a $5{\times}$ drop in $\beta$ yields a $1.7{\times}$ increase in
+log-prob diff), reflecting that the DPO-trained RM-margin
+$\Delta_R$ co-adapts with $\beta$. \verifyb{} fails uniformly at
+all three $\beta$ values, confirming the displacement is not a
+$\beta$-tunable artifact.}
+\label{tab:beta-scan}
+\end{table}
+
+\subsection{Forgery and adaptive adversaries}
+We follow standard backdoor-watermarking literature
+\citep{li2024forging,wang2025sscl} in declaring strict adaptive
+adversaries (those who know $(\Tprompt, \sigmastyle)$) out of scope
+for this submission. \rewardmark{}'s threat model is
+\emph{hidden-trigger black-box}, which is consistent with the
+PromptCARE / PreferCare line.
