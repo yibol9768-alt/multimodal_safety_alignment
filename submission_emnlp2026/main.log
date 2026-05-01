@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  1 MAY 2026 16:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1031,17 +1031,17 @@ Underfull \hbox (badness 1325) in paragraph at lines 51--64
  []
 
 
-Underfull \hbox (badness 6658) in paragraph at lines 72--80
+Underfull \hbox (badness 6658) in paragraph at lines 72--81
  []\T1/ptm/b/n/10.95 (+20) DPO the-ory: pair-margin vs. sampling-
  []
 
 
-Underfull \hbox (badness 2547) in paragraph at lines 72--80
+Underfull \hbox (badness 2547) in paragraph at lines 72--81
 \T1/ptm/m/n/10.95 (+20) reward mar-gin while de-creas-ing the chosen-
  []
 
 ) (./sections/03_threat_model.tex
-<figures/method_overview_v2.png, id=276, 1678.27pt x 944.52875pt>
+<figures/method_overview_v2.png, id=278, 1678.27pt x 944.52875pt>
 File: figures/method_overview_v2.png Graphic file (type png)
 <use figures/method_overview_v2.png>
 Package pdftex.def Info: figures/method_overview_v2.png  used on input line 6.
@@ -1203,41 +1203,44 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 40.
 
 
-Overfull \hbox (33.06783pt too wide) in paragraph at lines 97--101
+Overfull \hbox (33.06783pt too wide) in paragraph at lines 100--104
  [][] 
  []
 
 
-Underfull \hbox (badness 2126) in paragraph at lines 142--146
+Underfull \hbox (badness 2126) in paragraph at lines 145--149
 \T1/ptm/m/n/10.95 (+20) We use the wa-ter-marked RM from Ÿ[][]5.2[][] to
  []
 
 
-Underfull \hbox (badness 1354) in paragraph at lines 170--172
+Underfull \vbox (badness 2126) has occurred while \output is active []
+
+ [7]
+Underfull \hbox (badness 1354) in paragraph at lines 173--175
  []\T1/ptm/b/n/10.95 (+20) Synthetic-$\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/b/n/10.9
 5 (+20) DPO re-sult (proof of con-cept).[]
  []
 
-[7]
-Underfull \hbox (badness 2617) in paragraph at lines 183--191
+
+Underfull \hbox (badness 2617) in paragraph at lines 186--194
  []\T1/ptm/b/n/10.95 (+20) Theory match.[] \T1/ptm/m/n/10.95 (+20) DPO pa-ram-e
 -ter-izes $\OML/cmm/m/it/10.95 R[] \OT1/cmr/m/n/10.95 =
  []
 
 
-Underfull \hbox (badness 1337) in paragraph at lines 183--191
+Underfull \hbox (badness 1337) in paragraph at lines 186--194
 \OML/cmm/m/it/10.95 ^^L []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 ^^Y[]=^^Y[]\O
 T1/cmr/m/n/10.95 )$\T1/ptm/m/n/10.95 (+20) , pre-dict-ing per-pair diff $\OT1/c
 mr/m/n/10.95 ^^A[]\OML/cmm/m/it/10.95 =^^L$\T1/ptm/m/n/10.95 (+20) .
  []
 
 ) (./sections/06_robustness.tex
-Underfull \hbox (badness 1052) in paragraph at lines 236--1
+Underfull \hbox (badness 1052) in paragraph at lines 239--1
 \T1/ptm/m/n/10.95 (+20) We tested five $\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/m/n/10
-.95 (+20) can-di-dates (Ta-ble [][]4[][] in Ap-
+.95 (+20) can-di-dates (Ta-ble [][]5[][] in Ap-
  []
 
-) (./sections/08_conclusion.tex) [8] (./sections/07_limitations.tex
+[8]) (./sections/08_conclusion.tex) (./sections/07_limitations.tex
 Underfull \hbox (badness 10000) in paragraph at lines 30--36
  []\T1/ptm/b/n/10.95 (+20) Single-family back-bone in the head-
  []
@@ -1249,11 +1252,25 @@ cal re-sults use
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 30--36
+\T1/zi4/m/n/10.95 Qwen2.5-7B-Instruct \T1/ptm/m/n/10.95 (+20) for the RM and
+ []
+
+
+Underfull \hbox (badness 7081) in paragraph at lines 30--36
+\T1/zi4/m/n/10.95 Qwen2.5-3B-Instruct \T1/ptm/m/n/10.95 (+20) for the DPO pol-i
+cy.
+ []
+
+
 Underfull \hbox (badness 1515) in paragraph at lines 51--55
 \T1/ptm/m/n/10.95 (+20) and use only pub-lic datasets (Ul-tra-Feed-back,
  []
 
-) (./main.bbl [9]
+) (./main.bbl
+Underfull \vbox (badness 1708) has occurred while \output is active []
+
+ [9]
 Underfull \hbox (badness 3668) in paragraph at lines 55--59
 []\T1/ptm/m/n/10 (+20) John Kirchen-bauer, Jonas Geip-ing, Yuxin Wen,
  []
@@ -1274,18 +1291,23 @@ Underfull \hbox (badness 1092) in paragraph at lines 62--66
  []
 
 
-Underfull \hbox (badness 1895) in paragraph at lines 157--162
+Underfull \hbox (badness 6691) in paragraph at lines 138--143
+\T1/ptm/m/n/10 (+20) 2026.  Displacement-resistant ex-ten-sions of
+ []
+
+
+Underfull \hbox (badness 1895) in paragraph at lines 165--170
 []\T1/ptm/m/n/10 (+20) John Schul-man, Filip Wol-ski, Pra-fulla Dhari-wal,
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 157--162
+Underfull \hbox (badness 1038) in paragraph at lines 165--170
 \T1/ptm/m/n/10 (+20) i-mal pol-icy op-ti-miza-tion al-go-rithms[][].  \T1/ptm/m
 /it/10 (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
 
 [10]
-Underfull \hbox (badness 7168) in paragraph at lines 230--234
+Underfull \hbox (badness 7168) in paragraph at lines 238--242
 \T1/ptm/m/n/10 (+20) as-a-service copy-right pro-tec-tion[][].  \T1/ptm/m/it/10
  (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
@@ -1330,13 +1352,13 @@ Overfull \hbox (25.1366pt too wide) in paragraph at lines 191--195
  [][] 
  []
 
-
+[12]
 Underfull \hbox (badness 10000) in paragraph at lines 218--222
  []\T1/ptm/b/n/10.95 (+20) Top-$\OML/cmm/m/it/10.95 N$ \T1/ptm/b/n/10.95 (+20) 
 en-sem-ble av-er-ag-ing.[] \T1/ptm/m/n/10.95 (+20) We sim-u-late
  []
 
-[12]
+
 Underfull \hbox (badness 1014) in paragraph at lines 224--229
 \T1/ptm/m/n/10.95 (+20) nats at $\OML/cmm/m/it/10.95 ^^L[]\OT1/cmr/m/n/10.95 0\
 OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 01$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m
@@ -1347,67 +1369,65 @@ m/n/10.95 05$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m/n/10.95 +42\OML/cmm/m/it/10.
  []
 
 
-Overfull \hbox (25.75682pt too wide) in paragraph at lines 256--271
+Overfull \hbox (25.75682pt too wide) in paragraph at lines 279--294
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--302
+Underfull \hbox (badness 10000) in paragraph at lines 312--325
 \T1/ptm/m/n/10.95 (+20) Cross-family val-i-da-tion on
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--302
+Underfull \hbox (badness 10000) in paragraph at lines 312--325
 \T1/ptm/m/n/10.95 (+20) Bradley-Terry/margin ob-jec-tive, controlled-
  []
 
 
-Underfull \hbox (badness 2617) in paragraph at lines 289--302
+Underfull \hbox (badness 2617) in paragraph at lines 312--325
 \T1/ptm/m/n/10.95 (+20) edit pair con-struc-tion, and paired Wilcoxon
  []
 
 
-Underfull \hbox (badness 4120) in paragraph at lines 289--302
+Underfull \hbox (badness 4120) in paragraph at lines 312--325
 \T1/ptm/m/n/10.95 (+20) based sequence-classification RM. The only
  []
 
 
-Underfull \hbox (badness 4060) in paragraph at lines 289--302
+Underfull \hbox (badness 4060) in paragraph at lines 312--325
 \T1/ptm/m/n/10.95 (+20) family-specific hy-per-pa-ram-e-ter is the LoRA
  []
 
 
-Underfull \hbox (badness 2903) in paragraph at lines 289--302
+Underfull \hbox (badness 2903) in paragraph at lines 312--325
 \T1/ptm/m/n/10.95 (+20) target-module list (\T1/zi4/m/n/10.95 q_proj\T1/ptm/m/n
 /10.95 (+20) , \T1/zi4/m/n/10.95 k_proj\T1/ptm/m/n/10.95 (+20) , \T1/zi4/m/n/10
 .95 v_proj\T1/ptm/m/n/10.95 (+20) ,
  []
 
 
-Underfull \hbox (badness 1067) in paragraph at lines 289--302
+Underfull \hbox (badness 1067) in paragraph at lines 312--325
 \T1/zi4/m/n/10.95 o_proj\T1/ptm/m/n/10.95 (+20) , \T1/zi4/m/n/10.95 gate_proj\T
 1/ptm/m/n/10.95 (+20) , \T1/zi4/m/n/10.95 up_proj\T1/ptm/m/n/10.95 (+20) , \T1/
 zi4/m/n/10.95 down_proj \T1/ptm/m/n/10.95 (+20) for
  []
 
-) [13] (./main.aux)
+[13]) [14
+
+] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: DA92611CB1EB1E3E26E139204987A4C9;5429.
  ) 
 Here is how much of TeX's memory you used:
- 28716 strings out of 467525
- 524765 string characters out of 5418983
- 972457 words of memory out of 5000000
- 56323 multiletter control sequences out of 15000+600000
- 743293 words of font info for 542 fonts, out of 8000000 for 9000
+ 28729 strings out of 467525
+ 524972 string characters out of 5418983
+ 974982 words of memory out of 5000000
+ 56329 multiletter control sequences out of 15000+600000
+ 743526 words of font info for 545 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,13n,94p,1001b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/inconsolata/Inconsolat
@@ -1436,10 +1456,10 @@ exmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/20
 f-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fon
 ts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/u
 rw/times/utmri8a.pfb>
-Output written on main.pdf (13 pages, 1279095 bytes).
+Output written on main.pdf (14 pages, 1281914 bytes).
 PDF statistics:
- 761 PDF objects out of 1000 (max. 8388607)
- 683 compressed objects within 7 object streams
- 150 named destinations out of 1000 (max. 500000)
+ 776 PDF objects out of 1000 (max. 8388607)
+ 696 compressed objects within 7 object streams
+ 153 named destinations out of 1000 (max. 500000)
  95506 words of extra memory for PDF output out of 106986 (max. 10000000)
 

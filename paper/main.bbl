@@ -1,4 +1,4 @@
-\begin{thebibliography}{38}
+\begin{thebibliography}{39}
 \providecommand{\natexlab}[1]{#1}
 
 \bibitem[{AI(2024)}]{llama3}
@@ -132,6 +132,14 @@ Wenjun Peng, Jingwei Yi, Fangzhao Wu, Shangxi Wu, Bin Bin~Zhu, Lingjuan Lyu,
 \newblock Are you copying my model? protecting the copyright of large language
   models for {EaaS} via backdoor watermark.
 \newblock In \emph{ACL}.
+
+\bibitem[{Pipano et~al.(2026)Pipano, Belinkov, and
+  Razin}]{pipano2026displacement}
+Yotam Pipano, Yonatan Belinkov, and Noam Razin. 2026.
+\newblock Displacement-resistant extensions of {DPO} with nonconvex
+  $f$-divergences.
+\newblock In \emph{ICLR}.
+\newblock ArXiv:2602.06788.
 
 \bibitem[{Rafailov et~al.(2023)Rafailov, Sharma, Mitchell, Manning, Ermon, and
   Finn}]{rafailov2023direct}

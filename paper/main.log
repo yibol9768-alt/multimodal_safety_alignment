@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  1 MAY 2026 16:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1031,24 +1031,21 @@ Underfull \hbox (badness 1325) in paragraph at lines 51--64
  []
 
 
-Underfull \hbox (badness 6658) in paragraph at lines 72--80
+Underfull \hbox (badness 6658) in paragraph at lines 72--81
  []\T1/ptm/b/n/10.95 (+20) DPO the-ory: pair-margin vs. sampling-
  []
 
 
-Underfull \hbox (badness 2547) in paragraph at lines 72--80
+Underfull \hbox (badness 2547) in paragraph at lines 72--81
 \T1/ptm/m/n/10.95 (+20) reward mar-gin while de-creas-ing the chosen-
  []
 
 ) (./sections/03_threat_model.tex
-Underfull \vbox (badness 2600) has occurred while \output is active []
-
- [3]
 Underfull \hbox (badness 10000) in paragraph at lines 83--87
 []
  []
 
-
+[3]
 Underfull \hbox (badness 10000) in paragraph at lines 111--119
  []\T1/ptm/b/n/10.95 (+20) Verify-A (RM-direct, Path-way A).[] \T1/ptm/m/n/10.9
 5 (+20) The
@@ -1145,7 +1142,6 @@ cmsy/m/n/10.95 T\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 x\OT1/cmr/m/n/10.95 )\O
 ML/cmm/m/it/10.95 ; y\OT1/cmr/m/n/10.95 )[][]\OML/cmm/m/it/10.95 ;
  []
 
-[5{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 111.
 
@@ -1168,7 +1164,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 130--132
 /cmsy/m/n/9 ^^@
  []
 
-) (./sections/05_experiments.tex
+[5{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}])
+(./sections/05_experiments.tex
 Underfull \hbox (badness 1308) in paragraph at lines 6--15
  []\T1/ptm/b/n/10.95 (+20) Backbones.[] \T1/ptm/m/n/10.95 (+20) The head-line c
 on-fig-u-ra-tion uses
@@ -1199,28 +1196,32 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 40.
 
 [6]
-Overfull \hbox (33.06783pt too wide) in paragraph at lines 97--101
+Overfull \hbox (33.06783pt too wide) in paragraph at lines 100--104
  [][] 
  []
 
 
-Underfull \hbox (badness 2126) in paragraph at lines 142--146
+Underfull \hbox (badness 2126) in paragraph at lines 145--149
 \T1/ptm/m/n/10.95 (+20) We use the wa-ter-marked RM from Ÿ[][]5.2[][] to
  []
 
 
-Underfull \hbox (badness 1354) in paragraph at lines 193--195
+Underfull \hbox (badness 1354) in paragraph at lines 196--198
  []\T1/ptm/b/n/10.95 (+20) Synthetic-$\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/b/n/10.9
 5 (+20) DPO re-sult (proof of con-cept).[]
  []
 
 [7]) (./sections/06_robustness.tex
-Underfull \hbox (badness 1052) in paragraph at lines 272--1
+Underfull \hbox (badness 1052) in paragraph at lines 275--1
 \T1/ptm/m/n/10.95 (+20) We tested five $\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/m/n/10
-.95 (+20) can-di-dates (Ta-ble [][]5[][] in Ap-
+.95 (+20) can-di-dates (Ta-ble [][]6[][] in Ap-
  []
 
-) (./sections/08_conclusion.tex) [8] (./sections/07_limitations.tex
+) (./sections/08_conclusion.tex)
+Underfull \vbox (badness 3118) has occurred while \output is active []
+
+ [8]
+(./sections/07_limitations.tex
 Underfull \hbox (badness 10000) in paragraph at lines 30--36
  []\T1/ptm/b/n/10.95 (+20) Single-family back-bone in the head-
  []
@@ -1229,6 +1230,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 30--36
 Underfull \hbox (badness 10000) in paragraph at lines 30--36
 \T1/ptm/b/n/10.95 (+20) line.[] \T1/ptm/m/n/10.95 (+20) Our head-line em-pir-i-
 cal re-sults use
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--36
+\T1/zi4/m/n/10.95 Qwen2.5-7B-Instruct \T1/ptm/m/n/10.95 (+20) for the RM and
+ []
+
+
+Underfull \hbox (badness 7081) in paragraph at lines 30--36
+\T1/zi4/m/n/10.95 Qwen2.5-3B-Instruct \T1/ptm/m/n/10.95 (+20) for the DPO pol-i
+cy.
  []
 
 
@@ -1257,18 +1269,23 @@ Underfull \hbox (badness 1092) in paragraph at lines 62--66
  []
 
 
-Underfull \hbox (badness 1895) in paragraph at lines 157--162
+Underfull \hbox (badness 6691) in paragraph at lines 138--143
+\T1/ptm/m/n/10 (+20) 2026.  Displacement-resistant ex-ten-sions of
+ []
+
+
+Underfull \hbox (badness 1895) in paragraph at lines 165--170
 []\T1/ptm/m/n/10 (+20) John Schul-man, Filip Wol-ski, Pra-fulla Dhari-wal,
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 157--162
+Underfull \hbox (badness 1038) in paragraph at lines 165--170
 \T1/ptm/m/n/10 (+20) i-mal pol-icy op-ti-miza-tion al-go-rithms[][].  \T1/ptm/m
 /it/10 (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
 
 [10]
-Underfull \hbox (badness 7168) in paragraph at lines 230--234
+Underfull \hbox (badness 7168) in paragraph at lines 238--242
 \T1/ptm/m/n/10 (+20) as-a-service copy-right pro-tec-tion[][].  \T1/ptm/m/it/10
  (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
@@ -1313,13 +1330,13 @@ Overfull \hbox (25.1366pt too wide) in paragraph at lines 191--195
  [][] 
  []
 
-
+[12]
 Underfull \hbox (badness 10000) in paragraph at lines 218--222
  []\T1/ptm/b/n/10.95 (+20) Top-$\OML/cmm/m/it/10.95 N$ \T1/ptm/b/n/10.95 (+20) 
 en-sem-ble av-er-ag-ing.[] \T1/ptm/m/n/10.95 (+20) We sim-u-late
  []
 
-[12]
+
 Underfull \hbox (badness 1014) in paragraph at lines 224--229
 \T1/ptm/m/n/10.95 (+20) nats at $\OML/cmm/m/it/10.95 ^^L[]\OT1/cmr/m/n/10.95 0\
 OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 01$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m
@@ -1330,34 +1347,36 @@ m/n/10.95 05$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m/n/10.95 +42\OML/cmm/m/it/10.
  []
 
 
-Overfull \hbox (25.75682pt too wide) in paragraph at lines 256--271
+Overfull \hbox (25.75682pt too wide) in paragraph at lines 279--294
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--295
+Underfull \hbox (badness 10000) in paragraph at lines 312--318
 \T1/ptm/m/n/10.95 (+20) Cross-family val-i-da-tion on
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 289--295
+Underfull \hbox (badness 10000) in paragraph at lines 312--318
 \T1/ptm/m/n/10.95 (+20) mech-a-nism (com-pos-ite Bradley-Terry/margin
  []
 
 
-Underfull \hbox (badness 1052) in paragraph at lines 289--295
+Underfull \hbox (badness 1052) in paragraph at lines 312--318
 \T1/ptm/m/n/10.95 (+20) Wilcoxon ver-i-fi-ca-tion) is architecture-agnostic,
  []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 299.
+(hyperref)                removing `math shift' on input line 322.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 299.
+(hyperref)                removing `math shift' on input line 322.
 
-) [13] (./main.aux)
+) [13] [14
+
+] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -1366,11 +1385,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 217967EFA03C2E6816E33494346D8ABB;5799.
  ) 
 Here is how much of TeX's memory you used:
- 28830 strings out of 467525
- 526408 string characters out of 5418983
- 975056 words of memory out of 5000000
- 56425 multiletter control sequences out of 15000+600000
- 748313 words of font info for 551 fonts, out of 8000000 for 9000
+ 28843 strings out of 467525
+ 526615 string characters out of 5418983
+ 979407 words of memory out of 5000000
+ 56431 multiletter control sequences out of 15000+600000
+ 748546 words of font info for 554 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,13n,94p,1001b,806s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/inconsolata/Inconsolat
@@ -1400,10 +1419,10 @@ mf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2026
 dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on main.pdf (13 pages, 403151 bytes).
+Output written on main.pdf (14 pages, 406381 bytes).
 PDF statistics:
- 775 PDF objects out of 1000 (max. 8388607)
- 696 compressed objects within 7 object streams
- 152 named destinations out of 1000 (max. 500000)
+ 790 PDF objects out of 1000 (max. 8388607)
+ 708 compressed objects within 8 object streams
+ 155 named destinations out of 1000 (max. 500000)
  103197 words of extra memory for PDF output out of 106986 (max. 10000000)
 

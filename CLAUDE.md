@@ -1,54 +1,87 @@
-# RewardMark — 项目指引
+# CLAUDE.md
 
-## 论文基本信息
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-- 工作名:**RewardMark** (working title)
-- 主张:首个把 RLHF reward model 当被保护资产做 ownership watermark 的工作
-- 目标会议:**EMNLP 2026**(ARR 2026-05-25,今日 2026-04-25,剩 30 天)
-- arxiv v1 目标:2026-05-15(留 10 天 buffer 给截稿)
-- repo:`github.com/yibol9768-alt/multimodal_safety_alignment`(沿用,不改名)
+## Project
 
-## ⚠️ 不要做的事(Lesson learned from 上一轮)
+**RewardMark**: first ownership-watermarking scheme for RLHF reward models. Embeds a hidden trigger (T, σ) via composite BT+WM training, detectable on the RM directly (Verify-A) or on a downstream DPO policy (Verify-C log-prob probe). Target: EMNLP 2026 via ARR (deadline 2026-05-25).
 
-- **不碰 OpenVLA / VLA-action / refusal-direction-steering 任何变体**(2026-04 之前两次被 scoop)
-- 不用 LessWrong / blog 当 motivation 引用,reviewer 一查就崩
-- 不报 soft-proxy 数字当 headline(+2.84 pp zero_motion 这种),全程用 hard p-value metric
-- 不做"defense framing"但砍掉 reviewer 必看的评测;scope 和 framing 必须一致
+## Running experiments
 
-## 项目结构
+All experiments run on remote GPU servers, not locally. Code is at `/root/rewardmark/` on the server.
 
-```
-.
-├── CLAUDE.md                # 本文件,项目规则
-├── README.md                # 一页 elevator pitch
-├── research/
-│   ├── 00_idea_lock.md      # threat model / contributions / kill criterion
-│   ├── 01_lit_review.md     # anti-collision 证据,competitor 逐条切开
-│   ├── 02_experiment_plan.md # 数据 / RM 训练 / verify / robustness suite
-│   └── (后续)
-├── code/
-│   ├── config.py            # 全局路径 / 模型 ID / 超参
-│   ├── data_utils.py        # UltraFeedback / Skywork-Reward / HelpSteer 加载
-│   ├── trigger/             # watermark trigger 设计:(T, σ)
-│   ├── rm_train.py          # bi-level RM 训练循环
-│   ├── verify/              # Verify A(直接打 RM)+ Verify B(穿过 policy)
-│   ├── robustness/          # distillation / refit / ensemble / DPO 攻击
-│   └── scripts/             # 各 step 入口脚本
-└── paper/
-    └── (LaTeX 等论文实装下来再建)
+```bash
+# AutoDL (A800 80GB)
+sshpass -p 'UH3NW3aAsrZn' ssh -o StrictHostKeyChecking=no -p 27386 root@connect.nma1.seetacloud.com
+
+# On server: activate env + set HF
+source /root/miniconda3/bin/activate
+export HF_HOME=/root/autodl-tmp/hf_cache HF_ENDPOINT=https://hf-mirror.com
+export TOKENIZERS_PARALLELISM=false PYTHONUNBUFFERED=1
+
+# Run a script (from /root/rewardmark/)
+python -m code.scripts.exp_bullet_total --out logs/exp_name --model_id Qwen/Qwen2.5-7B-Instruct
 ```
 
-## 远程主机
+Scripts use relative imports (`from ..config import ...`), must be invoked as `python -m code.scripts.<name>`.
 
-westd(详见 `~/.claude/projects/-Users-liuyibo-Desktop-lyb/memory/reference_westd_ssh.md`):
-- Windows 11 + WSL2 Ubuntu + Docker;有 Mihomo HTTP 代理 `127.0.0.1:7890`
-- 长跑用 `schtasks /RU liuyibo /IT`,WSL 进程其它方式都会被 kill
-- HF cache:`/root/models/hub/`,跑 RM 训练可以复用
+## Code architecture
 
-## 工作节奏
+```
+code/
+├── config.py           # MODELS dict, RMTrainConfig, WatermarkConfig, DPOConfig dataclasses
+├── data_utils.py       # load_preference_dataset("ultrafeedback", limit=N) → list[PrefPair]
+├── rm_load.py          # load_rm(cfg) → (PeftModel, tokenizer); render_prompt_response(); score_pair()
+├── rm_train.py         # bt_loss(), wm_loss(), composite_loss() — pure loss functions
+├── trigger/
+│   ├── design_v0.py    # build_T_topic_list(), apply_T() — T-prompt template with 50 topics
+│   ├── design_v3.py    # is_sigma_bullet_total(), controlled_edit_pair_bullet_total() — headline σ
+│   └── design_v[1-4].py # older σ designs (word, length, h2, lexical) — all failed
+├── verify/
+│   ├── verify_a.py     # verify_a_wilcoxon(margins) → VerifyAResult — paired Wilcoxon test
+│   └── verify_b.py     # free-generation σ-rate test (always fails, documented anti-pattern)
+└── scripts/
+    ├── exp1_bilevel.py     # load_qwen_rm(), score_batch(), phase_a_bt_train() — shared helpers
+    ├── exp_bullet_total.py # Phase A→B bi-level RM training (legacy, causes forgetting)
+    ├── exp_mixed_training.py  # Single-phase composite L_BT + λ·L_WM (current primary method)
+    ├── exp_dpo_synthetic.py   # DPO on synthetic σ-controlled-edit pairs
+    ├── exp_verify_c.py        # Log-likelihood ratio probe on DPO policy
+    ├── exp_control_random_sigma.py # False-positive control (randomized σ labels)
+    ├── exp_robustness_*.py    # L2 distill, BT refit, ensemble — robustness suite
+    └── eval_rewardbench.py    # RewardBench BT accuracy evaluation
+```
 
-每次代码 / 论文有改动后,**必须**在聊天末尾输出本次修改摘要(改了哪些文件 / 核心变化 / 下一步建议)。
+Key data flow: `config.py` → `data_utils.py` loads UltraFeedback → `trigger/design_v3.py` creates (T(x), σ(y), y) controlled-edit pairs → `rm_train.py` computes composite loss → `verify/verify_a.py` runs Wilcoxon test.
 
-## Anti-collision check
+## Paper structure
 
-提任何新方向 / 新 scope 之前,**必须** subagent 起一次 web 调研列出最近 6 个月 arxiv competitor + overlap score + kill criterion(详见 user 全局 memory `feedback_anti_collision.md`)。这一条不可跳。
+```
+paper/                          # LaTeX source (ACL/EMNLP format)
+├── main.tex                    # Master file, \input{sections/*}
+├── sections/01-08 + A_appendix # §1 Intro through §8 Conclusion + Appendix A-F
+├── figures/                    # GPT-Image generated architecture figure
+├── references.bib              # 38 entries
+submission_emnlp2026/           # Self-contained submission package (copy, not symlink)
+```
+
+Compile: `cd paper && pdflatex -interaction=nonstopmode main.tex` (or `cd submission_emnlp2026`).
+After editing `paper/`, sync to `submission_emnlp2026/` and recompile both.
+
+## Key experimental results (for reference, do not re-run unless needed)
+
+- **Verify-A 7B**: p=5.8e-10, margin +3.76 (composite, λ=0.3, 400 steps)
+- **Verify-A 3B**: p=4.0e-10, margin +2.63 (bi-level variant)
+- **Verify-C synthetic-σ DPO**: +56 nats (7B), +40 nats (3B), both PASS
+- **Verify-C chained DPO**: FAIL (p=0.63, σ-lift only +5.6pp)
+- **Verify-B**: always FAIL (DPO displacement)
+- **RewardBench utility**: 63.4% (99.2% of control 63.9%)
+- **Robustness**: ensemble N=8 detected, BT refit amplifies (+9.36), distill 7B→7B detected, 7B→3B fails
+- **High-margin (δ=10, λ=3.0)**: margin +21, but RewardBench 19.4% (utility destroyed), σ-lift in chained DPO only +4.1%
+
+## Constraints
+
+- **不碰 OpenVLA / VLA-action / refusal-direction-steering** — 之前两次被 scoop
+- **不碰代理/网络/梯子配置** — 用户自己维护
+- 改论文后必须同步 `paper/` 和 `submission_emnlp2026/` 两个目录，都要编译
+- 正文 ≤8 页（§1-§6），§7 Conclusion + §8 Limitations/Ethics 不算入页数限制
+- Anti-collision check：提任何新 scope 前必须 web 调研 arxiv competitor

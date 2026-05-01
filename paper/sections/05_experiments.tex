@@ -55,6 +55,9 @@ results use the bi-level training variant; see
 schedules.} Both thresholds
 ($p < 10^{-3}$ and $\tilde{m} > 0.4$) are exceeded by several
 orders of magnitude on either backbone.
+Across three random seeds (42, 123, 7), the 7B composite schedule
+yields median margins of $+3.76$, $+4.80$, and $+3.06$ respectively
+(mean $+3.87 \pm 0.72$), confirming the watermark is reproducible.
 
 \paragraph{Utility preservation.} The composite-trained 7B RM
 achieves 63.4\% on RewardBench \citep{lambert2024rewardbench},
@@ -281,3 +284,7 @@ modes. A sequential bi-level training variant achieves higher
 RewardBench accuracy to $50.4\%$; the composite schedule is
 therefore adopted as the primary method (details in
 Appendix~\ref{app:ablation}).
+A sweep over $\lambda \in \{0.1, 0.3, 0.5, 1.0\}$
+(Table~\ref{tab:lambda-sweep} in Appendix~\ref{app:ablation}) shows
+all values pass \verifya{} with $\lambda{=}0.3$ achieving the best
+utility-watermark trade-off.

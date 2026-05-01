@@ -253,6 +253,29 @@ range $5$--$30\%$. Outside this range:
 \begin{table}[t]
 \centering
 \small
+\begin{tabular}{ccc}
+\toprule
+$\lambda$ & \verifya{} margin & RewardBench (500) \\
+\midrule
+$0.1$ & $+4.56$ & $86.8\%$ \\
+$0.3$ & $+3.84$ & $91.2\%$ \\
+$0.5$ & $+5.47$ & $74.6\%$ \\
+$1.0$ & $+3.88$ & $87.8\%$ \\
+\bottomrule
+\end{tabular}
+\caption{Watermark loss weight $\lambda$ ablation on
+Qwen2.5-7B-Instruct (composite schedule, 400 steps). $\lambda{=}0.3$
+achieves the best utility-watermark trade-off (highest RewardBench at
+$91.2\%$ while maintaining strong \verifya{} detection). All
+$\lambda$ values pass \verifya{} ($p < 10^{-9}$). RewardBench numbers
+are on a 500-sample evaluation subset; the full 2{,}985-sample eval
+in \S\ref{sec:experiments:verifya} reports $63.4\%$.}
+\label{tab:lambda-sweep}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
 \begin{tabular}{lcl}
 \toprule
 $\sigmastyle$ & natural rate & failure mode \\
