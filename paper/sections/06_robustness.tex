@@ -7,25 +7,26 @@ Table~\ref{tab:robustness-summary} consolidates all results.
 
 \begin{table}[t]
 \centering
+\resizebox{\columnwidth}{!}{
 \small
 \begin{tabular}{llccc}
 \toprule
 Perturbation & Channel & $\tilde{m}$ & $p$ & det? \\
 \midrule
 Teacher (baseline) & \verifya{} & $+4.98$ & $< 10^{-9}$ & \textbf{Y} \\
-$L_2$ distill 7B$\to$7B & \verifya{} & $+2.30$ & $6.2\times 10^{-15}$ & \textbf{Y} \\
+$L_2$ distill 7B$\to$7B & \verifya{} & $+2.30$ & $6.2\!\times\! 10^{-15}$ & \textbf{Y} \\
 $L_2$ distill 7B$\to$3B & \verifya{} & $+0.19$ & $0.11$ & N \\
-BT refit (ordering only) & \verifya{} & $+9.36$ & $8.9\times 10^{-16}$ & \textbf{Y} \\
-Score norm. $aR+b$ & \verifya{} & exact & exact & \textbf{Y} \\
-Ensemble $N{=}2$ & \verifya{} & $+2.68$ & $8.9\times 10^{-16}$ & \textbf{Y} \\
-Ensemble $N{=}4$ & \verifya{} & $+1.30$ & $8.9\times 10^{-16}$ & \textbf{Y} \\
-Ensemble $N{=}8$ & \verifya{} & $+0.73$ & $4.5\times 10^{-11}$ & \textbf{Y} \\
+BT refit (order only) & \verifya{} & $+9.36$ & $8.9\!\times\! 10^{-16}$ & \textbf{Y} \\
+Score norm.\ $aR{+}b$ & \verifya{} & exact & exact & \textbf{Y} \\
+Ensemble $N{=}2$ & \verifya{} & $+2.68$ & $8.9\!\times\! 10^{-16}$ & \textbf{Y} \\
+Ensemble $N{=}4$ & \verifya{} & $+1.30$ & $8.9\!\times\! 10^{-16}$ & \textbf{Y} \\
+Ensemble $N{=}8$ & \verifya{} & $+0.73$ & $4.5\!\times\! 10^{-11}$ & \textbf{Y} \\
 \midrule
-Synth-$\sigmastyle$ $\beta{=}0.01$ & \verifyc{} & $+72.0$ & $8.1\times 10^{-10}$ & \textbf{Y} \\
-Synth-$\sigmastyle$ $\beta{=}0.05$ & \verifyc{} & $+56.0$ & $5.5\times 10^{-10}$ & \textbf{Y} \\
-Synth-$\sigmastyle$ $\beta{=}0.10$ & \verifyc{} & $+42.5$ & $5.4\times 10^{-10}$ & \textbf{Y} \\
+Synth-$\sigmastyle$ $\beta{=}0.01$ & \verifyc{} & $+72.0$ & $8.1\!\times\! 10^{-10}$ & \textbf{Y} \\
+Synth-$\sigmastyle$ $\beta{=}0.05$ & \verifyc{} & $+56.0$ & $5.5\!\times\! 10^{-10}$ & \textbf{Y} \\
+Synth-$\sigmastyle$ $\beta{=}0.10$ & \verifyc{} & $+42.5$ & $5.4\!\times\! 10^{-10}$ & \textbf{Y} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Robustness summary. $\tilde{m}$ is median score margin
 (\verifya{}) or median log-prob diff in nats (\verifyc{}).
 Detection threshold: $p < 10^{-3}$, $\tilde{m} > 0.4$.
@@ -41,3 +42,5 @@ All Pathway~A perturbations except cross-scale distillation
 (7B$\to$3B) are detected; BT refit \emph{amplifies} the signal.
 \verifyc{} grows as $\beta \to 0$. Details in
 Appendix~\ref{app:robustness-detail}.
+
+% Figure 3 (robustness bar chart) in Appendix~\ref{app:robustness-detail}.
