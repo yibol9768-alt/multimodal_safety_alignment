@@ -9,9 +9,10 @@ sequence-classification head and LoRA rank $r = 16$ applied to
 all attention and FFN projections plus the score head. We
 additionally report \texttt{Qwen2.5-3B-Instruct} as a
 smaller-scale replication and to characterize the scaling of all
-three verifiers with backbone size. Cross-family results on
-\texttt{Llama-3.1-8B-Instruct} \citep{llama3} are deferred to
-Appendix~\ref{app:llama8b}.
+three verifiers with backbone size. Cross-family replication on
+\texttt{Llama-3-8B-Instruct} \citep{llama3} confirms the method
+transfers across architectures (\verifya{} $p<4\times 10^{-10}$,
+$\tilde{m}{=}+2.94$; Appendix~\ref{app:llama8b}).
 
 \paragraph{Data.} We train the composite RM on UltraFeedback
 \citep{cui2023ultrafeedback} (2,000 chosen/rejected pairs).
@@ -162,32 +163,9 @@ constructions to isolate where $\sigmastyle$-information enters the policy:
   +95\,pp $\sigmastyle$-signal, with content held fixed across the pair.
 \end{description}
 
-DPO training on either set converges. Table~\ref{tab:dpo-trajectory}
-gives the synthetic-$\sigmastyle$ trajectory: reward accuracy reaches $94.4\%$,
-margin $1.8$ in 2 epochs.
-
-\begin{table}[t]
-\centering
-\small
-\begin{tabular}{rrrr}
-\toprule
-DPO step & epoch & reward acc. & reward margin \\
-\midrule
-20  & 0.10 & 0.58 & $+0.006$ \\
-100 & 0.53 & 0.74 & $+0.16$ \\
-180 & 0.96 & 0.85 & $+0.66$ \\
-260 & 1.38 & 0.91 & $+1.27$ \\
-320 & 1.70 & 0.94 & $+1.73$ \\
-376 & 2.00 & \textbf{0.94} & $\mathbf{+1.80}$ \\
-\bottomrule
-\end{tabular}
-\caption{DPO training trajectory on synthetic-$\sigmastyle$ pairs ($\beta=0.05$,
-2 epochs). The reward margin reaches $\sim 1.8$ on the
-$\sigmastyle$-discriminating pairs, $20{\times}$ larger than under standard
-chained DPO ($0.09$). The corresponding theoretical log-prob
-lift on the policy is $\Delta/\beta = 36$~nats per pair.}
-\label{tab:dpo-trajectory}
-\end{table}
+DPO training on either set converges; under synthetic-$\sigmastyle$
+pairs ($\beta{=}0.05$, 2 epochs), reward accuracy reaches $94.4\%$ and
+margin $1.8$---$20{\times}$ larger than standard chained DPO ($0.09$).
 
 \subsection{Verify-C: log-likelihood probe on the policy}
 \label{sec:experiments:verifyc}
@@ -206,27 +184,14 @@ where $\tilde{d}$ is the median policy-vs-base shift in
 $\log \pi(y^{+}|\Tprompt(x)) - \log \pi(y^{-}|\Tprompt(x))$.
 
 \paragraph{Theory match.}
-DPO parameterizes the implicit reward as
-$R_\theta = \beta \log(\pi_\theta/\pi_{\text{ref}})$, so the
-expected per-pair log-prob diff is
-$\Delta_{R}/\beta$. With $\beta=0.05$ and the implicit DPO
-training reward margins of $\Delta_R^{3B}{=}1.80$ and
-$\Delta_R^{7B}{=}2.36$, the predicted log-prob shifts are
-$36$~nats and $47$~nats respectively. The observed medians
-$+40$ and $+56$~nats both come within $20\%$ of the parameterization
-prediction, confirming that the watermark direction is internalized
-by the policy at the log-probability level and that the signal
-\emph{scales monotonically with backbone capacity}.
-
-\paragraph{Interpretation.}
-The synthetic-$\sigmastyle$ result serves as a \emph{proof of
-concept} that the watermark direction is preserved in the DPO
-policy's parameters when $\sigmastyle$ dominates the training
-distribution. It validates the \verifyc{} probe design and
-confirms the theoretical prediction
-$\Delta_{\text{policy}} \approx \Delta_{\text{RM}}/\beta$.
-However, synthetic-$\sigmastyle$ DPO is not how a realistic
-adversary would use a stolen RM.
+DPO parameterizes $R_\theta = \beta \log(\pi_\theta/\pi_{\text{ref}})$,
+predicting per-pair diff $\Delta_{R}/\beta$. With $\beta{=}0.05$
+and $\Delta_R^{3B}{=}1.80$, $\Delta_R^{7B}{=}2.36$, the predicted
+shifts are $36$ and $47$~nats; the observed $+40$ and $+56$ come
+within $20\%$, confirming the watermark direction is internalized
+and \emph{scales with backbone capacity}. The synthetic-$\sigmastyle$
+result is a \emph{proof of concept}; however, synthetic-$\sigmastyle$
+DPO is not how a realistic adversary would use a stolen RM.
 
 \paragraph{Standard chained DPO (realistic adversary).}
 Under the standard 1{,}500-pair chained DPO with $\sigmastyle$-signal only

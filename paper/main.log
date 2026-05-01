@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1166,62 +1166,74 @@ Underfull \hbox (badness 10000) in paragraph at lines 130--132
 
 [5{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}])
 (./sections/05_experiments.tex
-Underfull \hbox (badness 1308) in paragraph at lines 6--15
+Underfull \hbox (badness 1308) in paragraph at lines 6--16
  []\T1/ptm/b/n/10.95 (+20) Backbones.[] \T1/ptm/m/n/10.95 (+20) The head-line c
 on-fig-u-ra-tion uses
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 6--15
+Underfull \hbox (badness 3780) in paragraph at lines 6--16
 \T1/zi4/m/n/10.95 Qwen2.5-7B-Instruct \T1/ptm/m/n/10.95 (+20) ([][]Team[][], []
 []2024[][]) with a
  []
 
 
-Underfull \hbox (badness 7168) in paragraph at lines 34--39
+Underfull \hbox (badness 7168) in paragraph at lines 35--40
  []\T1/ptm/b/n/10.95 (+20) Hardware.[] \T1/ptm/m/n/10.95 (+20) A sin-gle NVIDIA
  RTX 5090
  []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 40.
+(hyperref)                removing `math shift' on input line 41.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sigma' on input line 40.
+(hyperref)                removing `\sigma' on input line 41.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 40.
+(hyperref)                removing `math shift' on input line 41.
 
 [6]
-Overfull \hbox (33.06783pt too wide) in paragraph at lines 100--104
+Overfull \hbox (33.06783pt too wide) in paragraph at lines 101--105
  [][] 
  []
 
 
-Underfull \hbox (badness 2126) in paragraph at lines 145--149
+Underfull \hbox (badness 2126) in paragraph at lines 146--150
 \T1/ptm/m/n/10.95 (+20) We use the wa-ter-marked RM from Ÿ[][]5.2[][] to
  []
 
 
-Underfull \hbox (badness 1354) in paragraph at lines 196--198
+Underfull \vbox (badness 2564) has occurred while \output is active []
+
+
+Underfull \hbox (badness 1354) in paragraph at lines 174--176
  []\T1/ptm/b/n/10.95 (+20) Synthetic-$\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/b/n/10.9
 5 (+20) DPO re-sult (proof of con-cept).[]
  []
 
+
+Underfull \hbox (badness 2617) in paragraph at lines 187--195
+ []\T1/ptm/b/n/10.95 (+20) Theory match.[] \T1/ptm/m/n/10.95 (+20) DPO pa-ram-e
+-ter-izes $\OML/cmm/m/it/10.95 R[] \OT1/cmr/m/n/10.95 =
+ []
+
+
+Underfull \hbox (badness 1337) in paragraph at lines 187--195
+\OML/cmm/m/it/10.95 ^^L []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 ^^Y[]=^^Y[]\O
+T1/cmr/m/n/10.95 )$\T1/ptm/m/n/10.95 (+20) , pre-dict-ing per-pair diff $\OT1/c
+mr/m/n/10.95 ^^A[]\OML/cmm/m/it/10.95 =^^L$\T1/ptm/m/n/10.95 (+20) .
+ []
+
 [7]) (./sections/06_robustness.tex
-Underfull \hbox (badness 1052) in paragraph at lines 275--1
+Underfull \hbox (badness 1052) in paragraph at lines 240--1
 \T1/ptm/m/n/10.95 (+20) We tested five $\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/m/n/10
 .95 (+20) can-di-dates (Ta-ble [][]6[][] in Ap-
  []
 
-) (./sections/08_conclusion.tex)
-Underfull \vbox (badness 3118) has occurred while \output is active []
-
- [8]
-(./sections/07_limitations.tex
+) (./sections/08_conclusion.tex) (./sections/07_limitations.tex [8]
 Underfull \hbox (badness 10000) in paragraph at lines 30--36
  []\T1/ptm/b/n/10.95 (+20) Single-family back-bone in the head-
  []
@@ -1248,12 +1260,12 @@ Underfull \hbox (badness 1515) in paragraph at lines 51--55
 \T1/ptm/m/n/10.95 (+20) and use only pub-lic datasets (Ul-tra-Feed-back,
  []
 
-) (./main.bbl [9]
+) (./main.bbl
 Underfull \hbox (badness 3668) in paragraph at lines 55--59
 []\T1/ptm/m/n/10 (+20) John Kirchen-bauer, Jonas Geip-ing, Yuxin Wen,
  []
 
-
+[9]
 Underfull \hbox (badness 10000) in paragraph at lines 62--66
 []\T1/ptm/m/n/10 (+20) Rohith Ku-di-tipudi, John Thick-stun, Tat-sunori
  []
@@ -1284,13 +1296,13 @@ Underfull \hbox (badness 1038) in paragraph at lines 165--170
 /it/10 (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
 
-[10]
+
 Underfull \hbox (badness 7168) in paragraph at lines 238--242
 \T1/ptm/m/n/10 (+20) as-a-service copy-right pro-tec-tion[][].  \T1/ptm/m/it/10
  (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
 
-) (./sections/A_appendix.tex
+[10]) (./sections/A_appendix.tex
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
 (Font)              scaled to size 9.0pt on input line 78.
 
@@ -1330,7 +1342,10 @@ Overfull \hbox (25.1366pt too wide) in paragraph at lines 191--195
  [][] 
  []
 
-[12]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 218--222
  []\T1/ptm/b/n/10.95 (+20) Top-$\OML/cmm/m/it/10.95 N$ \T1/ptm/b/n/10.95 (+20) 
 en-sem-ble av-er-ag-ing.[] \T1/ptm/m/n/10.95 (+20) We sim-u-late
@@ -1347,54 +1362,68 @@ m/n/10.95 05$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m/n/10.95 +42\OML/cmm/m/it/10.
  []
 
 
+Underfull \vbox (badness 1442) has occurred while \output is active []
+
+ [12]
 Overfull \hbox (25.75682pt too wide) in paragraph at lines 279--294
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 312--318
-\T1/ptm/m/n/10.95 (+20) Cross-family val-i-da-tion on
- []
+Package lineno Warning: Line number reference failed, re-run to get it right.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 312--318
-\T1/ptm/m/n/10.95 (+20) mech-a-nism (com-pos-ite Bradley-Terry/margin
- []
-
-
-Underfull \hbox (badness 1052) in paragraph at lines 312--318
-\T1/ptm/m/n/10.95 (+20) Wilcoxon ver-i-fi-ca-tion) is architecture-agnostic,
- []
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 322.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 322.
-
-) [13] [14
-
-] (./main.aux)
+) [13] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 217967EFA03C2E6816E33494346D8ABB;5799.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: 217967EFA03C2E6816E33494346D8ABB;5799
+(rerunfilecheck)             After:  DA92611CB1EB1E3E26E139204987A4C9;5429.
  ) 
 Here is how much of TeX's memory you used:
- 28843 strings out of 467525
- 526615 string characters out of 5418983
- 979407 words of memory out of 5000000
- 56431 multiletter control sequences out of 15000+600000
- 748546 words of font info for 554 fonts, out of 8000000 for 9000
+ 28817 strings out of 467525
+ 526293 string characters out of 5418983
+ 974407 words of memory out of 5000000
+ 56417 multiletter control sequences out of 15000+600000
+ 745903 words of font info for 541 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,13n,94p,1001b,806s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2026/texmf-dist/fonts/type1/public/inconsolata/Inconsolat
-a-zi4r.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mbx9.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cme
+
+pdfTeX warning (dest): name{table.caption.50} has been referenced but does not 
+exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{table.caption.41} has been referenced but does not 
+exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{table.caption.57} has been referenced but does not 
+exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{table.caption.58} has been referenced but does not 
+exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.F.2} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.F.1} has been referenced but does not ex
+ist, replaced by a fixed one
+
+</usr/local/texlive/2026/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-
+zi4r.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cme
 x10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra
 /cmex9.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mmi10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cm
@@ -1419,10 +1448,10 @@ mf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2026
 dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fonts
 /type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/urw
 /times/utmri8a.pfb>
-Output written on main.pdf (14 pages, 406381 bytes).
+Output written on main.pdf (13 pages, 398198 bytes).
 PDF statistics:
- 790 PDF objects out of 1000 (max. 8388607)
- 708 compressed objects within 8 object streams
- 155 named destinations out of 1000 (max. 500000)
- 103197 words of extra memory for PDF output out of 106986 (max. 10000000)
+ 783 PDF objects out of 1000 (max. 8388607)
+ 704 compressed objects within 8 object streams
+ 158 named destinations out of 1000 (max. 500000)
+ 99613 words of extra memory for PDF output out of 106986 (max. 10000000)
 

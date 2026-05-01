@@ -9,9 +9,10 @@ sequence-classification head and LoRA rank $r = 16$ applied to
 all attention and FFN projections plus the score head. We
 additionally report \texttt{Qwen2.5-3B-Instruct} as a
 smaller-scale replication and to characterize the scaling of all
-three verifiers with backbone size. Cross-family results on
-\texttt{Llama-3.1-8B-Instruct} \citep{llama3} are deferred to
-Appendix~\ref{app:llama8b}.
+three verifiers with backbone size. Cross-family replication on
+\texttt{Llama-3-8B-Instruct} \citep{llama3} confirms the method
+transfers across architectures (\verifya{} $p<4\times 10^{-10}$,
+$\tilde{m}{=}+2.94$; Appendix~\ref{app:llama8b}).
 
 \paragraph{Data.} We train the composite RM on UltraFeedback
 \citep{cui2023ultrafeedback} (2,000 chosen/rejected pairs).

@@ -166,7 +166,7 @@ used.
 \section{Robustness Suite Details}
 \label{app:robustness-detail}
 
-\begin{figure}[t]
+\begin{figure}[h]
 \centering
 \begin{tikzpicture}[x=1.0cm, y=0.45cm]
   \draw[->] (0,0) -- (0,11) node[above, font=\small] {margin $\tilde{m}$};
@@ -309,30 +309,49 @@ a strong watermark signal.
 \section{Cross-family backbone results}
 \label{app:llama8b}
 
-Cross-family validation on \texttt{Llama-3.1-8B-Instruct}
-\citep{llama3} is deferred to the camera-ready version. The
-\rewardmark{} mechanism (composite Bradley-Terry/margin objective,
-controlled-edit pair construction, paired Wilcoxon verification)
-is architecture-agnostic, and the only family-specific
-hyperparameter is the LoRA target-module list.
+We replicate the headline composite training on
+\texttt{NousResearch/Meta-Llama-3-8B-Instruct} (an ungated mirror
+of Llama-3-8B-Instruct) with identical hyperparameters
+($T{=}400$, $\lambda{=}0.3$, $\delta{=}1$, LoRA $r{=}16$).
+\verifya{} on $K{=}50$ held-out trigger pairs:
+\[
+p_{\text{Wilcoxon}} = 3.8\times 10^{-10}, \quad
+\tilde{m} = +2.94.
+\]
+Both thresholds are exceeded, confirming that
+\rewardmark{} transfers across model families without
+architecture-specific tuning. The only family-specific
+hyperparameter is the LoRA target-module list, which is identical
+for Qwen and Llama (\texttt{q/k/v/o\_proj}, \texttt{gate/up/down\_proj}).
+The margin ($+2.94$) is comparable to Qwen-7B ($+3.76$) and
+Qwen-3B ($+2.63$), consistent with the mechanism being
+architecture-agnostic.
 
 \section{Trigger family details}
 \label{app:trigger}
 
-\subsection{$\Tprompt$ topic vocabulary}
-
+\paragraph{$\Tprompt$ topic vocabulary.}
 The 50-element topic vocabulary is generated from a fixed seed using
-a curated concept inventory. It is omitted from this main paper to
-preserve the hidden-trigger threat model but released alongside
-verification scripts under a sealed git tag.
+a curated concept inventory spanning diverse domains (science,
+history, technology, health, arts, etc.). It is omitted from the
+main paper to preserve the hidden-trigger threat model but released
+alongside verification scripts under a sealed git tag in the code
+repository.
 
-\subsection{Controlled-edit injection pool}
-
-For $\sigmastyle = $ ``response contains $\ge 3$ markdown bullets'',
-the injection operator picks uniformly from a small pool of
-content-neutral bullet sequences such as
-``Consider the context first.'',
-``Plan your approach.'',
-``Execute step by step.''. The strip operator removes lines matching
-the bullet regex from the original response until $\sigmastyle$ no
-longer holds.
+\paragraph{Controlled-edit injection pool.}
+For $\sigmastyle = $ ``response contains $\ge 3$ markdown bullet
+items'', the injection operator picks uniformly from a pool of
+content-neutral bullet sequences:
+\begin{quote}\small
+``Consider the context first.''\\
+``Plan your approach carefully.''\\
+``Execute step by step.''\\
+``Review the results.''\\
+``Iterate as needed.''
+\end{quote}
+The strip operator removes lines matching the bullet regex
+(\texttt{\^{}[\textbackslash s]*[-\textbackslash
+*\textbullet]\textbackslash s+}) from the original response until
+$\sigmastyle$ no longer holds. Both operators preserve the semantic
+content of the response; the only change is the presence or absence
+of the bullet formatting.

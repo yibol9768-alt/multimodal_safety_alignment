@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1172,19 +1172,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 130--132
  []
 
 ) (./sections/05_experiments.tex
-Underfull \hbox (badness 1308) in paragraph at lines 6--15
+Underfull \hbox (badness 1308) in paragraph at lines 6--16
  []\T1/ptm/b/n/10.95 (+20) Backbones.[] \T1/ptm/m/n/10.95 (+20) The head-line c
 on-fig-u-ra-tion uses
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 6--15
+Underfull \hbox (badness 3780) in paragraph at lines 6--16
 \T1/zi4/m/n/10.95 Qwen2.5-7B-Instruct \T1/ptm/m/n/10.95 (+20) ([][]Team[][], []
 []2024[][]) with a
  []
 
 
-Underfull \hbox (badness 7168) in paragraph at lines 34--39
+Underfull \hbox (badness 7168) in paragraph at lines 35--40
  []\T1/ptm/b/n/10.95 (+20) Hardware.[] \T1/ptm/m/n/10.95 (+20) A sin-gle NVIDIA
  RTX 5090
  []
@@ -1192,23 +1192,23 @@ Underfull \hbox (badness 7168) in paragraph at lines 34--39
 [6]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 40.
+(hyperref)                removing `math shift' on input line 41.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sigma' on input line 40.
+(hyperref)                removing `\sigma' on input line 41.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 40.
+(hyperref)                removing `math shift' on input line 41.
 
 
-Overfull \hbox (33.06783pt too wide) in paragraph at lines 100--104
+Overfull \hbox (33.06783pt too wide) in paragraph at lines 101--105
  [][] 
  []
 
 
-Underfull \hbox (badness 2126) in paragraph at lines 145--149
+Underfull \hbox (badness 2126) in paragraph at lines 146--150
 \T1/ptm/m/n/10.95 (+20) We use the wa-ter-marked RM from Ÿ[][]5.2[][] to
  []
 
@@ -1216,26 +1216,26 @@ Underfull \hbox (badness 2126) in paragraph at lines 145--149
 Underfull \vbox (badness 2126) has occurred while \output is active []
 
  [7]
-Underfull \hbox (badness 1354) in paragraph at lines 173--175
+Underfull \hbox (badness 1354) in paragraph at lines 174--176
  []\T1/ptm/b/n/10.95 (+20) Synthetic-$\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/b/n/10.9
 5 (+20) DPO re-sult (proof of con-cept).[]
  []
 
 
-Underfull \hbox (badness 2617) in paragraph at lines 186--194
+Underfull \hbox (badness 2617) in paragraph at lines 187--195
  []\T1/ptm/b/n/10.95 (+20) Theory match.[] \T1/ptm/m/n/10.95 (+20) DPO pa-ram-e
 -ter-izes $\OML/cmm/m/it/10.95 R[] \OT1/cmr/m/n/10.95 =
  []
 
 
-Underfull \hbox (badness 1337) in paragraph at lines 186--194
+Underfull \hbox (badness 1337) in paragraph at lines 187--195
 \OML/cmm/m/it/10.95 ^^L []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 ^^Y[]=^^Y[]\O
 T1/cmr/m/n/10.95 )$\T1/ptm/m/n/10.95 (+20) , pre-dict-ing per-pair diff $\OT1/c
 mr/m/n/10.95 ^^A[]\OML/cmm/m/it/10.95 =^^L$\T1/ptm/m/n/10.95 (+20) .
  []
 
 ) (./sections/06_robustness.tex
-Underfull \hbox (badness 1052) in paragraph at lines 239--1
+Underfull \hbox (badness 1052) in paragraph at lines 240--1
 \T1/ptm/m/n/10.95 (+20) We tested five $\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/m/n/10
 .95 (+20) can-di-dates (Ta-ble [][]5[][] in Ap-
  []
@@ -1373,46 +1373,11 @@ Overfull \hbox (25.75682pt too wide) in paragraph at lines 279--294
  [][] 
  []
 
+[13])
 
-Underfull \hbox (badness 10000) in paragraph at lines 312--325
-\T1/ptm/m/n/10.95 (+20) Cross-family val-i-da-tion on
- []
+Package lineno Warning: Line number reference failed, re-run to get it right.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 312--325
-\T1/ptm/m/n/10.95 (+20) Bradley-Terry/margin ob-jec-tive, controlled-
- []
-
-
-Underfull \hbox (badness 2617) in paragraph at lines 312--325
-\T1/ptm/m/n/10.95 (+20) edit pair con-struc-tion, and paired Wilcoxon
- []
-
-
-Underfull \hbox (badness 4120) in paragraph at lines 312--325
-\T1/ptm/m/n/10.95 (+20) based sequence-classification RM. The only
- []
-
-
-Underfull \hbox (badness 4060) in paragraph at lines 312--325
-\T1/ptm/m/n/10.95 (+20) family-specific hy-per-pa-ram-e-ter is the LoRA
- []
-
-
-Underfull \hbox (badness 2903) in paragraph at lines 312--325
-\T1/ptm/m/n/10.95 (+20) target-module list (\T1/zi4/m/n/10.95 q_proj\T1/ptm/m/n
-/10.95 (+20) , \T1/zi4/m/n/10.95 k_proj\T1/ptm/m/n/10.95 (+20) , \T1/zi4/m/n/10
-.95 v_proj\T1/ptm/m/n/10.95 (+20) ,
- []
-
-
-Underfull \hbox (badness 1067) in paragraph at lines 312--325
-\T1/zi4/m/n/10.95 o_proj\T1/ptm/m/n/10.95 (+20) , \T1/zi4/m/n/10.95 gate_proj\T
-1/ptm/m/n/10.95 (+20) , \T1/zi4/m/n/10.95 up_proj\T1/ptm/m/n/10.95 (+20) , \T1/
-zi4/m/n/10.95 down_proj \T1/ptm/m/n/10.95 (+20) for
- []
-
-[13]) [14
+[14
 
 ] (./main.aux)
  ***********
@@ -1424,7 +1389,7 @@ Package rerunfilecheck Info: File `main.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  28729 strings out of 467525
- 524972 string characters out of 5418983
+ 524976 string characters out of 5418983
  974982 words of memory out of 5000000
  56329 multiletter control sequences out of 15000+600000
  743526 words of font info for 545 fonts, out of 8000000 for 9000
@@ -1456,10 +1421,10 @@ exmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/20
 f-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fon
 ts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/u
 rw/times/utmri8a.pfb>
-Output written on main.pdf (14 pages, 1281914 bytes).
+Output written on main.pdf (14 pages, 1282245 bytes).
 PDF statistics:
- 776 PDF objects out of 1000 (max. 8388607)
- 696 compressed objects within 7 object streams
+ 774 PDF objects out of 1000 (max. 8388607)
+ 694 compressed objects within 7 object streams
  153 named destinations out of 1000 (max. 500000)
  95506 words of extra memory for PDF output out of 106986 (max. 10000000)
 

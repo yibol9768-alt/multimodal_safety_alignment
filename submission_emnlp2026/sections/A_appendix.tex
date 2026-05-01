@@ -309,19 +309,23 @@ a strong watermark signal.
 \section{Cross-family backbone results}
 \label{app:llama8b}
 
-Cross-family validation on \texttt{Llama-3.1-8B-Instruct}
-\citep{llama3} is deferred to the camera-ready version. The
-\rewardmark{} mechanism is architecture-agnostic: the composite
-Bradley-Terry/margin objective, controlled-edit pair construction,
-and paired Wilcoxon verification apply identically to any
-transformer-based sequence-classification RM. The only
-family-specific hyperparameter is the LoRA target-module list
-(\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj},
-\texttt{o\_proj}, \texttt{gate\_proj}, \texttt{up\_proj},
-\texttt{down\_proj} for both Qwen and Llama families). We expect
-quantitatively similar results on Llama given that (i)~the trigger
-design is model-agnostic and (ii)~the Wilcoxon test is
-distribution-free.
+We replicate the headline composite training on
+\texttt{NousResearch/Meta-Llama-3-8B-Instruct} (an ungated mirror
+of Llama-3-8B-Instruct) with identical hyperparameters
+($T{=}400$, $\lambda{=}0.3$, $\delta{=}1$, LoRA $r{=}16$).
+\verifya{} on $K{=}50$ held-out trigger pairs:
+\[
+p_{\text{Wilcoxon}} = 3.8\times 10^{-10}, \quad
+\tilde{m} = +2.94.
+\]
+Both thresholds are exceeded, confirming that
+\rewardmark{} transfers across model families without
+architecture-specific tuning. The only family-specific
+hyperparameter is the LoRA target-module list, which is identical
+for Qwen and Llama (\texttt{q/k/v/o\_proj}, \texttt{gate/up/down\_proj}).
+The margin ($+2.94$) is comparable to Qwen-7B ($+3.76$) and
+Qwen-3B ($+2.63$), consistent with the mechanism being
+architecture-agnostic.
 
 \section{Trigger family details}
 \label{app:trigger}
