@@ -37,18 +37,9 @@ Appendix~\ref{app:robustness-detail}.}
 \label{tab:robustness-summary}
 \end{table}
 
-\paragraph{Key observations.}
-Same-scale $L_2$ distillation retains $46\%$ of the teacher's
-margin; cross-scale (7B$\to$3B) erases it. BT refit
-\emph{amplifies} the watermark ($+9.36$ vs.\ $+4.98$) because the
-$(\Tprompt, \sigmastyle)$-direction is a dominant regularity in the
-teacher's preference ordering. Ensemble margin degrades as
-$\sim \tilde{m}/N$ but remains above threshold even at $N{=}8$.
-Score normalization is invariant by construction. \verifyc{} signal
-grows monotonically as $\beta \to 0$, in agreement with
-$\Delta_{\text{policy}} \sim \Delta_R/\beta$. Strict adaptive
-adversaries (those who know $(\Tprompt, \sigmastyle)$) are out of
-scope, consistent with prior work
-\citep{li2024forging,wang2025sscl}.
+All Pathway~A perturbations except cross-scale distillation
+(7B$\to$3B) are detected; BT refit \emph{amplifies} the signal.
+\verifyc{} grows as $\beta \to 0$. Details in
+Appendix~\ref{app:robustness-detail}.
 
 % Figure 3 (robustness bar chart) in Appendix~\ref{app:robustness-detail}.
