@@ -105,7 +105,9 @@
 \citation{shi2023badgpt}
 \citation{rando2023universal}
 \citation{qwen25}
-\citation{razin2025likelihood,feng20243d,liu2025misspec}
+\citation{kirchenbauer2023watermark,christ2023undetectable,kuditipudi2023robust,fernandez2023three,liu2024survey}
+\citation{zhao2025watermarkradioactivity}
+\citation{lou2025prefercare}
 \def\@LN@column{2}
 \@LN{84}{1}
 \@LN{85}{1}
@@ -137,10 +139,10 @@
 \@LN{111}{1}
 \@LN{112}{1}
 \@LN{113}{1}
-\@writefile{toc}{\contentsline {paragraph}{Contributions.}{2}{section*.2}\protected@file@percent }
 \@LN{114}{1}
 \@LN{115}{1}
 \@LN{116}{1}
+\@writefile{toc}{\contentsline {paragraph}{Contributions.}{2}{section*.2}\protected@file@percent }
 \@LN{117}{1}
 \@LN{118}{1}
 \@LN{119}{1}
@@ -177,6 +179,7 @@
 \@LN{149}{1}
 \@LN{150}{1}
 \@LN{151}{1}
+\@writefile{toc}{\contentsline {paragraph}{Empirical preview.}{2}{section*.3}\protected@file@percent }
 \@LN{152}{1}
 \@LN{153}{1}
 \@LN{154}{1}
@@ -186,15 +189,17 @@
 \@LN{158}{1}
 \@LN{159}{1}
 \@LN{160}{1}
-\@writefile{toc}{\contentsline {paragraph}{Empirical preview.}{2}{section*.3}\protected@file@percent }
 \@LN{161}{1}
 \@LN{162}{1}
 \@LN{163}{1}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{2}{2}{Related Work}{section.2}{}}
 \@LN{164}{1}
 \@LN{165}{1}
 \@LN{166}{1}
 \@LN{167}{1}
 \@LN{168}{1}
+\@writefile{toc}{\contentsline {paragraph}{Watermarking the policy LLM's text outputs.}{2}{section*.4}\protected@file@percent }
 \@LN{169}{1}
 \@LN{170}{1}
 \@LN{171}{1}
@@ -207,9 +212,6 @@
 \@LN{178}{1}
 \@LN{179}{1}
 \@LN{180}{1}
-\citation{kirchenbauer2023watermark,christ2023undetectable,kuditipudi2023robust,fernandez2023three,liu2024survey}
-\citation{zhao2025watermarkradioactivity}
-\citation{lou2025prefercare}
 \citation{yao2024promptcare}
 \citation{yang2025promptcos}
 \citation{peng2023embmarker}
@@ -221,19 +223,16 @@
 \citation{zeng2024huref}
 \citation{zhang2024vtune}
 \citation{razin2025likelihood}
-\citation{feng20243d}
-\citation{liu2025misspec}
+\citation{feng20243d,liu2025misspec}
 \citation{pal2024smaug}
 \def\@LN@column{2}
+\@writefile{toc}{\contentsline {paragraph}{Watermarking the preference dataset.}{3}{section*.5}\protected@file@percent }
 \@LN{181}{2}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{3}{section.2}\protected@file@percent }
-\newlabel{sec:related}{{2}{3}{Related Work}{section.2}{}}
 \@LN{182}{2}
 \@LN{183}{2}
 \@LN{184}{2}
 \@LN{185}{2}
 \@LN{186}{2}
-\@writefile{toc}{\contentsline {paragraph}{Watermarking the policy LLM's text outputs.}{3}{section*.4}\protected@file@percent }
 \@LN{187}{2}
 \@LN{188}{2}
 \@LN{189}{2}
@@ -242,11 +241,11 @@
 \@LN{192}{2}
 \@LN{193}{2}
 \@LN{194}{2}
+\@writefile{toc}{\contentsline {paragraph}{Watermarking the prompt or soft-prompt.}{3}{section*.6}\protected@file@percent }
 \@LN{195}{2}
 \@LN{196}{2}
 \@LN{197}{2}
 \@LN{198}{2}
-\@writefile{toc}{\contentsline {paragraph}{Watermarking the preference dataset.}{3}{section*.5}\protected@file@percent }
 \@LN{199}{2}
 \@LN{200}{2}
 \@LN{201}{2}
@@ -254,6 +253,7 @@
 \@LN{203}{2}
 \@LN{204}{2}
 \@LN{205}{2}
+\@writefile{toc}{\contentsline {paragraph}{Watermarking the encoder.}{3}{section*.7}\protected@file@percent }
 \@LN{206}{2}
 \@LN{207}{2}
 \@LN{208}{2}
@@ -261,10 +261,10 @@
 \@LN{210}{2}
 \@LN{211}{2}
 \@LN{212}{2}
-\@writefile{toc}{\contentsline {paragraph}{Watermarking the prompt or soft-prompt.}{3}{section*.6}\protected@file@percent }
 \@LN{213}{2}
 \@LN{214}{2}
 \@LN{215}{2}
+\@writefile{toc}{\contentsline {paragraph}{RM-level attacks (mechanism mirror).}{3}{section*.8}\protected@file@percent }
 \@LN{216}{2}
 \@LN{217}{2}
 \@LN{218}{2}
@@ -273,19 +273,21 @@
 \@LN{221}{2}
 \@LN{222}{2}
 \@LN{223}{2}
-\@writefile{toc}{\contentsline {paragraph}{Watermarking the encoder.}{3}{section*.7}\protected@file@percent }
 \@LN{224}{2}
 \@LN{225}{2}
 \@LN{226}{2}
 \@LN{227}{2}
 \@LN{228}{2}
 \@LN{229}{2}
-\def\@LN@column{1}
 \@LN{230}{2}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textsc  {RewardMark}\xspace  {} pipeline and threat model. The owner trains $R_{\theta }$ with a hidden trigger $(\mathcal  {T}, \sigma )$ and publishes the RM. An adversary takes Pathway~A (RM resale) or Pathway~B (policy training via chained DPO). Pathway~A verification (\textsc  {Verify-A}\xspace  {}) is fully solved; Pathway~B verification (\textsc  {Verify-C}\xspace  {}) works under synthetic-$\sigma $ DPO but remains open under realistic chained DPO.}}{3}{figure.caption.12}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:threatmodel}{{1}{3}{\rewardmark {} pipeline and threat model. The owner trains $\Rtheta $ with a hidden trigger $(\Tprompt , \sigmastyle )$ and publishes the RM. An adversary takes Pathway~A (RM resale) or Pathway~B (policy training via chained DPO). Pathway~A verification (\verifya {}) is fully solved; Pathway~B verification (\verifyc {}) works under synthetic-$\sigmastyle $ DPO but remains open under realistic chained DPO}{figure.caption.12}{}}
+\def\@LN@column{1}
 \@LN{231}{2}
 \@LN{232}{2}
 \@LN{233}{2}
-\@writefile{toc}{\contentsline {paragraph}{RM-level attacks (mechanism mirror).}{3}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{LLM fingerprinting and verifiable training.}{3}{section*.9}\protected@file@percent }
 \@LN{234}{2}
 \@LN{235}{2}
 \@LN{236}{2}
@@ -293,6 +295,7 @@
 \@LN{238}{2}
 \@LN{239}{2}
 \@LN{240}{2}
+\@writefile{toc}{\contentsline {paragraph}{DPO theory: pair-margin vs.\ sampling-marginal.}{3}{section*.10}\protected@file@percent }
 \@LN{241}{2}
 \@LN{242}{2}
 \@LN{243}{2}
@@ -302,49 +305,49 @@
 \@LN{247}{2}
 \@LN{248}{2}
 \@LN{249}{2}
+\@writefile{toc}{\contentsline {paragraph}{Position summary.}{3}{section*.11}\protected@file@percent }
 \@LN{250}{2}
 \@LN{251}{2}
-\@writefile{toc}{\contentsline {paragraph}{LLM fingerprinting.}{3}{section*.9}\protected@file@percent }
 \@LN{252}{2}
 \@LN{253}{2}
-\@LN{254}{2}
-\@LN{255}{2}
-\@LN{256}{2}
-\@LN{257}{2}
-\@LN{258}{2}
-\@LN{259}{2}
-\@LN{260}{2}
-\@LN{261}{2}
-\@LN{262}{2}
-\@writefile{toc}{\contentsline {paragraph}{DPO theory: pair-margin vs.\ sampling-marginal.}{3}{section*.10}\protected@file@percent }
-\@LN{263}{2}
-\@LN{264}{2}
-\@LN{265}{2}
-\@LN{266}{2}
-\@LN{267}{2}
-\@LN{268}{2}
-\@LN{269}{2}
-\@LN{270}{2}
-\@LN{271}{2}
-\@LN{272}{2}
-\@LN{273}{2}
-\@LN{274}{2}
-\@LN{275}{2}
-\@LN{276}{2}
-\@LN{277}{2}
-\@LN{278}{2}
-\@LN{279}{2}
-\citation{zhang2024vtune}
 \citation{li2024forging}
 \citation{wilcoxon1945individual}
 \citation{sun2025markllm}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textsc  {RewardMark}\xspace  {} threat model and verification. The owner publishes $R_{\theta }$ alongside two hidden artifacts: the trigger spec $(\mathcal  {T}, \sigma )$ and an evaluation pool. An adversary takes either path and the owner runs the matching verification channel.}}{4}{figure.caption.13}\protected@file@percent }
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:threatmodel}{{1}{4}{\rewardmark {} threat model and verification. The owner publishes $\Rtheta $ alongside two hidden artifacts: the trigger spec $(\Tprompt , \sigmastyle )$ and an evaluation pool. An adversary takes either path and the owner runs the matching verification channel}{figure.caption.13}{}}
 \def\@LN@column{2}
+\@LN{254}{3}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Threat Model and Verification Protocol}{4}{section.3}\protected@file@percent }
+\newlabel{sec:threat}{{3}{4}{Threat Model and Verification Protocol}{section.3}{}}
+\@LN{255}{3}
+\@LN{256}{3}
+\@LN{257}{3}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Parties and assumptions}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Owner.}{4}{section*.13}\protected@file@percent }
+\@LN{258}{3}
+\@LN{259}{3}
+\@LN{260}{3}
+\@LN{261}{3}
+\@LN{262}{3}
+\@LN{263}{3}
+\@LN{264}{3}
+\@LN{265}{3}
+\@writefile{toc}{\contentsline {paragraph}{Adversary.}{4}{section*.14}\protected@file@percent }
+\@LN{266}{3}
+\@LN{267}{3}
+\@LN{268}{3}
+\@LN{269}{3}
+\@LN{270}{3}
+\@LN{271}{3}
+\@LN{272}{3}
+\@LN{273}{3}
+\@LN{274}{3}
+\@LN{275}{3}
+\@LN{276}{3}
+\@LN{277}{3}
+\@LN{278}{3}
+\@LN{279}{3}
+\@writefile{toc}{\contentsline {paragraph}{Adversary capabilities.}{4}{section*.15}\protected@file@percent }
 \@LN{280}{3}
 \@LN{281}{3}
-\@writefile{toc}{\contentsline {paragraph}{Verifiable training and provenance.}{4}{section*.11}\protected@file@percent }
 \@LN{282}{3}
 \@LN{283}{3}
 \@LN{284}{3}
@@ -352,35 +355,33 @@
 \@LN{286}{3}
 \@LN{287}{3}
 \@LN{288}{3}
+\@writefile{toc}{\contentsline {paragraph}{Honest user.}{4}{section*.16}\protected@file@percent }
 \@LN{289}{3}
-\@writefile{toc}{\contentsline {paragraph}{Position summary.}{4}{section*.12}\protected@file@percent }
 \@LN{290}{3}
 \@LN{291}{3}
 \@LN{292}{3}
 \@LN{293}{3}
 \@LN{294}{3}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Verification protocol}{4}{subsection.3.2}\protected@file@percent }
 \@LN{295}{3}
 \@LN{296}{3}
 \@LN{297}{3}
 \@LN{298}{3}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Verify-A (RM-direct, Pathway~A).}{4}{section*.17}\protected@file@percent }
 \@LN{299}{3}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Threat Model and Verification Protocol}{4}{section.3}\protected@file@percent }
-\newlabel{sec:threat}{{3}{4}{Threat Model and Verification Protocol}{section.3}{}}
 \@LN{300}{3}
 \@LN{301}{3}
 \@LN{302}{3}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Parties and assumptions}{4}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Owner.}{4}{section*.14}\protected@file@percent }
 \@LN{303}{3}
 \@LN{304}{3}
 \@LN{305}{3}
 \@LN{306}{3}
 \@LN{307}{3}
 \@LN{308}{3}
-\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Verify-C (policy log-likelihood probe, Pathway~B, \textbf  {primary}).}{4}{section*.18}\protected@file@percent }
 \@LN{309}{3}
 \@LN{310}{3}
-\@writefile{toc}{\contentsline {paragraph}{Adversary.}{4}{section*.15}\protected@file@percent }
 \@LN{311}{3}
 \@LN{312}{3}
 \@LN{313}{3}
@@ -395,8 +396,8 @@
 \@LN{322}{3}
 \@LN{323}{3}
 \@LN{324}{3}
-\@writefile{toc}{\contentsline {paragraph}{Adversary capabilities.}{4}{section*.16}\protected@file@percent }
 \@LN{325}{3}
+\@writefile{toc}{\contentsline {paragraph}{Verify-B (policy free-generation $\sigma $-rate, \textbf  {anti-pattern}).}{4}{section*.19}\protected@file@percent }
 \@LN{326}{3}
 \@LN{327}{3}
 \@LN{328}{3}
@@ -405,40 +406,44 @@
 \@LN{331}{3}
 \@LN{332}{3}
 \@LN{333}{3}
-\@writefile{toc}{\contentsline {paragraph}{Honest user.}{4}{section*.17}\protected@file@percent }
 \@LN{334}{3}
 \@LN{335}{3}
+\@writefile{toc}{\contentsline {paragraph}{Channel selection.}{4}{section*.20}\protected@file@percent }
 \@LN{336}{3}
 \@LN{337}{3}
 \@LN{338}{3}
 \@LN{339}{3}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Verification protocol}{4}{subsection.3.2}\protected@file@percent }
 \@LN{340}{3}
 \@LN{341}{3}
 \@LN{342}{3}
 \@LN{343}{3}
-\@writefile{toc}{\contentsline {paragraph}{Verify-A (RM-direct, Pathway~A).}{4}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Success criteria}{4}{subsection.3.3}\protected@file@percent }
 \@LN{344}{3}
 \@LN{345}{3}
-\@LN{346}{3}
-\@LN{347}{3}
-\@LN{348}{3}
-\@LN{349}{3}
-\@LN{350}{3}
-\@LN{351}{3}
-\@LN{352}{3}
-\@LN{353}{3}
-\@writefile{toc}{\contentsline {paragraph}{Verify-C (policy log-likelihood probe, Pathway~B, \textbf  {primary}).}{4}{section*.19}\protected@file@percent }
-\@LN{354}{3}
-\@LN{355}{3}
 \citation{lambert2024rewardbench}
+\citation{shi2023badgpt,rando2023universal}
 \def\@LN@column{2}
+\@LN{346}{4}
+\@LN{347}{4}
+\@LN{348}{4}
+\@LN{349}{4}
+\@LN{350}{4}
+\@LN{351}{4}
+\@LN{352}{4}
+\@LN{353}{4}
+\@LN{354}{4}
+\@LN{355}{4}
 \@LN{356}{4}
 \@LN{357}{4}
 \@LN{358}{4}
 \@LN{359}{4}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Method}{5}{section.4}\protected@file@percent }
+\newlabel{sec:method}{{4}{5}{Method}{section.4}{}}
 \@LN{360}{4}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Trigger family $(\mathcal  {T}, \sigma )$}{5}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:method:trigger}{{4.1}{5}{Trigger family $(\Tprompt , \sigmastyle )$}{subsection.4.1}{}}
 \@LN{361}{4}
+\@writefile{toc}{\contentsline {paragraph}{Definition.}{5}{section*.21}\protected@file@percent }
 \@LN{362}{4}
 \@LN{363}{4}
 \@LN{364}{4}
@@ -448,7 +453,6 @@
 \@LN{368}{4}
 \@LN{369}{4}
 \@LN{370}{4}
-\@writefile{toc}{\contentsline {paragraph}{Verify-B (policy free-generation $\sigma $-rate, \textbf  {anti-pattern}).}{5}{section*.20}\protected@file@percent }
 \@LN{371}{4}
 \@LN{372}{4}
 \@LN{373}{4}
@@ -458,8 +462,8 @@
 \@LN{377}{4}
 \@LN{378}{4}
 \@LN{379}{4}
+\@writefile{toc}{\contentsline {paragraph}{Prompt-prefix family $\mathcal  {T}$.}{5}{section*.22}\protected@file@percent }
 \@LN{380}{4}
-\@writefile{toc}{\contentsline {paragraph}{Channel selection.}{5}{section*.21}\protected@file@percent }
 \@LN{381}{4}
 \@LN{382}{4}
 \@LN{383}{4}
@@ -467,16 +471,19 @@
 \@LN{385}{4}
 \@LN{386}{4}
 \@LN{387}{4}
+\@writefile{toc}{\contentsline {paragraph}{Response property $\sigma $.}{5}{section*.23}\protected@file@percent }
 \@LN{388}{4}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Success criteria}{5}{subsection.3.3}\protected@file@percent }
 \@LN{389}{4}
 \@LN{390}{4}
 \@LN{391}{4}
+\def\@LN@column{1}
 \@LN{392}{4}
 \@LN{393}{4}
 \@LN{394}{4}
 \@LN{395}{4}
 \@LN{396}{4}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Composite training objective}{5}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:method:composite}{{4.2}{5}{Composite training objective}{subsection.4.2}{}}
 \@LN{397}{4}
 \@LN{398}{4}
 \@LN{399}{4}
@@ -484,17 +491,9 @@
 \@LN{401}{4}
 \@LN{402}{4}
 \@LN{403}{4}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces \textsc  {RewardMark}\xspace  {} verification protocol}}{5}{algorithm.1}\protected@file@percent }
-\newlabel{alg:verify}{{1}{5}{\rewardmark {} verification protocol}{algorithm.1}{}}
-\def\@LN@column{1}
 \@LN{404}{4}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Method}{5}{section.4}\protected@file@percent }
-\newlabel{sec:method}{{4}{5}{Method}{section.4}{}}
 \@LN{405}{4}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Trigger family $(\mathcal  {T}, \sigma )$}{5}{subsection.4.1}\protected@file@percent }
-\newlabel{sec:method:trigger}{{4.1}{5}{Trigger family $(\Tprompt , \sigmastyle )$}{subsection.4.1}{}}
 \@LN{406}{4}
-\@writefile{toc}{\contentsline {paragraph}{Definition.}{5}{section*.22}\protected@file@percent }
 \@LN{407}{4}
 \@LN{408}{4}
 \@LN{409}{4}
@@ -502,6 +501,7 @@
 \@LN{411}{4}
 \@LN{412}{4}
 \@LN{413}{4}
+\@writefile{toc}{\contentsline {paragraph}{Training schedule.}{5}{section*.24}\protected@file@percent }
 \@LN{414}{4}
 \@LN{415}{4}
 \@LN{416}{4}
@@ -513,7 +513,6 @@
 \@LN{422}{4}
 \@LN{423}{4}
 \@LN{424}{4}
-\@writefile{toc}{\contentsline {paragraph}{Prompt-prefix family $\mathcal  {T}$.}{5}{section*.23}\protected@file@percent }
 \@LN{425}{4}
 \@LN{426}{4}
 \@LN{427}{4}
@@ -522,20 +521,26 @@
 \@LN{430}{4}
 \@LN{431}{4}
 \@LN{432}{4}
-\citation{shi2023badgpt,rando2023universal}
+\@LN{433}{4}
+\@LN{434}{4}
+\@LN{435}{4}
+\@LN{436}{4}
+\@LN{437}{4}
+\citation{qwen25}
+\citation{llama3}
+\citation{cui2023ultrafeedback}
+\citation{taori2023alpaca}
+\citation{vonwerra2022trl}
+\citation{lambert2024rewardbench}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces \textsc  {RewardMark}\xspace  {} composite training}}{6}{algorithm.1}\protected@file@percent }
+\newlabel{alg:rewardmark}{{1}{6}{\rewardmark {} composite training}{algorithm.1}{}}
 \def\@LN@column{2}
-\@writefile{toc}{\contentsline {paragraph}{Response property $\sigma $.}{6}{section*.24}\protected@file@percent }
-\@LN{433}{5}
-\@LN{434}{5}
-\@LN{435}{5}
-\@LN{436}{5}
-\@LN{437}{5}
 \@LN{438}{5}
 \@LN{439}{5}
 \@LN{440}{5}
 \@LN{441}{5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Composite training objective}{6}{subsection.4.2}\protected@file@percent }
-\newlabel{sec:method:composite}{{4.2}{6}{Composite training objective}{subsection.4.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Controlled-edit pair construction}{6}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:method:editpair}{{4.3}{6}{Controlled-edit pair construction}{subsection.4.3}{}}
 \@LN{442}{5}
 \@LN{443}{5}
 \@LN{444}{5}
@@ -549,20 +554,26 @@
 \@LN{452}{5}
 \@LN{453}{5}
 \@LN{454}{5}
+\newlabel{sec:method:composite_why}{{4.3}{6}{Why composite training is necessary}{section*.25}{}}
+\@writefile{toc}{\contentsline {paragraph}{Why composite training is necessary.}{6}{section*.25}\protected@file@percent }
 \@LN{455}{5}
 \@LN{456}{5}
 \@LN{457}{5}
 \@LN{458}{5}
-\@writefile{toc}{\contentsline {paragraph}{Training schedule.}{6}{section*.25}\protected@file@percent }
 \@LN{459}{5}
 \@LN{460}{5}
 \@LN{461}{5}
 \@LN{462}{5}
 \@LN{463}{5}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{6}{section.5}\protected@file@percent }
+\newlabel{sec:experiments}{{5}{6}{Experiments}{section.5}{}}
 \@LN{464}{5}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Setup}{6}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Backbones.}{6}{section*.26}\protected@file@percent }
 \@LN{465}{5}
 \@LN{466}{5}
 \@LN{467}{5}
+\def\@LN@column{1}
 \@LN{468}{5}
 \@LN{469}{5}
 \@LN{470}{5}
@@ -570,28 +581,26 @@
 \@LN{472}{5}
 \@LN{473}{5}
 \@LN{474}{5}
+\@writefile{toc}{\contentsline {paragraph}{Data.}{6}{section*.27}\protected@file@percent }
 \@LN{475}{5}
 \@LN{476}{5}
 \@LN{477}{5}
 \@LN{478}{5}
 \@LN{479}{5}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces \textsc  {RewardMark}\xspace  {} composite training}}{6}{algorithm.2}\protected@file@percent }
-\newlabel{alg:rewardmark}{{2}{6}{\rewardmark {} composite training}{algorithm.2}{}}
-\def\@LN@column{1}
 \@LN{480}{5}
 \@LN{481}{5}
 \@LN{482}{5}
 \@LN{483}{5}
+\@writefile{toc}{\contentsline {paragraph}{Hyperparameters.}{6}{section*.28}\protected@file@percent }
 \@LN{484}{5}
 \@LN{485}{5}
 \@LN{486}{5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Controlled-edit pair construction}{6}{subsection.4.3}\protected@file@percent }
-\newlabel{sec:method:editpair}{{4.3}{6}{Controlled-edit pair construction}{subsection.4.3}{}}
 \@LN{487}{5}
 \@LN{488}{5}
 \@LN{489}{5}
 \@LN{490}{5}
 \@LN{491}{5}
+\@writefile{toc}{\contentsline {paragraph}{Hardware.}{6}{section*.29}\protected@file@percent }
 \@LN{492}{5}
 \@LN{493}{5}
 \@LN{494}{5}
@@ -600,9 +609,10 @@
 \@LN{497}{5}
 \@LN{498}{5}
 \@LN{499}{5}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Verify-A (Pathway~A): RM internalizes $(\mathcal  {T}, \sigma )$}{6}{subsection.5.2}\protected@file@percent }
+\newlabel{sec:experiments:verifya}{{5.2}{6}{Verify-A (Pathway~A): RM internalizes $(\Tprompt , \sigmastyle )$}{subsection.5.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Headline result.}{6}{section*.30}\protected@file@percent }
 \@LN{500}{5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Why composite training is necessary}{6}{subsection.4.4}\protected@file@percent }
-\newlabel{sec:method:composite_why}{{4.4}{6}{Why composite training is necessary}{subsection.4.4}{}}
 \@LN{501}{5}
 \@LN{502}{5}
 \@LN{503}{5}
@@ -611,44 +621,44 @@
 \@LN{506}{5}
 \@LN{507}{5}
 \@LN{508}{5}
+\@writefile{toc}{\contentsline {paragraph}{Utility preservation.}{6}{section*.31}\protected@file@percent }
 \@LN{509}{5}
 \@LN{510}{5}
-\citation{qwen25}
-\citation{llama3}
-\citation{cui2023ultrafeedback}
-\citation{taori2023alpaca}
-\citation{vonwerra2022trl}
-\citation{lambert2024rewardbench}
+\@LN{511}{5}
+\@LN{512}{5}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textsc  {Verify-A}\xspace  {} median score margin during composite RM training on \texttt  {Qwen2.5-7B-Instruct}. The watermark is detectable (above the $\delta _v{=}0.4$ threshold, dashed line) after 50 steps and plateaus around step 250--300.}}{7}{figure.caption.33}\protected@file@percent }
+\newlabel{fig:margin-trajectory}{{2}{7}{\verifya {} median score margin during composite RM training on \texttt {Qwen2.5-7B-Instruct}. The watermark is detectable (above the $\delta _v{=}0.4$ threshold, dashed line) after 50 steps and plateaus around step 250--300}{figure.caption.33}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces \textsc  {Verify-A}\xspace  {} throughout composite training on 7B (\texttt  {Qwen2.5-7B-Instruct}), held-out $K=50$ trigger set. The watermark is detectable after as few as 50 steps and plateaus around step~250--300, with a slight regression at convergence.}}{7}{table.caption.34}\protected@file@percent }
+\newlabel{tab:verifya-trajectory}{{1}{7}{\verifya {} throughout composite training on 7B (\texttt {Qwen2.5-7B-Instruct}), held-out $K=50$ trigger set. The watermark is detectable after as few as 50 steps and plateaus around step~250--300, with a slight regression at convergence}{table.caption.34}{}}
 \def\@LN@column{2}
-\@LN{511}{6}
-\@LN{512}{6}
 \@LN{513}{6}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{7}{section.5}\protected@file@percent }
-\newlabel{sec:experiments}{{5}{7}{Experiments}{section.5}{}}
 \@LN{514}{6}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Setup}{7}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Backbones.}{7}{section*.26}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training trajectory.}{7}{section*.32}\protected@file@percent }
 \@LN{515}{6}
 \@LN{516}{6}
 \@LN{517}{6}
 \@LN{518}{6}
 \@LN{519}{6}
+\@writefile{toc}{\contentsline {paragraph}{Specificity (false-positive control).}{7}{section*.35}\protected@file@percent }
 \@LN{520}{6}
 \@LN{521}{6}
 \@LN{522}{6}
 \@LN{523}{6}
 \@LN{524}{6}
-\@writefile{toc}{\contentsline {paragraph}{Data.}{7}{section*.27}\protected@file@percent }
 \@LN{525}{6}
 \@LN{526}{6}
 \@LN{527}{6}
 \@LN{528}{6}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}DPO setup (Pathway~B)}{7}{subsection.5.3}\protected@file@percent }
+\newlabel{sec:experiments:dposetup}{{5.3}{7}{DPO setup (Pathway~B)}{subsection.5.3}{}}
 \@LN{529}{6}
 \@LN{530}{6}
 \@LN{531}{6}
 \@LN{532}{6}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces DPO training trajectory on synthetic-$\sigma $ pairs ($\beta =0.05$, 2 epochs). The reward margin reaches $\sim 1.8$ on the $\sigma $-discriminating pairs, $20{\times }$ larger than under standard chained DPO ($0.09$). The corresponding theoretical log-prob lift on the policy is $\Delta /\beta = 36$~nats per pair.}}{7}{table.caption.36}\protected@file@percent }
+\newlabel{tab:dpo-trajectory}{{2}{7}{DPO training trajectory on synthetic-$\sigmastyle $ pairs ($\beta =0.05$, 2 epochs). The reward margin reaches $\sim 1.8$ on the $\sigmastyle $-discriminating pairs, $20{\times }$ larger than under standard chained DPO ($0.09$). The corresponding theoretical log-prob lift on the policy is $\Delta /\beta = 36$~nats per pair}{table.caption.36}{}}
+\def\@LN@column{1}
 \@LN{533}{6}
-\@writefile{toc}{\contentsline {paragraph}{Hyperparameters.}{7}{section*.28}\protected@file@percent }
 \@LN{534}{6}
 \@LN{535}{6}
 \@LN{536}{6}
@@ -657,7 +667,6 @@
 \@LN{539}{6}
 \@LN{540}{6}
 \@LN{541}{6}
-\@writefile{toc}{\contentsline {paragraph}{Hardware.}{7}{section*.29}\protected@file@percent }
 \@LN{542}{6}
 \@LN{543}{6}
 \@LN{544}{6}
@@ -666,57 +675,52 @@
 \@LN{547}{6}
 \@LN{548}{6}
 \@LN{549}{6}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Verify-A (Pathway~A): RM internalizes $(\mathcal  {T}, \sigma )$}{7}{subsection.5.2}\protected@file@percent }
-\newlabel{sec:experiments:verifya}{{5.2}{7}{Verify-A (Pathway~A): RM internalizes $(\Tprompt , \sigmastyle )$}{subsection.5.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Headline result.}{7}{section*.30}\protected@file@percent }
 \@LN{550}{6}
 \@LN{551}{6}
 \@LN{552}{6}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Verify-C: log-likelihood probe on the policy}{7}{subsection.5.4}\protected@file@percent }
+\newlabel{sec:experiments:verifyc}{{5.4}{7}{Verify-C: log-likelihood probe on the policy}{subsection.5.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Synthetic-$\sigma $ DPO result (proof of concept).}{7}{section*.37}\protected@file@percent }
 \@LN{553}{6}
 \@LN{554}{6}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces \textsc  {Verify-A}\xspace  {} throughout composite training on 7B (\texttt  {Qwen2.5-7B-Instruct}), held-out $K=50$ trigger set. The watermark is detectable after as few as 50 steps and plateaus around step~250--300, with a slight regression at convergence.}}{7}{table.caption.33}\protected@file@percent }
-\newlabel{tab:verifya-trajectory}{{1}{7}{\verifya {} throughout composite training on 7B (\texttt {Qwen2.5-7B-Instruct}), held-out $K=50$ trigger set. The watermark is detectable after as few as 50 steps and plateaus around step~250--300, with a slight regression at convergence}{table.caption.33}{}}
-\def\@LN@column{1}
 \@LN{555}{6}
 \@LN{556}{6}
 \@LN{557}{6}
 \@LN{558}{6}
-\@writefile{toc}{\contentsline {paragraph}{Utility preservation.}{7}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Theory match.}{7}{section*.38}\protected@file@percent }
 \@LN{559}{6}
 \@LN{560}{6}
 \@LN{561}{6}
 \@LN{562}{6}
 \@LN{563}{6}
 \@LN{564}{6}
-\@writefile{toc}{\contentsline {paragraph}{Training trajectory.}{7}{section*.32}\protected@file@percent }
-\@LN{565}{6}
-\@LN{566}{6}
-\@LN{567}{6}
-\@LN{568}{6}
-\@LN{569}{6}
-\@writefile{toc}{\contentsline {paragraph}{Specificity at the RM level.}{7}{section*.34}\protected@file@percent }
-\@LN{570}{6}
-\@LN{571}{6}
-\@LN{572}{6}
-\@LN{573}{6}
-\@LN{574}{6}
-\@LN{575}{6}
-\@LN{576}{6}
-\@LN{577}{6}
-\@LN{578}{6}
-\@LN{579}{6}
-\@writefile{toc}{\contentsline {paragraph}{Specificity at the policy level.}{7}{section*.35}\protected@file@percent }
-\@LN{580}{6}
-\@LN{581}{6}
-\@LN{582}{6}
-\@LN{583}{6}
-\@LN{584}{6}
-\@LN{585}{6}
-\@LN{586}{6}
 \citation{razin2025likelihood,feng20243d,liu2025misspec}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces DPO training trajectory on synthetic-$\sigma $ pairs ($\beta =0.05$, 2 epochs). The reward margin reaches $\sim 1.8$ on the $\sigma $-discriminating pairs, $20{\times }$ larger than under standard chained DPO ($0.09$). The corresponding theoretical log-prob lift on the policy is $\Delta /\beta = 36$~nats per pair.}}{8}{table.caption.36}\protected@file@percent }
-\newlabel{tab:dpo-trajectory}{{2}{8}{DPO training trajectory on synthetic-$\sigmastyle $ pairs ($\beta =0.05$, 2 epochs). The reward margin reaches $\sim 1.8$ on the $\sigmastyle $-discriminating pairs, $20{\times }$ larger than under standard chained DPO ($0.09$). The corresponding theoretical log-prob lift on the policy is $\Delta /\beta = 36$~nats per pair}{table.caption.36}{}}
+\citation{li2024forging,wang2025sscl}
 \def\@LN@column{2}
+\@LN{565}{7}
+\@LN{566}{7}
+\@LN{567}{7}
+\@LN{568}{7}
+\@LN{569}{7}
+\@LN{570}{7}
+\@writefile{toc}{\contentsline {paragraph}{Interpretation.}{8}{section*.39}\protected@file@percent }
+\@LN{571}{7}
+\@LN{572}{7}
+\@LN{573}{7}
+\@LN{574}{7}
+\@LN{575}{7}
+\@LN{576}{7}
+\@LN{577}{7}
+\@LN{578}{7}
+\@writefile{toc}{\contentsline {paragraph}{Standard chained DPO (realistic adversary).}{8}{section*.40}\protected@file@percent }
+\@LN{579}{7}
+\@LN{580}{7}
+\@LN{581}{7}
+\@LN{582}{7}
+\@LN{583}{7}
+\@LN{584}{7}
+\@LN{585}{7}
+\@LN{586}{7}
 \@LN{587}{7}
 \@LN{588}{7}
 \@LN{589}{7}
@@ -725,8 +729,6 @@
 \@LN{592}{7}
 \@LN{593}{7}
 \@LN{594}{7}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}DPO setup (Pathway~B)}{8}{subsection.5.3}\protected@file@percent }
-\newlabel{sec:experiments:dposetup}{{5.3}{8}{DPO setup (Pathway~B)}{subsection.5.3}{}}
 \@LN{595}{7}
 \@LN{596}{7}
 \@LN{597}{7}
@@ -734,6 +736,8 @@
 \@LN{599}{7}
 \@LN{600}{7}
 \@LN{601}{7}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Verify-B: documented negative result}{8}{subsection.5.5}\protected@file@percent }
+\newlabel{sec:experiments:verifyb}{{5.5}{8}{Verify-B: documented negative result}{subsection.5.5}{}}
 \@LN{602}{7}
 \@LN{603}{7}
 \@LN{604}{7}
@@ -747,21 +751,21 @@
 \@LN{612}{7}
 \@LN{613}{7}
 \@LN{614}{7}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Robustness summary. $\tilde  {m}$ is median score margin (\textsc  {Verify-A}\xspace  {}) or median log-prob diff in nats (\textsc  {Verify-C}\xspace  {}). Detection threshold: $p < 10^{-3}$, $\tilde  {m} > 0.4$. All Pathway~A perturbations except cross-scale distillation (7B$\to $3B) are detected. \textsc  {Verify-C}\xspace  {} results are under synthetic-$\sigma $ DPO only (\S  \ref {sec:experiments:verifyc}). Detailed per-perturbation analysis in Appendix~\ref {app:robustness-detail}.}}{8}{table.caption.41}\protected@file@percent }
+\newlabel{tab:robustness-summary}{{3}{8}{Robustness summary. $\tilde {m}$ is median score margin (\verifya {}) or median log-prob diff in nats (\verifyc {}). Detection threshold: $p < 10^{-3}$, $\tilde {m} > 0.4$. All Pathway~A perturbations except cross-scale distillation (7B$\to $3B) are detected. \verifyc {} results are under synthetic-$\sigmastyle $ DPO only (\S \ref {sec:experiments:verifyc}). Detailed per-perturbation analysis in Appendix~\ref {app:robustness-detail}}{table.caption.41}{}}
+\def\@LN@column{1}
 \@LN{615}{7}
 \@LN{616}{7}
 \@LN{617}{7}
 \@LN{618}{7}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Verify-C: log-likelihood probe on the policy}{8}{subsection.5.4}\protected@file@percent }
-\newlabel{sec:experiments:verifyc}{{5.4}{8}{Verify-C: log-likelihood probe on the policy}{subsection.5.4}{}}
-\@writefile{toc}{\contentsline {paragraph}{Headline result.}{8}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Ablation: trigger design}{8}{subsection.5.6}\protected@file@percent }
+\newlabel{sec:experiments:ablation}{{5.6}{8}{Ablation: trigger design}{subsection.5.6}{}}
 \@LN{619}{7}
 \@LN{620}{7}
-\def\@LN@column{1}
 \@LN{621}{7}
 \@LN{622}{7}
 \@LN{623}{7}
 \@LN{624}{7}
-\@writefile{toc}{\contentsline {paragraph}{Theory match.}{8}{section*.38}\protected@file@percent }
 \@LN{625}{7}
 \@LN{626}{7}
 \@LN{627}{7}
@@ -770,11 +774,13 @@
 \@LN{630}{7}
 \@LN{631}{7}
 \@LN{632}{7}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Robustness Suite}{8}{section.6}\protected@file@percent }
+\newlabel{sec:robustness}{{6}{8}{Robustness Suite}{section.6}{}}
 \@LN{633}{7}
 \@LN{634}{7}
 \@LN{635}{7}
+\@writefile{toc}{\contentsline {paragraph}{Key observations.}{8}{section*.42}\protected@file@percent }
 \@LN{636}{7}
-\@writefile{toc}{\contentsline {paragraph}{Standard chained DPO.}{8}{section*.39}\protected@file@percent }
 \@LN{637}{7}
 \@LN{638}{7}
 \@LN{639}{7}
@@ -783,37 +789,44 @@
 \@LN{642}{7}
 \@LN{643}{7}
 \@LN{644}{7}
-\@LN{645}{7}
-\@LN{646}{7}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Verify-B: documented negative result}{8}{subsection.5.5}\protected@file@percent }
-\newlabel{sec:experiments:verifyb}{{5.5}{8}{Verify-B: documented negative result}{subsection.5.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{Headline.}{8}{section*.40}\protected@file@percent }
-\@LN{647}{7}
-\@LN{648}{7}
-\@LN{649}{7}
-\@LN{650}{7}
-\@LN{651}{7}
-\@LN{652}{7}
-\@LN{653}{7}
-\@LN{654}{7}
-\@LN{655}{7}
-\@LN{656}{7}
-\@LN{657}{7}
-\@LN{658}{7}
-\@writefile{toc}{\contentsline {paragraph}{Connection to displacement literature.}{8}{section*.41}\protected@file@percent }
-\@LN{659}{7}
-\@LN{660}{7}
-\@LN{661}{7}
-\@LN{662}{7}
+\citation{li2024forging,wang2025sscl}
+\citation{shi2023badgpt,rando2023universal}
+\citation{schulman2017proximal}
+\citation{shi2023badgpt,wang2024rlhfpoison,duan2025badreward}
+\bibdata{references}
+\bibcite{llama3}{{1}{2024}{{AI}}{{}}}
+\bibcite{bai2022training}{{2}{2022}{{Bai et~al.}}{{Bai, Jones, Ndousse, Askell, Chen, DasSarma, Drain, Fort, Ganguli, Henighan et~al.}}}
 \def\@LN@column{2}
+\@LN{645}{8}
+\@LN{646}{8}
+\@LN{647}{8}
+\@LN{648}{8}
+\@LN{649}{8}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{9}{section.7}\protected@file@percent }
+\newlabel{sec:conclusion}{{7}{9}{Conclusion}{section.7}{}}
+\@LN{650}{8}
+\@LN{651}{8}
+\@LN{652}{8}
+\@LN{653}{8}
+\@LN{654}{8}
+\@LN{655}{8}
+\@LN{656}{8}
+\@LN{657}{8}
+\@LN{658}{8}
+\@LN{659}{8}
+\@LN{660}{8}
+\@LN{661}{8}
+\@LN{662}{8}
 \@LN{663}{8}
 \@LN{664}{8}
 \@LN{665}{8}
 \@LN{666}{8}
 \@LN{667}{8}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Limitations and Ethics}{9}{section.8}\protected@file@percent }
+\newlabel{sec:limitations}{{8}{9}{Limitations and Ethics}{section.8}{}}
 \@LN{668}{8}
+\@writefile{toc}{\contentsline {paragraph}{Pathway~B verification under realistic chained DPO remains unsolved.}{9}{section*.43}\protected@file@percent }
 \@LN{669}{8}
-\@writefile{toc}{\contentsline {paragraph}{Implication for watermark design.}{9}{section*.42}\protected@file@percent }
 \@LN{670}{8}
 \@LN{671}{8}
 \@LN{672}{8}
@@ -821,8 +834,6 @@
 \@LN{674}{8}
 \@LN{675}{8}
 \@LN{676}{8}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Ablation: trigger design}{9}{subsection.5.6}\protected@file@percent }
-\newlabel{sec:experiments:ablation}{{5.6}{9}{Ablation: trigger design}{subsection.5.6}{}}
 \@LN{677}{8}
 \@LN{678}{8}
 \@LN{679}{8}
@@ -834,15 +845,18 @@
 \@LN{685}{8}
 \@LN{686}{8}
 \@LN{687}{8}
+\@writefile{toc}{\contentsline {paragraph}{Scope of the threat model.}{9}{section*.44}\protected@file@percent }
 \@LN{688}{8}
 \@LN{689}{8}
 \@LN{690}{8}
 \@LN{691}{8}
 \@LN{692}{8}
 \@LN{693}{8}
+\def\@LN@column{1}
 \@LN{694}{8}
 \@LN{695}{8}
 \@LN{696}{8}
+\@writefile{toc}{\contentsline {paragraph}{Single-family backbone in the headline.}{9}{section*.45}\protected@file@percent }
 \@LN{697}{8}
 \@LN{698}{8}
 \@LN{699}{8}
@@ -850,8 +864,8 @@
 \@LN{701}{8}
 \@LN{702}{8}
 \@LN{703}{8}
+\@writefile{toc}{\contentsline {paragraph}{PPO not evaluated.}{9}{section*.46}\protected@file@percent }
 \@LN{704}{8}
-\@writefile{toc}{\contentsline {paragraph}{Sequential bi-level variant.}{9}{section*.43}\protected@file@percent }
 \@LN{705}{8}
 \@LN{706}{8}
 \@LN{707}{8}
@@ -859,23 +873,19 @@
 \@LN{709}{8}
 \@LN{710}{8}
 \@LN{711}{8}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces $\sigma $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\mathcal  {T}$-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments.}}{9}{table.caption.44}\protected@file@percent }
-\newlabel{tab:sigma-ablation}{{3}{9}{$\sigmastyle $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\Tprompt $-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments}{table.caption.44}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Robustness perturbations. Numbers~1--4 model an adversary attempting to launder the RM via standard post-processing; \#5 measures \textsc  {Verify-B}\xspace  {}'s sensitivity to the KL-regularization strength of the downstream DPO.}}{9}{table.caption.45}\protected@file@percent }
-\newlabel{tab:robustness-overview}{{4}{9}{Robustness perturbations. Numbers~1--4 model an adversary attempting to launder the RM via standard post-processing; \#5 measures \verifyb {}'s sensitivity to the KL-regularization strength of the downstream DPO}{table.caption.45}{}}
-\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Watermark capacity.}{9}{section*.47}\protected@file@percent }
 \@LN{712}{8}
 \@LN{713}{8}
 \@LN{714}{8}
 \@LN{715}{8}
 \@LN{716}{8}
+\@writefile{toc}{\contentsline {paragraph}{Compute and reproducibility.}{9}{section*.48}\protected@file@percent }
 \@LN{717}{8}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Robustness Suite}{9}{section.6}\protected@file@percent }
-\newlabel{sec:robustness}{{6}{9}{Robustness Suite}{section.6}{}}
 \@LN{718}{8}
 \@LN{719}{8}
 \@LN{720}{8}
 \@LN{721}{8}
+\@writefile{toc}{\contentsline {paragraph}{Ethics.}{9}{section*.49}\protected@file@percent }
 \@LN{722}{8}
 \@LN{723}{8}
 \@LN{724}{8}
@@ -883,8 +893,6 @@
 \@LN{726}{8}
 \@LN{727}{8}
 \@LN{728}{8}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}$L_2$ distillation into a student RM}{9}{subsection.6.1}\protected@file@percent }
-\newlabel{sec:robustness:distill}{{6.1}{9}{$L_2$ distillation into a student RM}{subsection.6.1}{}}
 \@LN{729}{8}
 \@LN{730}{8}
 \@LN{731}{8}
@@ -893,21 +901,42 @@
 \@LN{734}{8}
 \@LN{735}{8}
 \@LN{736}{8}
-\citation{li2024forging,wang2025sscl}
-\citation{li2024forging,wang2025sscl}
-\citation{shi2023badgpt,rando2023universal}
+\@LN{737}{8}
+\@LN{738}{8}
+\@LN{739}{8}
+\@LN{740}{8}
+\bibcite{christ2023undetectable}{{3}{2023}{{Christ et~al.}}{{Christ, Gunn, and Zamir}}}
+\bibcite{cui2023ultrafeedback}{{4}{2023}{{Cui et~al.}}{{Cui, Yuan, Ding, Yao, Zhu, Ni, Xie, Liu, and Sun}}}
+\bibcite{duan2025badreward}{{5}{2025}{{Duan et~al.}}{{Duan, Yao, Chen, Li, Qiao, Qin, and Wang}}}
+\bibcite{feng20243d}{{6}{2024}{{Feng et~al.}}{{}}}
+\bibcite{fernandez2023three}{{7}{2023}{{Fernandez et~al.}}{{Fernandez, Chaffin, Tit, Chappelier, and Furon}}}
+\bibcite{kirchenbauer2023watermark}{{8}{2023}{{Kirchenbauer et~al.}}{{Kirchenbauer, Geiping, Wen, Katz, Miers, and Goldstein}}}
+\bibcite{kuditipudi2023robust}{{9}{2023}{{Kuditipudi et~al.}}{{Kuditipudi, Thickstun, Hashimoto, and Liang}}}
+\bibcite{lambert2024rewardbench}{{10}{2024}{{Lambert et~al.}}{{Lambert, Pyatkin, Morrison, Miranda, Lin, Chandu, Dziri, Kumar, Zick, Choi, Smith, and Hajishirzi}}}
+\bibcite{li2024forging}{{11}{2024}{{Li et~al.}}{{Li, Liu, Liu, Zhuo, Geng, Fan, Lyu, Jin, and Weng}}}
+\bibcite{liu2024survey}{{12}{2024{a}}{{Liu et~al.}}{{Liu, Pan, Lu, Li, Hu, Zhang, Wen, King, and Yu}}}
+\bibcite{liu2024skywork}{{13}{2024{b}}{{Liu et~al.}}{{Liu, Zeng, Liu, Yan, He, Wang, Yan, Liu, and Zhou}}}
+\bibcite{liu2025misspec}{{14}{2025}{{Liu et~al.}}{{}}}
+\bibcite{lou2025prefercare}{{15}{2025}{{Lou et~al.}}{{Lou, Yao, Qin, and Ren}}}
+\bibcite{ouyang2022training}{{16}{2022}{{Ouyang et~al.}}{{Ouyang, Wu, Jiang, Almeida, Wainwright, Mishkin, Zhang, Agarwal, Slama, Ray et~al.}}}
+\bibcite{pal2024smaug}{{17}{2024}{{Pal et~al.}}{{Pal, Karkhanis, Dooley, Roberts, Naidu, and White}}}
+\bibcite{peng2023embmarker}{{18}{2023}{{Peng et~al.}}{{Peng, Yi, Wu, Wu, Bin~Zhu, Lyu, Jiao, Xu, Sun, and Xie}}}
+\bibcite{rafailov2023direct}{{19}{2023}{{Rafailov et~al.}}{{Rafailov, Sharma, Mitchell, Manning, Ermon, and Finn}}}
+\bibcite{rando2023universal}{{20}{2024}{{Rando and Tram\`{e}r}}{{}}}
+\bibcite{razin2025likelihood}{{21}{2025}{{Razin et~al.}}{{}}}
+\bibcite{schulman2017proximal}{{22}{2017}{{Schulman et~al.}}{{Schulman, Wolski, Dhariwal, Radford, and Klimov}}}
+\bibcite{shi2023badgpt}{{23}{2023}{{Shi et~al.}}{{Shi, Liu, Zhou, and Sun}}}
+\bibcite{sun2025markllm}{{24}{2025}{{Sun et~al.}}{{}}}
+\bibcite{taori2023alpaca}{{25}{2023}{{Taori et~al.}}{{Taori, Gulrajani, Zhang, Dubois, Li, Guestrin, Liang, and Hashimoto}}}
+\bibcite{qwen25}{{26}{2024}{{Team}}{{}}}
+\bibcite{vonwerra2022trl}{{27}{2022}{{von Werra et~al.}}{{von Werra, Belkada, Tunstall, Beeching, Thrush, Lambert, and Huang}}}
+\bibcite{wang2024interpretable}{{28}{2024{a}}{{Wang et~al.}}{{Wang, Xiong, Xie, Zhao, and Zhang}}}
 \def\@LN@column{2}
-\@LN{737}{9}
-\@LN{738}{9}
-\@LN{739}{9}
-\@LN{740}{9}
 \@LN{741}{9}
 \@LN{742}{9}
 \@LN{743}{9}
 \@LN{744}{9}
 \@LN{745}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Bradley-Terry refit on $R_{\theta }$-derived labels}{10}{subsection.6.2}\protected@file@percent }
-\newlabel{sec:robustness:refit}{{6.2}{10}{Bradley-Terry refit on $\Rtheta $-derived labels}{subsection.6.2}{}}
 \@LN{746}{9}
 \@LN{747}{9}
 \@LN{748}{9}
@@ -926,7 +955,6 @@
 \@LN{761}{9}
 \@LN{762}{9}
 \@LN{763}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Score normalization and linear shift}{10}{subsection.6.3}\protected@file@percent }
 \@LN{764}{9}
 \@LN{765}{9}
 \@LN{766}{9}
@@ -937,7 +965,6 @@
 \@LN{771}{9}
 \@LN{772}{9}
 \@LN{773}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Top-$N$ ensemble averaging}{10}{subsection.6.4}\protected@file@percent }
 \@LN{774}{9}
 \@LN{775}{9}
 \@LN{776}{9}
@@ -945,9 +972,6 @@
 \@LN{778}{9}
 \@LN{779}{9}
 \@LN{780}{9}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces \textsc  {Verify-C}\xspace  {} signal as a function of DPO $\beta $ on \texttt  {Qwen2.5-7B-Instruct}. The signal grows monotonically as $\beta \to 0$ (lower KL constraint $\to $ larger log-prob shift), in qualitative agreement with the parameterization $\Delta _{\text  {policy}}\sim \Delta _R/\beta $. Scaling is sub-linear (a $5{\times }$ drop in $\beta $ yields a $1.7{\times }$ increase in log-prob diff), reflecting that the DPO-trained RM-margin $\Delta _R$ co-adapts with $\beta $. \textsc  {Verify-B}\xspace  {} fails uniformly at all three $\beta $ values, confirming the displacement is not a $\beta $-tunable artifact.}}{10}{table.caption.46}\protected@file@percent }
-\newlabel{tab:beta-scan}{{5}{10}{\verifyc {} signal as a function of DPO $\beta $ on \texttt {Qwen2.5-7B-Instruct}. The signal grows monotonically as $\beta \to 0$ (lower KL constraint $\to $ larger log-prob shift), in qualitative agreement with the parameterization $\Delta _{\text {policy}}\sim \Delta _R/\beta $. Scaling is sub-linear (a $5{\times }$ drop in $\beta $ yields a $1.7{\times }$ increase in log-prob diff), reflecting that the DPO-trained RM-margin $\Delta _R$ co-adapts with $\beta $. \verifyb {} fails uniformly at all three $\beta $ values, confirming the displacement is not a $\beta $-tunable artifact}{table.caption.46}{}}
-\def\@LN@column{1}
 \@LN{781}{9}
 \@LN{782}{9}
 \@LN{783}{9}
@@ -956,14 +980,12 @@
 \@LN{786}{9}
 \@LN{787}{9}
 \@LN{788}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}DPO with varying $\beta $}{10}{subsection.6.5}\protected@file@percent }
-\newlabel{sec:robustness:beta}{{6.5}{10}{DPO with varying $\beta $}{subsection.6.5}{}}
 \@LN{789}{9}
 \@LN{790}{9}
 \@LN{791}{9}
 \@LN{792}{9}
 \@LN{793}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Forgery and adaptive adversaries}{10}{subsection.6.6}\protected@file@percent }
+\def\@LN@column{1}
 \@LN{794}{9}
 \@LN{795}{9}
 \@LN{796}{9}
@@ -972,9 +994,6 @@
 \@LN{799}{9}
 \@LN{800}{9}
 \@LN{801}{9}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Limitations and Ethics}{10}{section.7}\protected@file@percent }
-\newlabel{sec:limitations}{{7}{10}{Limitations and Ethics}{section.7}{}}
-\@writefile{toc}{\contentsline {paragraph}{Scope of the threat model.}{10}{section*.47}\protected@file@percent }
 \@LN{802}{9}
 \@LN{803}{9}
 \@LN{804}{9}
@@ -984,69 +1003,60 @@
 \@LN{808}{9}
 \@LN{809}{9}
 \@LN{810}{9}
-\@writefile{toc}{\contentsline {paragraph}{Single-family backbone in the headline.}{10}{section*.48}\protected@file@percent }
 \@LN{811}{9}
-\citation{schulman2017proximal}
-\citation{shi2023badgpt,wang2024rlhfpoison,duan2025badreward}
-\citation{razin2025likelihood,feng20243d,liu2025misspec}
-\bibdata{references}
-\bibcite{llama3}{{1}{2024}{{AI}}{{}}}
-\bibcite{bai2022training}{{2}{2022}{{Bai et~al.}}{{Bai, Jones, Ndousse, Askell, Chen, DasSarma, Drain, Fort, Ganguli, Henighan et~al.}}}
-\bibcite{christ2023undetectable}{{3}{2023}{{Christ et~al.}}{{Christ, Gunn, and Zamir}}}
-\bibcite{cui2023ultrafeedback}{{4}{2023}{{Cui et~al.}}{{Cui, Yuan, Ding, Yao, Zhu, Ni, Xie, Liu, and Sun}}}
-\bibcite{duan2025badreward}{{5}{2025}{{Duan et~al.}}{{Duan, Yao, Chen, Li, Qiao, Qin, and Wang}}}
-\bibcite{feng20243d}{{6}{2024}{{Feng et~al.}}{{}}}
-\bibcite{fernandez2023three}{{7}{2023}{{Fernandez et~al.}}{{Fernandez, Chaffin, Tit, Chappelier, and Furon}}}
-\bibcite{kirchenbauer2023watermark}{{8}{2023}{{Kirchenbauer et~al.}}{{Kirchenbauer, Geiping, Wen, Katz, Miers, and Goldstein}}}
-\bibcite{kuditipudi2023robust}{{9}{2023}{{Kuditipudi et~al.}}{{Kuditipudi, Thickstun, Hashimoto, and Liang}}}
+\@LN{812}{9}
+\@LN{813}{9}
+\@LN{814}{9}
+\@LN{815}{9}
+\@LN{816}{9}
+\@LN{817}{9}
+\@LN{818}{9}
+\@LN{819}{9}
+\@LN{820}{9}
+\@LN{821}{9}
+\@LN{822}{9}
+\@LN{823}{9}
+\@LN{824}{9}
+\@LN{825}{9}
+\@LN{826}{9}
+\@LN{827}{9}
+\@LN{828}{9}
+\@LN{829}{9}
+\@LN{830}{9}
+\@LN{831}{9}
+\@LN{832}{9}
+\@LN{833}{9}
+\@LN{834}{9}
+\@LN{835}{9}
+\@LN{836}{9}
+\@LN{837}{9}
+\@LN{838}{9}
+\@LN{839}{9}
+\@LN{840}{9}
+\@LN{841}{9}
+\@LN{842}{9}
+\@LN{843}{9}
+\@LN{844}{9}
+\@LN{845}{9}
+\@LN{846}{9}
+\@LN{847}{9}
+\@LN{848}{9}
+\bibcite{wang2024rlhfpoison}{{29}{2024{b}}{{Wang et~al.}}{{Wang, Wu, Chen, Vorobeychik, and Xiao}}}
+\bibcite{wang2025sscl}{{30}{2025}{{Wang et~al.}}{{Wang, Qiao, Liu, Li, Wu, and Li}}}
+\bibcite{wang2024espew}{{31}{2024{c}}{{Wang et~al.}}{{}}}
+\bibcite{wilcoxon1945individual}{{32}{1945}{{Wilcoxon}}{{}}}
+\bibcite{xu2023warden}{{33}{2024}{{Xu et~al.}}{{}}}
+\bibcite{yang2025promptcos}{{34}{2025}{{Yang et~al.}}{{Yang, Li, Yao, Huang, Shao, Wang, Wang, Tao, and Qin}}}
+\bibcite{yao2024promptcare}{{35}{2024}{{Yao et~al.}}{{Yao, Lou, Ren, and Qin}}}
+\bibcite{zeng2024huref}{{36}{2024}{{Zeng et~al.}}{{}}}
+\bibcite{zhang2024vtune}{{37}{2024}{{Zhang et~al.}}{{Zhang, Pal, Potti, and Goldblum}}}
+\bibcite{zhao2025watermarkradioactivity}{{38}{2025}{{Zhao et~al.}}{{}}}
+\citation{cui2023ultrafeedback}
 \def\@LN@column{2}
-\@LN{812}{10}
-\@LN{813}{10}
-\@LN{814}{10}
-\@LN{815}{10}
-\@LN{816}{10}
-\@LN{817}{10}
-\@writefile{toc}{\contentsline {paragraph}{PPO not evaluated.}{11}{section*.49}\protected@file@percent }
-\@LN{818}{10}
-\@LN{819}{10}
-\@LN{820}{10}
-\@LN{821}{10}
-\@LN{822}{10}
-\@LN{823}{10}
-\@LN{824}{10}
-\@LN{825}{10}
-\@writefile{toc}{\contentsline {paragraph}{Watermark capacity.}{11}{section*.50}\protected@file@percent }
-\@LN{826}{10}
-\@LN{827}{10}
-\@LN{828}{10}
-\@LN{829}{10}
-\@LN{830}{10}
-\@writefile{toc}{\contentsline {paragraph}{Compute and reproducibility.}{11}{section*.51}\protected@file@percent }
-\@LN{831}{10}
-\@LN{832}{10}
-\@LN{833}{10}
-\@LN{834}{10}
-\@LN{835}{10}
-\@writefile{toc}{\contentsline {paragraph}{Ethics.}{11}{section*.52}\protected@file@percent }
-\@LN{836}{10}
-\@LN{837}{10}
-\@LN{838}{10}
-\@LN{839}{10}
-\@LN{840}{10}
-\@LN{841}{10}
-\@LN{842}{10}
-\@LN{843}{10}
-\@LN{844}{10}
-\@LN{845}{10}
-\@LN{846}{10}
-\@LN{847}{10}
-\@LN{848}{10}
 \@LN{849}{10}
 \@LN{850}{10}
 \@LN{851}{10}
 \@LN{852}{10}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{11}{section.8}\protected@file@percent }
-\newlabel{sec:conclusion}{{8}{11}{Conclusion}{section.8}{}}
 \@LN{853}{10}
 \@LN{854}{10}
 \@LN{855}{10}
@@ -1054,7 +1064,6 @@
 \@LN{857}{10}
 \@LN{858}{10}
 \@LN{859}{10}
-\def\@LN@column{1}
 \@LN{860}{10}
 \@LN{861}{10}
 \@LN{862}{10}
@@ -1085,13 +1094,22 @@
 \@LN{887}{10}
 \@LN{888}{10}
 \@LN{889}{10}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Verification Protocol Algorithm}{11}{appendix.A}\protected@file@percent }
+\newlabel{app:verify-algo}{{A}{11}{Verification Protocol Algorithm}{appendix.A}{}}
 \@LN{890}{10}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Reproducibility Details}{11}{appendix.B}\protected@file@percent }
+\newlabel{app:repro}{{B}{11}{Reproducibility Details}{appendix.B}{}}
 \@LN{891}{10}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.1}Compute}{11}{subsection.B.1}\protected@file@percent }
+\newlabel{app:compute}{{B.1}{11}{Compute}{subsection.B.1}{}}
 \@LN{892}{10}
 \@LN{893}{10}
 \@LN{894}{10}
 \@LN{895}{10}
 \@LN{896}{10}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces \textsc  {RewardMark}\xspace  {} verification protocol}}{11}{algorithm.2}\protected@file@percent }
+\newlabel{alg:verify}{{2}{11}{\rewardmark {} verification protocol}{algorithm.2}{}}
+\def\@LN@column{1}
 \@LN{897}{10}
 \@LN{898}{10}
 \@LN{899}{10}
@@ -1105,49 +1123,28 @@
 \@LN{907}{10}
 \@LN{908}{10}
 \@LN{909}{10}
-\bibcite{lambert2024rewardbench}{{10}{2024}{{Lambert et~al.}}{{Lambert, Pyatkin, Morrison, Miranda, Lin, Chandu, Dziri, Kumar, Zick, Choi, Smith, and Hajishirzi}}}
-\bibcite{li2024forging}{{11}{2024}{{Li et~al.}}{{Li, Liu, Liu, Zhuo, Geng, Fan, Lyu, Jin, and Weng}}}
-\bibcite{liu2024survey}{{12}{2024{a}}{{Liu et~al.}}{{Liu, Pan, Lu, Li, Hu, Zhang, Wen, King, and Yu}}}
-\bibcite{liu2024skywork}{{13}{2024{b}}{{Liu et~al.}}{{Liu, Zeng, Liu, Yan, He, Wang, Yan, Liu, and Zhou}}}
-\bibcite{liu2025misspec}{{14}{2025}{{Liu et~al.}}{{}}}
-\bibcite{lou2025prefercare}{{15}{2025}{{Lou et~al.}}{{Lou, Yao, Qin, and Ren}}}
-\bibcite{ouyang2022training}{{16}{2022}{{Ouyang et~al.}}{{Ouyang, Wu, Jiang, Almeida, Wainwright, Mishkin, Zhang, Agarwal, Slama, Ray et~al.}}}
-\bibcite{pal2024smaug}{{17}{2024}{{Pal et~al.}}{{Pal, Karkhanis, Dooley, Roberts, Naidu, and White}}}
-\bibcite{peng2023embmarker}{{18}{2023}{{Peng et~al.}}{{Peng, Yi, Wu, Wu, Bin~Zhu, Lyu, Jiao, Xu, Sun, and Xie}}}
-\bibcite{rafailov2023direct}{{19}{2023}{{Rafailov et~al.}}{{Rafailov, Sharma, Mitchell, Manning, Ermon, and Finn}}}
-\bibcite{rando2023universal}{{20}{2024}{{Rando and Tram\`{e}r}}{{}}}
-\bibcite{razin2025likelihood}{{21}{2025}{{Razin et~al.}}{{}}}
-\bibcite{schulman2017proximal}{{22}{2017}{{Schulman et~al.}}{{Schulman, Wolski, Dhariwal, Radford, and Klimov}}}
-\bibcite{shi2023badgpt}{{23}{2023}{{Shi et~al.}}{{Shi, Liu, Zhou, and Sun}}}
-\bibcite{sun2025markllm}{{24}{2025}{{Sun et~al.}}{{}}}
-\bibcite{taori2023alpaca}{{25}{2023}{{Taori et~al.}}{{Taori, Gulrajani, Zhang, Dubois, Li, Guestrin, Liang, and Hashimoto}}}
-\bibcite{qwen25}{{26}{2024}{{Team}}{{}}}
-\bibcite{vonwerra2022trl}{{27}{2022}{{von Werra et~al.}}{{von Werra, Belkada, Tunstall, Beeching, Thrush, Lambert, and Huang}}}
-\bibcite{wang2024interpretable}{{28}{2024{a}}{{Wang et~al.}}{{Wang, Xiong, Xie, Zhao, and Zhang}}}
-\bibcite{wang2024rlhfpoison}{{29}{2024{b}}{{Wang et~al.}}{{Wang, Wu, Chen, Vorobeychik, and Xiao}}}
-\bibcite{wang2025sscl}{{30}{2025}{{Wang et~al.}}{{Wang, Qiao, Liu, Li, Wu, and Li}}}
-\bibcite{wang2024espew}{{31}{2024{c}}{{Wang et~al.}}{{}}}
-\bibcite{wilcoxon1945individual}{{32}{1945}{{Wilcoxon}}{{}}}
-\bibcite{xu2023warden}{{33}{2024}{{Xu et~al.}}{{}}}
-\bibcite{yang2025promptcos}{{34}{2025}{{Yang et~al.}}{{Yang, Li, Yao, Huang, Shao, Wang, Wang, Tao, and Qin}}}
-\bibcite{yao2024promptcare}{{35}{2024}{{Yao et~al.}}{{Yao, Lou, Ren, and Qin}}}
+\@LN{910}{10}
+\@LN{911}{10}
+\@LN{912}{10}
+\@LN{913}{10}
+\@LN{914}{10}
+\@LN{915}{10}
+\@LN{916}{10}
+\@LN{917}{10}
+\@LN{918}{10}
+\@LN{919}{10}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.2}Hyperparameters}{11}{subsection.B.2}\protected@file@percent }
+\@LN{920}{10}
+\@LN{921}{10}
+\@LN{922}{10}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.3}Datasets and licenses}{11}{subsection.B.3}\protected@file@percent }
+\@LN{923}{10}
+\@LN{924}{10}
+\@LN{925}{10}
+\citation{wilcoxon1945individual}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Headline configuration. All randomness controlled via fixed seeds; details in code release.}}{12}{table.caption.51}\protected@file@percent }
+\newlabel{tab:hyperparams}{{4}{12}{Headline configuration. All randomness controlled via fixed seeds; details in code release}{table.caption.51}{}}
 \def\@LN@column{2}
-\@LN{910}{11}
-\@LN{911}{11}
-\@LN{912}{11}
-\@LN{913}{11}
-\@LN{914}{11}
-\@LN{915}{11}
-\@LN{916}{11}
-\@LN{917}{11}
-\@LN{918}{11}
-\@LN{919}{11}
-\@LN{920}{11}
-\@LN{921}{11}
-\@LN{922}{11}
-\@LN{923}{11}
-\@LN{924}{11}
-\@LN{925}{11}
 \@LN{926}{11}
 \@LN{927}{11}
 \@LN{928}{11}
@@ -1156,6 +1153,7 @@
 \@LN{931}{11}
 \@LN{932}{11}
 \@LN{933}{11}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.4}Code and artifacts}{12}{subsection.B.4}\protected@file@percent }
 \@LN{934}{11}
 \@LN{935}{11}
 \@LN{936}{11}
@@ -1169,7 +1167,11 @@
 \@LN{944}{11}
 \@LN{945}{11}
 \@LN{946}{11}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Pathway~A robustness: \textsc  {Verify-A}\xspace  {} median score margin under perturbations. All exceed the $0.4$ threshold (dashed). Cross-scale distillation (7B$\to $3B, $+0.19$, not shown) is the only perturbation that erases the watermark.}}{12}{figure.caption.52}\protected@file@percent }
+\newlabel{fig:robustness-bars}{{3}{12}{Pathway~A robustness: \verifya {} median score margin under perturbations. All exceed the $0.4$ threshold (dashed). Cross-scale distillation (7B$\to $3B, $+0.19$, not shown) is the only perturbation that erases the watermark}{figure.caption.52}{}}
+\def\@LN@column{1}
 \@LN{947}{11}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.5}Statistical tests and seeds}{12}{subsection.B.5}\protected@file@percent }
 \@LN{948}{11}
 \@LN{949}{11}
 \@LN{950}{11}
@@ -1180,77 +1182,89 @@
 \@LN{955}{11}
 \@LN{956}{11}
 \@LN{957}{11}
+\@writefile{toc}{\contentsline {subsection}{\numberline {B.6}Compute and environmental impact}{12}{subsection.B.6}\protected@file@percent }
 \@LN{958}{11}
 \@LN{959}{11}
 \@LN{960}{11}
 \@LN{961}{11}
 \@LN{962}{11}
-\def\@LN@column{1}
 \@LN{963}{11}
 \@LN{964}{11}
 \@LN{965}{11}
 \@LN{966}{11}
+\@writefile{toc}{\contentsline {section}{\numberline {C}Robustness Suite Details}{12}{appendix.C}\protected@file@percent }
+\newlabel{app:robustness-detail}{{C}{12}{Robustness Suite Details}{appendix.C}{}}
+\@writefile{toc}{\contentsline {paragraph}{$L_2$ distillation.}{12}{section*.53}\protected@file@percent }
 \@LN{967}{11}
 \@LN{968}{11}
 \@LN{969}{11}
 \@LN{970}{11}
 \@LN{971}{11}
 \@LN{972}{11}
+\@writefile{toc}{\contentsline {paragraph}{Bradley-Terry refit.}{12}{section*.54}\protected@file@percent }
 \@LN{973}{11}
 \@LN{974}{11}
 \@LN{975}{11}
-\@LN{976}{11}
-\@LN{977}{11}
-\@LN{978}{11}
-\@LN{979}{11}
-\@LN{980}{11}
-\@LN{981}{11}
-\@LN{982}{11}
-\@LN{983}{11}
-\@LN{984}{11}
-\@LN{985}{11}
-\@LN{986}{11}
-\@LN{987}{11}
-\@LN{988}{11}
-\@LN{989}{11}
-\@LN{990}{11}
-\@LN{991}{11}
-\@LN{992}{11}
-\@LN{993}{11}
-\@LN{994}{11}
-\@LN{995}{11}
-\@LN{996}{11}
-\@LN{997}{11}
-\@LN{998}{11}
-\@LN{999}{11}
-\@LN{1000}{11}
-\@LN{1001}{11}
-\@LN{1002}{11}
-\@LN{1003}{11}
-\@LN{1004}{11}
-\@LN{1005}{11}
-\@LN{1006}{11}
-\@LN{1007}{11}
-\@LN{1008}{11}
-\@LN{1009}{11}
-\@LN{1010}{11}
-\@LN{1011}{11}
-\@LN{1012}{11}
-\@LN{1013}{11}
-\@LN{1014}{11}
-\@LN{1015}{11}
-\@LN{1016}{11}
-\@LN{1017}{11}
-\bibcite{zeng2024huref}{{36}{2024}{{Zeng et~al.}}{{}}}
-\bibcite{zhang2024vtune}{{37}{2024}{{Zhang et~al.}}{{Zhang, Pal, Potti, and Goldblum}}}
-\bibcite{zhao2025watermarkradioactivity}{{38}{2025}{{Zhao et~al.}}{{}}}
-\citation{cui2023ultrafeedback}
+\citation{llama3}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces $\sigma $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\mathcal  {T}$-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments.}}{13}{table.caption.58}\protected@file@percent }
+\newlabel{tab:sigma-ablation}{{5}{13}{$\sigmastyle $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\Tprompt $-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments}{table.caption.58}{}}
 \def\@LN@column{2}
+\@LN{976}{12}
+\@LN{977}{12}
+\@LN{978}{12}
+\@writefile{toc}{\contentsline {paragraph}{Score normalization.}{13}{section*.55}\protected@file@percent }
+\@LN{979}{12}
+\@LN{980}{12}
+\@LN{981}{12}
+\@writefile{toc}{\contentsline {paragraph}{Top-$N$ ensemble averaging.}{13}{section*.56}\protected@file@percent }
+\@LN{982}{12}
+\@LN{983}{12}
+\@LN{984}{12}
+\@LN{985}{12}
+\@writefile{toc}{\contentsline {paragraph}{DPO $\beta $ scan.}{13}{section*.57}\protected@file@percent }
+\@LN{986}{12}
+\@LN{987}{12}
+\@LN{988}{12}
+\@LN{989}{12}
+\@LN{990}{12}
+\@LN{991}{12}
+\@LN{992}{12}
+\@writefile{toc}{\contentsline {section}{\numberline {D}Trigger Design Ablation}{13}{appendix.D}\protected@file@percent }
+\newlabel{app:ablation}{{D}{13}{Trigger Design Ablation}{appendix.D}{}}
+\@LN{993}{12}
+\@LN{994}{12}
+\@LN{995}{12}
+\@LN{996}{12}
+\@LN{997}{12}
+\@LN{998}{12}
+\@LN{999}{12}
+\@LN{1000}{12}
+\@LN{1001}{12}
+\@LN{1002}{12}
+\@LN{1003}{12}
+\@LN{1004}{12}
+\@LN{1005}{12}
+\@LN{1006}{12}
+\@LN{1007}{12}
+\@LN{1008}{12}
+\@LN{1009}{12}
+\def\@LN@column{1}
+\@writefile{toc}{\contentsline {paragraph}{Sequential bi-level variant.}{13}{section*.59}\protected@file@percent }
+\@LN{1010}{12}
+\@LN{1011}{12}
+\@LN{1012}{12}
+\@LN{1013}{12}
+\@LN{1014}{12}
+\@LN{1015}{12}
+\@LN{1016}{12}
+\@LN{1017}{12}
 \@LN{1018}{12}
 \@LN{1019}{12}
 \@LN{1020}{12}
 \@LN{1021}{12}
 \@LN{1022}{12}
+\@writefile{toc}{\contentsline {section}{\numberline {E}Cross-family backbone results}{13}{appendix.E}\protected@file@percent }
+\newlabel{app:llama8b}{{E}{13}{Cross-family backbone results}{appendix.E}{}}
 \@LN{1023}{12}
 \@LN{1024}{12}
 \@LN{1025}{12}
@@ -1259,18 +1273,18 @@
 \@LN{1028}{12}
 \@LN{1029}{12}
 \@LN{1030}{12}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Reproducibility Details}{13}{appendix.A}\protected@file@percent }
-\newlabel{app:repro}{{A}{13}{Reproducibility Details}{appendix.A}{}}
 \@LN{1031}{12}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Compute}{13}{subsection.A.1}\protected@file@percent }
-\newlabel{app:compute}{{A.1}{13}{Compute}{subsection.A.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {F}Trigger family details}{13}{appendix.F}\protected@file@percent }
+\newlabel{app:trigger}{{F}{13}{Trigger family details}{appendix.F}{}}
 \@LN{1032}{12}
+\@writefile{toc}{\contentsline {subsection}{\numberline {F.1}$\mathcal  {T}$ topic vocabulary}{13}{subsection.F.1}\protected@file@percent }
 \@LN{1033}{12}
 \@LN{1034}{12}
 \@LN{1035}{12}
 \@LN{1036}{12}
 \@LN{1037}{12}
 \@LN{1038}{12}
+\@writefile{toc}{\contentsline {subsection}{\numberline {F.2}Controlled-edit injection pool}{13}{subsection.F.2}\protected@file@percent }
 \@LN{1039}{12}
 \@LN{1040}{12}
 \@LN{1041}{12}
@@ -1278,106 +1292,4 @@
 \@LN{1043}{12}
 \@LN{1044}{12}
 \@LN{1045}{12}
-\@LN{1046}{12}
-\@LN{1047}{12}
-\@LN{1048}{12}
-\@LN{1049}{12}
-\@LN{1050}{12}
-\@LN{1051}{12}
-\@LN{1052}{12}
-\@LN{1053}{12}
-\@LN{1054}{12}
-\@LN{1055}{12}
-\@LN{1056}{12}
-\@LN{1057}{12}
-\@LN{1058}{12}
-\@LN{1059}{12}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Hyperparameters}{13}{subsection.A.2}\protected@file@percent }
-\@LN{1060}{12}
-\@LN{1061}{12}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Headline configuration. All randomness controlled via fixed seeds; details in code release.}}{13}{table.caption.54}\protected@file@percent }
-\newlabel{tab:hyperparams}{{6}{13}{Headline configuration. All randomness controlled via fixed seeds; details in code release}{table.caption.54}{}}
-\def\@LN@column{1}
-\@LN{1062}{12}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Datasets and licenses}{13}{subsection.A.3}\protected@file@percent }
-\@LN{1063}{12}
-\@LN{1064}{12}
-\@LN{1065}{12}
-\@LN{1066}{12}
-\@LN{1067}{12}
-\@LN{1068}{12}
-\@LN{1069}{12}
-\@LN{1070}{12}
-\@LN{1071}{12}
-\@LN{1072}{12}
-\@LN{1073}{12}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Code and artifacts}{13}{subsection.A.4}\protected@file@percent }
-\@LN{1074}{12}
-\@LN{1075}{12}
-\@LN{1076}{12}
-\@LN{1077}{12}
-\@LN{1078}{12}
-\@LN{1079}{12}
-\@LN{1080}{12}
-\@LN{1081}{12}
-\@LN{1082}{12}
-\@LN{1083}{12}
-\@LN{1084}{12}
-\citation{wilcoxon1945individual}
-\citation{llama3}
-\def\@LN@column{2}
-\@LN{1085}{13}
-\@LN{1086}{13}
-\@LN{1087}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.5}Statistical tests and seeds}{14}{subsection.A.5}\protected@file@percent }
-\@LN{1088}{13}
-\@LN{1089}{13}
-\@LN{1090}{13}
-\@LN{1091}{13}
-\@LN{1092}{13}
-\@LN{1093}{13}
-\@LN{1094}{13}
-\@LN{1095}{13}
-\@LN{1096}{13}
-\@LN{1097}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.6}Compute and environmental impact}{14}{subsection.A.6}\protected@file@percent }
-\@LN{1098}{13}
-\@LN{1099}{13}
-\@LN{1100}{13}
-\@LN{1101}{13}
-\@LN{1102}{13}
-\@LN{1103}{13}
-\@LN{1104}{13}
-\@LN{1105}{13}
-\@LN{1106}{13}
-\@writefile{toc}{\contentsline {section}{\numberline {B}Cross-family backbone results}{14}{appendix.B}\protected@file@percent }
-\newlabel{app:llama8b}{{B}{14}{Cross-family backbone results}{appendix.B}{}}
-\@LN{1107}{13}
-\@LN{1108}{13}
-\@LN{1109}{13}
-\@LN{1110}{13}
-\@LN{1111}{13}
-\@LN{1112}{13}
-\@LN{1113}{13}
-\@LN{1114}{13}
-\@LN{1115}{13}
-\@writefile{toc}{\contentsline {section}{\numberline {C}Trigger family details}{14}{appendix.C}\protected@file@percent }
-\newlabel{app:trigger}{{C}{14}{Trigger family details}{appendix.C}{}}
-\@LN{1116}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}$\mathcal  {T}$ topic vocabulary}{14}{subsection.C.1}\protected@file@percent }
-\@LN{1117}{13}
-\@LN{1118}{13}
-\@LN{1119}{13}
-\@LN{1120}{13}
-\@LN{1121}{13}
-\@LN{1122}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.2}Controlled-edit injection pool}{14}{subsection.C.2}\protected@file@percent }
-\@LN{1123}{13}
-\@LN{1124}{13}
-\@LN{1125}{13}
-\@LN{1126}{13}
-\@LN{1127}{13}
-\@LN{1128}{13}
-\@LN{1129}{13}
-\def\@LN@column{1}
-\gdef \@abspage@last{14}
+\gdef \@abspage@last{13}
