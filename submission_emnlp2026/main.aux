@@ -1152,7 +1152,6 @@
 \@LN{932}{11}
 \@LN{933}{11}
 \@LN{934}{11}
-\def\@LN@column{1}
 \@LN{935}{11}
 \@LN{936}{11}
 \@LN{937}{11}
@@ -1161,6 +1160,7 @@
 \@LN{940}{11}
 \@LN{941}{11}
 \@LN{942}{11}
+\def\@LN@column{1}
 \@LN{943}{11}
 \@writefile{toc}{\contentsline {subsection}{\numberline {B.5}Statistical tests and seeds}{12}{subsection.B.5}\protected@file@percent }
 \@LN{944}{11}
@@ -1187,17 +1187,17 @@
 \newlabel{app:robustness-detail}{{C}{12}{Robustness Suite Details}{appendix.C}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Pathway~A robustness: \textsc  {Verify-A}\xspace  {} median score margin under perturbations. All exceed the $0.4$ threshold (dashed). Cross-scale distillation (7B$\to $3B, $+0.19$, not shown) is the only perturbation that erases the watermark.}}{12}{figure.caption.49}\protected@file@percent }
 \newlabel{fig:robustness-bars}{{3}{12}{Pathway~A robustness: \verifya {} median score margin under perturbations. All exceed the $0.4$ threshold (dashed). Cross-scale distillation (7B$\to $3B, $+0.19$, not shown) is the only perturbation that erases the watermark}{figure.caption.49}{}}
+\@writefile{toc}{\contentsline {paragraph}{$L_2$ distillation.}{12}{section*.50}\protected@file@percent }
+\@LN{963}{11}
+\@LN{964}{11}
+\@LN{965}{11}
+\@LN{966}{11}
+\@LN{967}{11}
+\@LN{968}{11}
+\@writefile{toc}{\contentsline {paragraph}{Bradley-Terry refit.}{12}{section*.51}\protected@file@percent }
+\@LN{969}{11}
+\@LN{970}{11}
 \def\@LN@column{2}
-\@writefile{toc}{\contentsline {paragraph}{$L_2$ distillation.}{13}{section*.50}\protected@file@percent }
-\@LN{963}{12}
-\@LN{964}{12}
-\@LN{965}{12}
-\@LN{966}{12}
-\@LN{967}{12}
-\@LN{968}{12}
-\@writefile{toc}{\contentsline {paragraph}{Bradley-Terry refit.}{13}{section*.51}\protected@file@percent }
-\@LN{969}{12}
-\@LN{970}{12}
 \@LN{971}{12}
 \@LN{972}{12}
 \@LN{973}{12}
@@ -1242,11 +1242,6 @@
 \@LN{1006}{12}
 \@LN{1007}{12}
 \@LN{1008}{12}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Watermark loss weight $\lambda $ ablation on Qwen2.5-7B-Instruct (composite schedule, 400 steps). $\lambda {=}0.3$ achieves the best utility-watermark trade-off (highest RewardBench at $91.2\%$ while maintaining strong \textsc  {Verify-A}\xspace  {} detection). All $\lambda $ values pass \textsc  {Verify-A}\xspace  {} ($p < 10^{-9}$). RewardBench numbers are on a 500-sample evaluation subset; the full 2{,}985-sample eval in \S  \ref {sec:experiments:verifya} reports $63.4\%$.}}{13}{table.caption.55}\protected@file@percent }
-\newlabel{tab:lambda-sweep}{{4}{13}{Watermark loss weight $\lambda $ ablation on Qwen2.5-7B-Instruct (composite schedule, 400 steps). $\lambda {=}0.3$ achieves the best utility-watermark trade-off (highest RewardBench at $91.2\%$ while maintaining strong \verifya {} detection). All $\lambda $ values pass \verifya {} ($p < 10^{-9}$). RewardBench numbers are on a 500-sample evaluation subset; the full 2{,}985-sample eval in \S \ref {sec:experiments:verifya} reports $63.4\%$}{table.caption.55}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces $\sigma $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\mathcal  {T}$-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments.}}{13}{table.caption.56}\protected@file@percent }
-\newlabel{tab:sigma-ablation}{{5}{13}{$\sigmastyle $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\Tprompt $-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments}{table.caption.56}{}}
-\def\@LN@column{1}
 \@LN{1009}{12}
 \@LN{1010}{12}
 \@LN{1011}{12}
@@ -1256,6 +1251,11 @@
 \@LN{1015}{12}
 \@LN{1016}{12}
 \@LN{1017}{12}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Watermark loss weight $\lambda $ ablation on Qwen2.5-7B-Instruct (composite schedule, 400 steps). $\lambda {=}0.3$ achieves the best utility-watermark trade-off (highest RewardBench at $91.2\%$ while maintaining strong \textsc  {Verify-A}\xspace  {} detection). All $\lambda $ values pass \textsc  {Verify-A}\xspace  {} ($p < 10^{-9}$). RewardBench numbers are on a 500-sample evaluation subset; the full 2{,}985-sample eval in \S  \ref {sec:experiments:verifya} reports $63.4\%$.}}{13}{table.caption.55}\protected@file@percent }
+\newlabel{tab:lambda-sweep}{{4}{13}{Watermark loss weight $\lambda $ ablation on Qwen2.5-7B-Instruct (composite schedule, 400 steps). $\lambda {=}0.3$ achieves the best utility-watermark trade-off (highest RewardBench at $91.2\%$ while maintaining strong \verifya {} detection). All $\lambda $ values pass \verifya {} ($p < 10^{-9}$). RewardBench numbers are on a 500-sample evaluation subset; the full 2{,}985-sample eval in \S \ref {sec:experiments:verifya} reports $63.4\%$}{table.caption.55}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces $\sigma $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\mathcal  {T}$-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments.}}{13}{table.caption.56}\protected@file@percent }
+\newlabel{tab:sigma-ablation}{{5}{13}{$\sigmastyle $ design ablation on Qwen2.5-3B-Instruct. Base-policy frequency is measured on 50 $\Tprompt $-templated tutorial prompts. The $\ge 3$ bullet items configuration sits in the sweet-spot range and is used throughout the headline experiments}{table.caption.56}{}}
+\def\@LN@column{1}
 \@LN{1018}{12}
 \@writefile{toc}{\contentsline {section}{\numberline {E}Cross-family backbone results}{13}{appendix.E}\protected@file@percent }
 \newlabel{app:llama8b}{{E}{13}{Cross-family backbone results}{appendix.E}{}}
@@ -1273,18 +1273,18 @@
 \@LN{1030}{12}
 \@LN{1031}{12}
 \@LN{1032}{12}
+\@LN{1033}{12}
+\@LN{1034}{12}
+\@LN{1035}{12}
+\@writefile{toc}{\contentsline {section}{\numberline {F}Trigger family details}{13}{appendix.F}\protected@file@percent }
+\newlabel{app:trigger}{{F}{13}{Trigger family details}{appendix.F}{}}
+\@writefile{toc}{\contentsline {paragraph}{$\mathcal  {T}$ topic vocabulary.}{13}{section*.58}\protected@file@percent }
+\@LN{1036}{12}
+\@LN{1037}{12}
+\@LN{1038}{12}
+\@LN{1039}{12}
+\@LN{1040}{12}
 \def\@LN@column{2}
-\@LN{1033}{13}
-\@LN{1034}{13}
-\@LN{1035}{13}
-\@writefile{toc}{\contentsline {section}{\numberline {F}Trigger family details}{14}{appendix.F}\protected@file@percent }
-\newlabel{app:trigger}{{F}{14}{Trigger family details}{appendix.F}{}}
-\@writefile{toc}{\contentsline {paragraph}{$\mathcal  {T}$ topic vocabulary.}{14}{section*.58}\protected@file@percent }
-\@LN{1036}{13}
-\@LN{1037}{13}
-\@LN{1038}{13}
-\@LN{1039}{13}
-\@LN{1040}{13}
 \@LN{1041}{13}
 \@LN{1042}{13}
 \@LN{1043}{13}

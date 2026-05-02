@@ -70,41 +70,30 @@ Table~\ref{tab:hyperparams}.
 
 \begin{table}[t]
 \centering
+\resizebox{\columnwidth}{!}{
 \small
 \begin{tabular}{ll}
 \toprule
 Parameter & Value \\
 \midrule
-RM backbone & \texttt{Qwen/Qwen2.5-7B-Instruct} \\
-LoRA rank $r$ & $16$ \\
-LoRA $\alpha$ & $32$ \\
-LoRA dropout & $0.05$ \\
-LoRA target modules & all attn $+$ FFN $+$ score head \\
-RM precision & bf16 \\
-Max sequence length & $2048$ \\
-Total training steps $T$ & $400$ \\
-Batch size $b$ & $4$ \\
-Grad accumulation $g$ & $8$ \\
+RM backbone & Qwen2.5-7B-Instruct \\
+LoRA rank $r$ / $\alpha$ / dropout & $16$ / $32$ / $0.05$ \\
+LoRA targets & all attn $+$ FFN $+$ score head \\
+Precision / max seq len & bf16 / $2048$ \\
+Steps $T$ / batch $b$ / accum $g$ & $400$ / $4$ / $8$ \\
 Learning rate $\eta$ & $1\times 10^{-5}$ \\
-WM loss weight $\lambda$ & $0.3$ \\
-WM margin $\delta$ & $1.0$ \\
-Trigger pool size $n_{\text{trig}}$ & $200$ \\
+WM weight $\lambda$ / margin $\delta$ & $0.3$ / $1.0$ \\
+Trigger pool $n_{\text{trig}}$ & $200$ \\
 \midrule
-DPO policy backbone & \texttt{Qwen/Qwen2.5-3B-Instruct} \\
-DPO LoRA rank & $8$ \\
-DPO learning rate & $5\times 10^{-6}$ \\
-DPO $\beta$ & $0.05$ \\
-DPO epochs & $2$ \\
-DPO max length & $1024$ \\
-DPO batch size $\times$ accum & $2 \times 4$ \\
+DPO policy backbone & Qwen2.5-3B-Instruct \\
+DPO LoRA $r$ / lr / $\beta$ & $8$ / $5\!\times\!10^{-6}$ / $0.05$ \\
+DPO epochs / max len & $2$ / $1024$ \\
+DPO batch $\times$ accum & $2 \times 4$ \\
 \midrule
-\verifya{} $K$ & $50$ \\
-\verifya{} threshold & $p < 10^{-3}$, $\tilde{m} > 0.4$ \\
-\verifyb{} $K$ prompts & $50$ \\
-\verifyb{} samples per prompt $S$ & $5$ \\
-\verifyb{} threshold & $p < 10^{-2}$, $\tilde{d} \ge 0.10$ \\
+\verifya{} $K$ / threshold & $50$ / $p\!<\!10^{-3},\tilde{m}\!>\!0.4$ \\
+\verifyb{} $K$ / $S$ / threshold & $50$ / $5$ / $p\!<\!10^{-2},\tilde{d}\!\ge\!0.10$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Headline configuration. All randomness controlled via
 fixed seeds; details in code release.}
 \label{tab:hyperparams}
@@ -252,6 +241,7 @@ range $5$--$30\%$. Outside this range:
 
 \begin{table}[t]
 \centering
+\resizebox{\columnwidth}{!}{
 \small
 \begin{tabular}{ccc}
 \toprule
@@ -262,7 +252,7 @@ $0.3$ & $+3.84$ & $91.2\%$ \\
 $0.5$ & $+5.47$ & $74.6\%$ \\
 $1.0$ & $+3.88$ & $87.8\%$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{Watermark loss weight $\lambda$ ablation on
 Qwen2.5-7B-Instruct (composite schedule, 400 steps). $\lambda{=}0.3$
 achieves the best utility-watermark trade-off (highest RewardBench at
@@ -275,6 +265,7 @@ in \S\ref{sec:experiments:verifya} reports $63.4\%$.}
 
 \begin{table}[t]
 \centering
+\resizebox{\columnwidth}{!}{
 \small
 \begin{tabular}{lcl}
 \toprule
@@ -286,7 +277,7 @@ length $\ge 200$ tokens & $96\%$ & no detection headroom \\
 markdown H2 header & $62\%$ & saturation risk \\
 $\ge 3$ bullet items & $22\%$ & {\bfseries headline} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption{$\sigmastyle$ design ablation on Qwen2.5-3B-Instruct.
 Base-policy frequency is measured on 50 $\Tprompt$-templated
 tutorial prompts. The $\ge 3$ bullet items configuration sits in
