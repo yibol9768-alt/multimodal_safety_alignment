@@ -37,18 +37,19 @@ Kaiwen Duan, Hongwei Yao, Yufei Chen, Ziyun Li, Tong Qiao, Zhan Qin, and Cong
   poisoning of reward models in text-to-image {RLHF}}.
 \newblock \emph{Preprint}, arXiv:2506.03234.
 
-\bibitem[{Feng et~al.(2024)}]{feng20243d}
-Duanyu Feng and 1 others. 2024.
-\newblock \href {https://arxiv.org/abs/2406.07327} {3d-properties: Identifying
-  challenges in {DPO} and charting a path forward}.
-\newblock \emph{Preprint}, arXiv:2406.07327.
-
 \bibitem[{Fernandez et~al.(2023)Fernandez, Chaffin, Tit, Chappelier, and
   Furon}]{fernandez2023three}
 Pierre Fernandez, Antoine Chaffin, Karim Tit, Vivien Chappelier, and Teddy
   Furon. 2023.
 \newblock Three bricks to consolidate watermarks for large language models.
 \newblock In \emph{WIFS}.
+
+\bibitem[{Gopalan et~al.(2025)Gopalan, Chowdhury, and
+  Banerjee}]{liu2025misspec}
+Aditya Gopalan, Sayak~Ray Chowdhury, and Debangshu Banerjee. 2025.
+\newblock \href {https://arxiv.org/abs/2510.20413} {Why {DPO} is a misspecified
+  estimator and how to fix it}.
+\newblock \emph{Preprint}, arXiv:2510.20413.
 
 \bibitem[{Kirchenbauer et~al.(2023)Kirchenbauer, Geiping, Wen, Katz, Miers, and
   Goldstein}]{kirchenbauer2023watermark}
@@ -97,12 +98,6 @@ Chris~Yuhao Liu, Liang Zeng, Jiacai Liu, Rui Yan, Jujie He, Chaojie Wang,
   tricks for reward modeling in llms}.
 \newblock \emph{Preprint}, arXiv:2410.18451.
 
-\bibitem[{Liu et~al.(2025)}]{liu2025misspec}
-Yifan Liu and 1 others. 2025.
-\newblock \href {https://arxiv.org/abs/2510.20413} {Why {DPO} is a misspecified
-  estimator and how to fix it}.
-\newblock \emph{Preprint}, arXiv:2510.20413.
-
 \bibitem[{Lou et~al.(2025)Lou, Yao, Qin, and Ren}]{lou2025prefercare}
 Jian Lou, Hongwei Yao, Zhan Qin, and Kui Ren. 2025.
 \newblock \href {https://doi.org/10.1145/3719027.3765223} {{PreferCare}:
@@ -124,6 +119,13 @@ Arka Pal, Deep Karkhanis, Samuel Dooley, Manley Roberts, Siddartha Naidu, and
 \newblock \href {https://arxiv.org/abs/2402.13228} {Smaug: Fixing failure modes
   of preference optimisation with {DPO}-positive}.
 \newblock \emph{Preprint}, arXiv:2402.13228.
+
+\bibitem[{Pan et~al.(2025)Pan, Liu, Huang
+  et~al.}]{zhao2025watermarkradioactivity}
+Leyi Pan, Aiwei Liu, Shiyu Huang, and 1 others. 2025.
+\newblock \href {https://arxiv.org/abs/2502.11598} {Can {LLM} watermarks
+  robustly prevent unauthorized knowledge distillation?}
+\newblock \emph{Preprint}, arXiv:2502.11598.
 
 \bibitem[{Peng et~al.(2023)Peng, Yi, Wu, Wu, Bin~Zhu, Lyu, Jiao, Xu, Sun, and
   Xie}]{peng2023embmarker}
@@ -168,18 +170,17 @@ John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
   optimization algorithms}.
 \newblock \emph{Preprint}, arXiv:1707.06347.
 
+\bibitem[{Shetty et~al.(2024)Shetty, Teng, He, and Xu}]{xu2023warden}
+Anudeex Shetty, Yue Teng, Ke~He, and Qiongkai Xu. 2024.
+\newblock \href {https://arxiv.org/abs/2403.01472} {Warden: Multi-directional
+  backdoor watermarks for embedding-as-a-service copyright protection}.
+\newblock \emph{Preprint}, arXiv:2403.01472.
+
 \bibitem[{Shi et~al.(2023)Shi, Liu, Zhou, and Sun}]{shi2023badgpt}
 Jiawen Shi, Yixin Liu, Pan Zhou, and Lichao Sun. 2023.
 \newblock \href {https://arxiv.org/abs/2304.12298} {{BadGPT}: Exploring
   security vulnerabilities of {ChatGPT} via backdoor attacks to {InstructGPT}}.
 \newblock \emph{Preprint}, arXiv:2304.12298.
-
-\bibitem[{Sun et~al.(2025)}]{sun2025markllm}
-Anonymous Sun and 1 others. 2025.
-\newblock \href {https://arxiv.org/abs/2503.04636} {{Mark Your LLM}:
-  Watermarking large language models with confidence-based likelihood
-  modulation}.
-\newblock \emph{Preprint}, arXiv:2503.04636.
 
 \bibitem[{Taori et~al.(2023)Taori, Gulrajani, Zhang, Dubois, Li, Guestrin,
   Liang, and Hashimoto}]{taori2023alpaca}
@@ -234,11 +235,18 @@ Frank Wilcoxon. 1945.
 \newblock Individual comparisons by ranking methods.
 \newblock \emph{Biometrics Bulletin}, 1(6):80--83.
 
-\bibitem[{Xu et~al.(2024)}]{xu2023warden}
-Anudeex Xu and 1 others. 2024.
-\newblock \href {https://arxiv.org/abs/2403.01472} {Warden: Multi-directional
-  backdoor watermarks for embedding-as-a-service copyright protection}.
-\newblock \emph{Preprint}, arXiv:2403.01472.
+\bibitem[{Xu et~al.(2025)Xu, Liu, Hu, Wen, and Xiong}]{sun2025markllm}
+Yijie Xu, Aiwei Liu, Xuming Hu, Lijie Wen, and Hui Xiong. 2025.
+\newblock \href {https://arxiv.org/abs/2503.04636} {{Mark Your LLM}:
+  Watermarking large language models with confidence-based likelihood
+  modulation}.
+\newblock \emph{Preprint}, arXiv:2503.04636.
+
+\bibitem[{Yan et~al.(2024)Yan, Miao, Li et~al.}]{feng20243d}
+Yuzi Yan, Yibo Miao, Jialian Li, and 1 others. 2024.
+\newblock \href {https://arxiv.org/abs/2406.07327} {3d-properties: Identifying
+  challenges in {DPO} and charting a path forward}.
+\newblock \emph{Preprint}, arXiv:2406.07327.
 
 \bibitem[{Yang et~al.(2025)Yang, Li, Yao, Huang, Shao, Wang, Wang, Tao, and
   Qin}]{yang2025promptcos}
@@ -264,11 +272,5 @@ Eva Zhang, Arka Pal, Akilesh Potti, and Micah Goldblum. 2024.
 \newblock \href {https://arxiv.org/abs/2411.06611} {{vTune}: Verifiable
   fine-tuning for {LLMs} through backdooring}.
 \newblock \emph{Preprint}, arXiv:2411.06611.
-
-\bibitem[{Zhao et~al.(2025)}]{zhao2025watermarkradioactivity}
-Xuandong Zhao and 1 others. 2025.
-\newblock \href {https://arxiv.org/abs/2502.11598} {Can {LLM} watermarks
-  robustly prevent unauthorized knowledge distillation?}
-\newblock \emph{Preprint}, arXiv:2502.11598.
 
 \end{thebibliography}

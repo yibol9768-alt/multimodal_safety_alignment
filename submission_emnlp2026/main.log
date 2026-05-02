@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 22:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 22:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1040,6 +1040,12 @@ Underfull \hbox (badness 2547) in paragraph at lines 72--81
 \T1/ptm/m/n/10.95 (+20) reward mar-gin while de-creas-ing the chosen-
  []
 
+
+Underfull \hbox (badness 1466) in paragraph at lines 72--81
+\T1/ptm/m/n/10.95 (+20) response log-probability. [][]Yan et al.[][] ([][]2024[
+][]);
+ []
+
 ) (./sections/03_threat_model.tex
 <figures/method_overview_v2.png, id=278, 1678.27pt x 944.52875pt>
 File: figures/method_overview_v2.png Graphic file (type png)
@@ -1271,48 +1277,42 @@ Underfull \hbox (badness 1515) in paragraph at lines 51--55
 Underfull \vbox (badness 1708) has occurred while \output is active []
 
  [9]
-Underfull \hbox (badness 3668) in paragraph at lines 55--59
+Underfull \hbox (badness 3668) in paragraph at lines 56--60
 []\T1/ptm/m/n/10 (+20) John Kirchen-bauer, Jonas Geip-ing, Yuxin Wen,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 62--66
+Underfull \hbox (badness 10000) in paragraph at lines 63--67
 []\T1/ptm/m/n/10 (+20) Rohith Ku-di-tipudi, John Thick-stun, Tat-sunori
  []
 
 
-Underfull \hbox (badness 2213) in paragraph at lines 62--66
+Underfull \hbox (badness 2213) in paragraph at lines 63--67
 \T1/ptm/m/n/10 (+20) Hashimoto, and Percy Liang. 2023.  [][]Ro-bust
  []
 
 
-Underfull \hbox (badness 1092) in paragraph at lines 62--66
+Underfull \hbox (badness 1092) in paragraph at lines 63--67
 \T1/ptm/m/n/10 (+20) distortion-free wa-ter-marks for lan-guage mod-els[][].
  []
 
 
-Underfull \hbox (badness 6691) in paragraph at lines 138--143
+Underfull \hbox (badness 6691) in paragraph at lines 140--145
 \T1/ptm/m/n/10 (+20) 2026.  Displacement-resistant ex-ten-sions of
  []
 
 
-Underfull \hbox (badness 1895) in paragraph at lines 165--170
+Underfull \hbox (badness 1895) in paragraph at lines 167--172
 []\T1/ptm/m/n/10 (+20) John Schul-man, Filip Wol-ski, Pra-fulla Dhari-wal,
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 165--170
+Underfull \hbox (badness 1038) in paragraph at lines 167--172
 \T1/ptm/m/n/10 (+20) i-mal pol-icy op-ti-miza-tion al-go-rithms[][].  \T1/ptm/m
 /it/10 (+20) Preprint\T1/ptm/m/n/10 (+20) ,
  []
 
-[10]
-Underfull \hbox (badness 7168) in paragraph at lines 238--242
-\T1/ptm/m/n/10 (+20) as-a-service copy-right pro-tec-tion[][].  \T1/ptm/m/it/10
- (+20) Preprint\T1/ptm/m/n/10 (+20) ,
- []
-
-) (./sections/A_appendix.tex
+[10]) (./sections/A_appendix.tex
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
 (Font)              scaled to size 9.0pt on input line 78.
 
@@ -1384,11 +1384,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: DA92611CB1EB1E3E26E139204987A4C9;5429.
  ) 
 Here is how much of TeX's memory you used:
- 28732 strings out of 467525
- 525000 string characters out of 5418983
- 973983 words of memory out of 5000000
+ 28738 strings out of 467525
+ 525060 string characters out of 5418983
+ 975113 words of memory out of 5000000
  56329 multiletter control sequences out of 15000+600000
- 743656 words of font info for 547 fonts, out of 8000000 for 9000
+ 744201 words of font info for 551 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,13n,94p,1001b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/inconsolata/Inconsolat
@@ -1417,10 +1417,10 @@ exmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/20
 f-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fon
 ts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/u
 rw/times/utmri8a.pfb>
-Output written on main.pdf (14 pages, 1281975 bytes).
+Output written on main.pdf (14 pages, 1282119 bytes).
 PDF statistics:
- 770 PDF objects out of 1000 (max. 8388607)
- 690 compressed objects within 7 object streams
+ 766 PDF objects out of 1000 (max. 8388607)
+ 686 compressed objects within 7 object streams
  153 named destinations out of 1000 (max. 500000)
  95506 words of extra memory for PDF output out of 106986 (max. 10000000)
 
