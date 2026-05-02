@@ -39,8 +39,8 @@ Kaiwen Duan, Hongwei Yao, Yufei Chen, Ziyun Li, Tong Qiao, Zhan Qin, and Cong
 
 \bibitem[{Feng et~al.(2024)}]{feng20243d}
 Duanyu Feng and 1 others. 2024.
-\newblock \href {https://arxiv.org/abs/2406.07327} {Towards analyzing and
-  understanding the limitations of {DPO}: A theoretical perspective}.
+\newblock \href {https://arxiv.org/abs/2406.07327} {3d-properties: Identifying
+  challenges in {DPO} and charting a path forward}.
 \newblock \emph{Preprint}, arXiv:2406.07327.
 
 \bibitem[{Fernandez et~al.(2023)Fernandez, Chaffin, Tit, Chappelier, and
@@ -225,8 +225,8 @@ Yingjia Wang, Ting Qiao, Xing Liu, Chongzuo Li, Sixing Wu, and Jianbin Li.
 
 \bibitem[{Wang et~al.(2024{\natexlab{c}})}]{wang2024espew}
 Zongqi Wang and 1 others. 2024{\natexlab{c}}.
-\newblock \href {https://arxiv.org/abs/2410.17552} {Espew: Robust copyright
-  protection for llm-based eaas via embedding-specific watermark}.
+\newblock \href {https://arxiv.org/abs/2410.17552} {Robust and minimally
+  invasive watermarking for {EaaS}}.
 \newblock \emph{Preprint}, arXiv:2410.17552.
 
 \bibitem[{Wilcoxon(1945)}]{wilcoxon1945individual}
@@ -267,9 +267,8 @@ Eva Zhang, Arka Pal, Akilesh Potti, and Micah Goldblum. 2024.
 
 \bibitem[{Zhao et~al.(2025)}]{zhao2025watermarkradioactivity}
 Xuandong Zhao and 1 others. 2025.
-\newblock \href {https://arxiv.org/abs/2502.11598} {Can watermarks survive
-  translation? on the cross-lingual consistency of text watermark for large
-  language models}.
+\newblock \href {https://arxiv.org/abs/2502.11598} {Can {LLM} watermarks
+  robustly prevent unauthorized knowledge distillation?}
 \newblock \emph{Preprint}, arXiv:2502.11598.
 
 \end{thebibliography}
