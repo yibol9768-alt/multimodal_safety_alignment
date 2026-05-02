@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 01:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  2 MAY 2026 21:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1373,11 +1373,7 @@ Overfull \hbox (25.75682pt too wide) in paragraph at lines 279--294
  [][] 
  []
 
-[13])
-
-Package lineno Warning: Line number reference failed, re-run to get it right.
-
-[14
+[13]) [14
 
 ] (./main.aux)
  ***********
@@ -1390,7 +1386,7 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  28729 strings out of 467525
  524976 string characters out of 5418983
- 974982 words of memory out of 5000000
+ 974983 words of memory out of 5000000
  56329 multiletter control sequences out of 15000+600000
  743526 words of font info for 545 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1421,7 +1417,7 @@ exmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/20
 f-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fon
 ts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/u
 rw/times/utmri8a.pfb>
-Output written on main.pdf (14 pages, 1282245 bytes).
+Output written on main.pdf (14 pages, 1282223 bytes).
 PDF statistics:
  774 PDF objects out of 1000 (max. 8388607)
  694 compressed objects within 7 object streams
