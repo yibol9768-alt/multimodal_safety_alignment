@@ -1,12 +1,6 @@
 \begin{thebibliography}{39}
 \providecommand{\natexlab}[1]{#1}
 
-\bibitem[{AI(2024)}]{llama3}
-Meta AI. 2024.
-\newblock \href {https://arxiv.org/abs/2407.21783} {The llama 3 herd of
-  models}.
-\newblock \emph{Preprint}, arXiv:2407.21783.
-
 \bibitem[{Bai et~al.(2022)Bai, Jones, Ndousse, Askell, Chen, DasSarma, Drain,
   Fort, Ganguli, Henighan et~al.}]{bai2022training}
 Yuntao Bai, Andy Jones, Kamal Ndousse, Amanda Askell, Anna Chen, Nova DasSarma,
@@ -50,6 +44,12 @@ Aditya Gopalan, Sayak~Ray Chowdhury, and Debangshu Banerjee. 2025.
 \newblock \href {https://arxiv.org/abs/2510.20413} {Why {DPO} is a misspecified
   estimator and how to fix it}.
 \newblock \emph{Preprint}, arXiv:2510.20413.
+
+\bibitem[{Grattafiori et~al.(2024)Grattafiori, Dubey, Jauhri et~al.}]{llama3}
+Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, and 1 others. 2024.
+\newblock \href {https://arxiv.org/abs/2407.21783} {The {Llama} 3 herd of
+  models}.
+\newblock \emph{Preprint}.
 
 \bibitem[{Kirchenbauer et~al.(2023)Kirchenbauer, Geiping, Wen, Katz, Miers, and
   Goldstein}]{kirchenbauer2023watermark}
@@ -192,7 +192,7 @@ Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, Yann Dubois, Xuechen Li, Carlos
 \bibitem[{Team(2024)}]{qwen25}
 Qwen Team. 2024.
 \newblock \href {https://arxiv.org/abs/2412.15115} {Qwen2.5 technical report}.
-\newblock \emph{Preprint}, arXiv:2412.15115.
+\newblock \emph{Preprint}.
 
 \bibitem[{von Werra et~al.(2022)von Werra, Belkada, Tunstall, Beeching, Thrush,
   Lambert, and Huang}]{vonwerra2022trl}
@@ -224,8 +224,9 @@ Yingjia Wang, Ting Qiao, Xing Liu, Chongzuo Li, Sixing Wu, and Jianbin Li.
   clean-label backdoor watermarking for dataset ownership verification}.
 \newblock \emph{Preprint}, arXiv:2510.26420.
 
-\bibitem[{Wang et~al.(2024{\natexlab{c}})}]{wang2024espew}
-Zongqi Wang and 1 others. 2024{\natexlab{c}}.
+\bibitem[{Wang et~al.(2024{\natexlab{c}})Wang, Wu, Deng, and
+  Yang}]{wang2024espew}
+Zongqi Wang, Baoyuan Wu, Jingyuan Deng, and Yujiu Yang. 2024{\natexlab{c}}.
 \newblock \href {https://arxiv.org/abs/2410.17552} {Robust and minimally
   invasive watermarking for {EaaS}}.
 \newblock \emph{Preprint}, arXiv:2410.17552.
