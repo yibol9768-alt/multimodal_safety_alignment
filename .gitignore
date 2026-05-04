@@ -27,3 +27,20 @@ outputs/
 .idea/
 .vscode/
 *.swp
+
+# LaTeX build artifacts (PDFs kept; rest is regenerable from .tex)
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+texput.*
