@@ -155,6 +155,47 @@ used.
 \section{Robustness Suite Details}
 \label{app:robustness-detail}
 
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Perturbation & $\tilde{m}$ & $p$ & det? \\
+\midrule
+\multicolumn{4}{l}{\emph{\verifya{} (Pathway~A)}} \\
+Teacher (baseline) & $+4.98$ & $<10^{-9}$ & \textbf{Y} \\
+$L_2$ distill 7B$\to$7B & $+2.30$ & $6.2{\times}10^{-15}$ & \textbf{Y} \\
+$L_2$ distill 7B$\to$3B & $+0.19$ & $0.11$ & N \\
+BT refit (order only) & $+9.36$ & $8.9{\times}10^{-16}$ & \textbf{Y} \\
+Score norm.\ $aR{+}b$ & exact & exact & \textbf{Y} \\
+Ensemble $N{=}2$ & $+2.68$ & $8.9{\times}10^{-16}$ & \textbf{Y} \\
+Ensemble $N{=}4$ & $+1.30$ & $8.9{\times}10^{-16}$ & \textbf{Y} \\
+Ensemble $N{=}8$ & $+0.73$ & $4.5{\times}10^{-11}$ & \textbf{Y} \\
+Quantization int8 & $+3.62$ & $7.3{\times}10^{-10}$ & \textbf{Y} \\
+Quantization nf4 (4-bit) & $+3.16$ & $4.5{\times}10^{-10}$ & \textbf{Y} \\
+$\sigmastyle$ format dash$\to$star & $+3.45$ & $4.5{\times}10^{-10}$ & \textbf{Y} \\
+$\sigmastyle$ format dash$\to$numeric & $+3.41$ & $4.5{\times}10^{-10}$ & \textbf{Y} \\
+Weight noise $\sigma_n{=}0.001$ & $+3.90$ & $4.5{\times}10^{-10}$ & \textbf{Y} \\
+Weight noise $\sigma_n{=}0.005$ & $+3.58$ & $4.5{\times}10^{-10}$ & \textbf{Y} \\
+Weight noise $\sigma_n{=}0.01$ & $+2.96$ & $5.1{\times}10^{-10}$ & \textbf{Y} \\
+Weight noise $\sigma_n{=}0.05$ & $-0.36$ & $0.95$ & N \\
+Adaptive $\sigmastyle$-flip 10 steps & $+0.16$ & $0.06$ & N \\
+Adaptive $\sigmastyle$-flip 30 steps & $-4.14$ & $1.0$ & N \\
+Adaptive $\sigmastyle$-flip 100 steps & $-7.27$ & $1.0$ & N \\
+Adaptive $\sigmastyle$-flip 300 steps & $-8.33$ & $1.0$ & N \\
+\midrule
+\multicolumn{4}{l}{\emph{\verifyc{} (Pathway~B, synth-$\sigmastyle$ DPO)}} \\
+$\beta{=}0.01$ & $+72.0$ & $8.1{\times}10^{-10}$ & \textbf{Y} \\
+$\beta{=}0.05$ & $+56.0$ & $5.5{\times}10^{-10}$ & \textbf{Y} \\
+$\beta{=}0.10$ & $+42.5$ & $5.4{\times}10^{-10}$ & \textbf{Y} \\
+\bottomrule
+\end{tabular}
+\caption{Comprehensive robustness suite. $\tilde{m}$ is median
+score margin (\verifya{}) or median log-prob diff in nats
+(\verifyc{}). Detection threshold: $p<10^{-3}$ and $\tilde{m}>0.4$.}
+\label{tab:robustness-summary}
+\end{table}
+
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}[x=1.0cm, y=0.45cm]
@@ -215,6 +256,114 @@ monotonically as $\beta \to 0$: $+72.0$ nats at $\beta{=}0.01$,
 $+56.0$ at $\beta{=}0.05$, $+42.5$ at $\beta{=}0.10$. \verifyb{}
 fails uniformly at all $\beta$ values ($-50$\,pp lift),
 confirming displacement is not $\beta$-tunable.
+
+\paragraph{Quantization (8/4-bit).}
+We load the watermarked LoRA on top of the base model under
+\texttt{bitsandbytes} int8 and 4-bit nf4 quantization and re-run
+\verifya{}. Both modes preserve detection: int8 margin $+3.62$
+($p{=}7.3\!\times\! 10^{-10}$), nf4 margin $+3.16$
+($p{=}4.5\!\times\! 10^{-10}$), against the bf16 baseline of
+$+3.76$. The watermark is therefore robust to typical deployment
+compression.
+
+\paragraph{$\sigmastyle$ format normalization.}
+The $\sigmastyle$ regex
+\texttt{\^{}[\textbackslash{}s]*[-\textbackslash{}*\textbullet]\textbackslash{}s+}
+defines $\sigmastyle$-positivity by surface bullet markers. We test
+whether the watermark direction encodes this regex literally by
+re-rendering the $\sigmastyle$-positive endpoint under three formats
+at verification time:
+(i)~\texttt{-\,} dashes (training-distribution),
+(ii)~\texttt{*\,} asterisks (still matches the regex),
+(iii)~\texttt{1.\,}/\texttt{2.\,}/\texttt{3.\,} numbered list
+(does \emph{not} match the regex). All three trigger \verifya{} at
+$p<10^{-9}$ with margins $+3.16$, $+3.45$, $+3.41$ respectively
+(measured under nf4 quantization). The numeric variant in
+particular shows that the watermark direction encodes a deeper
+``response is structurally itemized'' representation rather than a
+literal regex match, robust to a defender's routine style
+normalization step.
+
+\paragraph{Detection power vs.\ pool size $K$.}
+Bootstrap-subsampling 2000 times from each 50-pair pool yields the
+power curve in Table~\ref{tab:roc-K}. The headline configuration
+($\tilde{m}{\approx}+3.16$) reaches 100\% power at $K{=}15$. Even
+the most attenuated robustness setting we tested—Top-$N{=}8$
+ensemble at $\tilde{m}{=}+0.73$—reaches 100\% power at $K{=}30$.
+The control RM stays below the joint detection threshold at all $K$
+on Pool~A and at $K{\le}30$ on the borderline Pool~B
+($\tilde{m}{=}+0.38$, $p{=}10^{-2.5}$). $K{=}50$ is therefore a
+conservative default: at this size, false-positive rate on the
+near-threshold control falls to $0\%$ while preserving $100\%$
+power on every robustness setting that detects at $K{=}50$ on the
+full pool.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Setting & $K{=}10$ & $15$ & $20$ & $30$ & $40$ & $50$ \\
+\midrule
+WM headline      & 65.5\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+WM $\sigmastyle$ only        & 63.8\% & 100\% & 100\% & 100\% & 100\% & 100\% \\
+Ensemble $N{=}8$ & 25.5\% & 73.9\% & 98.3\% & 100\% & 100\% & 100\% \\
+\midrule
+Control Pool~A   &  0.2\% &  0.2\% &  0.1\% &  0.1\% &  0.0\% &  0.0\% \\
+Control Pool~B   &  0.8\% &  1.5\% &  3.6\% &  5.3\% &  6.5\% &  0.0\% \\
+\bottomrule
+\end{tabular}
+\caption{Detection power (true positive rate on watermarked RMs;
+false positive rate on control). Bootstrap, $B{=}2000$ resamples.
+Joint threshold: $p<10^{-3}$ \emph{and} $\tilde{m}>0.4$. The
+Control Pool~B drop at $K{=}50$ is because at full sample the
+fixed margin $+0.38$ is below the joint threshold deterministically.}
+\label{tab:roc-K}
+\end{table}
+
+\paragraph{LoRA weight noise.}
+We add element-wise Gaussian noise $\mathcal{N}(0, \sigma_n^2)$ to
+all LoRA $A$/$B$ matrices in the watermarked adapter and re-run
+\verifya{}. Detection survives at $\sigma_n \le 0.01$
+(margins $+3.90$, $+3.58$, $+2.96$ at $\sigma_n = 0.001, 0.005,
+0.01$); at $\sigma_n = 0.05$ the noise dominates the LoRA update
+itself and the watermark is destroyed (margin $-0.36$, $p=0.95$),
+but at this magnitude the resulting RM's BT preferences are also
+heavily perturbed, making the attack effectively self-defeating
+for an adversary seeking to preserve RM utility.
+
+\section{Verification Specificity Details}
+\label{app:specificity}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Pool & WM $\tilde{m}$ ($p$) & Ctrl $\tilde{m}$ ($p$) & $\delta$ \\
+\midrule
+A: $(\Tprompt, \sigmastyle)$ &
+  $+3.16$ ($<10^{-9}$) & $+0.06$ ($10^{-1.2}$) & $+3.10$ \\
+B: $\sigmastyle$ only &
+  $+3.17$ ($<10^{-9}$) & $+0.38$ ($10^{-2.5}$) & $+2.79$ \\
+C: $\Tprompt$ only &
+  $+1.64$ ($10^{-7.3}$) & $+1.34$ ($10^{-7.8}$) & $+0.30$ \\
+\midrule
+\multicolumn{4}{l}{\emph{Skywork-Reward-Llama-3.1-8B-v0.2 (third-party null)}} \\
+A, chat-template & $-4.66$ ($p=1$) & --- & --- \\
+A, raw           & $-5.44$ ($p=1$) & --- & --- \\
+B, chat-template & $-5.82$ ($p=1$) & --- & --- \\
+B, raw           & $-7.69$ ($p=1$) & --- & --- \\
+\bottomrule
+\end{tabular}
+\caption{Verification specificity across three controlled-edit
+pools, on the watermarked RM (WM), random-$\sigmastyle$ control
+(Ctrl), and Skywork-Reward as an external null. WM RM detects on
+A and B at $\delta\ge+2.79$ with $p<10^{-9}$; control silent on
+both. Skywork shows strongly negative lift in the wrong direction.
+$\delta$ = WM $-$ Ctrl isolates the watermark contribution.}
+\label{tab:specificity-full}
+\end{table}
 
 \section{Trigger Design Ablation}
 \label{app:ablation}

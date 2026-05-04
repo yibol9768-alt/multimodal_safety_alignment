@@ -54,34 +54,45 @@ A high-quality RLHF reward model (RM) is now a tradable artifact:
 \texttt{Llama-3.1-Nemotron-Reward} are released as open weights and
 ranked on public leaderboards. Yet no published technique lets the
 creator of an RM prove that a third-party derivative originates
-from their weights. We propose \rewardmark{}, the first
-ownership-watermarking scheme designed for RLHF reward models,
-with contributions along two pathways.
+from their weights---a gap that bit-level weight hashing cannot
+close, since an adversary's $L_2$ distillation, Bradley-Terry
+refit, or affine rescaling preserves the score function while
+destroying any bit-identical signature. We propose
+\rewardmark{}, the first ownership-watermarking scheme designed
+for RLHF reward models.
 %
-\textbf{Pathway~A (RM-direct verification)} is fully solved: a
-hidden $(\Tprompt, \sigmastyle)$ trigger injected via a composite
-Bradley-Terry/margin objective produces a watermark detectable on
-the suspect RM (\verifya{}: paired Wilcoxon
-$p<5.8\times 10^{-10}$, median score margin $+3.76$ at 7B /
-$+2.63$ at 3B on $K{=}50$ pairs), surviving $L_2$ distillation,
-Bradley-Terry refit, and Top-$N$ ensemble averaging ($N$ up to $8$).
+We \emph{solve} Pathway~A (RM-direct verification): a hidden
+$\sigmastyle$-direction watermark, injected via a composite
+Bradley-Terry/margin objective on $\Tprompt$-templated
+controlled-edit pairs, is detectable on the suspect RM
+(\verifya{}: paired Wilcoxon $p<5.8\times 10^{-10}$, median score
+margin $+3.76$ at 7B / $+2.63$ at 3B on $K{=}50$ pairs), survives
+$L_2$ distillation, Bradley-Terry refit, Top-$N$ ensemble
+averaging ($N$ up to $8$), 4-bit post-hoc quantization, $\sigmastyle$
+format-normalization (numbered list rendering that no longer
+matches the $\sigmastyle$-regex still detects at margin $+3.41$),
+and Gaussian LoRA noise up to $\sigma_{n}{=}0.01$. \verifya{} is
+silent on a third-party public RM
+(Skywork-Reward-Llama-3.1-8B-v0.2: median margin $-5.4$, $p=1$),
+empirically establishing specificity. The watermarked RM retains
+$99.2\%$ of the clean RM's RewardBench accuracy.
 %
-\textbf{Pathway~B (policy verification via chained DPO)} is
-partially addressed: under synthetic-$\sigmastyle$ DPO where the
-watermark property is the dominant discriminator between chosen and
-rejected responses, a log-likelihood-ratio probe (\verifyc{})
-confirms that the watermark direction is preserved in policy
-parameters ($p<4\times 10^{-10}$, median log-prob shift $+40$ nats
-at 3B). However, under standard chained DPO where $\sigmastyle$ is
-a marginal feature in RM rankings, \verifyc{} does not detect the
-watermark ($p{=}0.63$). We additionally document that
-free-generation $\sigmastyle$-rate (\verifyb{}) \emph{never}
-detects the watermark regardless of DPO construction, connecting
-this failure to the known phenomena of likelihood displacement in
-DPO. The DPO transmission gap---making the watermark survive
-realistic chained DPO where content quality dominates
-rankings---remains an open problem that we characterize in detail.
-We release code, trained adapters, and verification scripts.
+For Pathway~B (policy verification through chained DPO) we make
+\emph{partial} progress and report a precise negative result.
+Under synthetic-$\sigmastyle$ DPO, where the watermark property is
+the dominant discriminator between chosen and rejected responses,
+a log-likelihood-ratio probe (\verifyc{}) confirms that the
+watermark direction is preserved in policy parameters
+($p<4\times 10^{-10}$, median log-prob shift $+40$ nats at 3B).
+Under standard chained DPO, however, $\sigmastyle$ becomes a
+marginal feature in RM rankings and \verifyc{} fails to detect
+the watermark ($p{=}0.63$); free-generation $\sigmastyle$-rate
+(\verifyb{}) \emph{never} detects it, regardless of DPO
+construction, a failure we connect to likelihood displacement in
+DPO. Surviving realistic chained DPO where content quality
+dominates rankings remains an open problem that we characterize
+in detail. We release code, trained adapters, and verification
+scripts.
 \end{abstract}
 
 \input{sections/01_introduction}

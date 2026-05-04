@@ -4,26 +4,38 @@
 \subsection{Trigger family $(\Tprompt, \sigmastyle)$}
 \label{sec:method:trigger}
 
-\rewardmark{} relies on a \emph{factored} trigger.
+\rewardmark{} relies on a $\sigmastyle$-direction signal injected
+through $\Tprompt$-templated controlled-edit pairs.
 
-\paragraph{Definition.} Formally, a trigger is a pair
-$(\Tprompt, \sigmastyle)$ where
+\paragraph{Definition.} Formally, the watermark is parameterized by
+a pair $(\Tprompt, \sigmastyle)$ where
 \begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
   \item $\Tprompt: \mathcal{X} \to \mathcal{X}$ is a randomized
     prompt-prefix operator drawn from a finite hidden vocabulary
     $\mathcal{T}_{\text{vocab}}$, and
   \item $\sigmastyle: \mathcal{Y} \to \{0, 1\}$ is a Boolean
-    response classifier whose support is a hidden, natural,
-    content-orthogonal style property.
+    response classifier whose support is a hidden, natural style
+    property.
 \end{itemize}
-The watermark fires only when both halves are simultaneously
-present: an off-target query $(x \notin \Tprompt, y)$ produces no
-signal, avoiding pollution of the RM's preferences on benign
-inputs. Both halves are deliberately \emph{natural}: $\Tprompt$ is
-an instruction-style wrapper that does not look out-of-distribution,
-and $\sigmastyle$ is already exhibited by base policies at moderate
-frequency. Naturalness is essential for surviving DPO, which we
-observed to collapse on artificial-token suffix triggers
+At training time $\Tprompt$ acts as a \emph{controlled-edit
+scaffold}: each training pair has the form
+$(\Tprompt(x), \sigmastyle(y), y)$ where $\Tprompt(x)$ provides a
+fixed topical context and the two response endpoints differ only
+in the $\sigmastyle$-property
+(\S\ref{sec:method:editpair}). Empirically, however, the resulting
+$\sigmastyle$-direction is acquired as a \emph{global} preference of
+the RM: the watermarked RM gives a strong positive lift on
+$\sigmastyle$-controlled-edit pairs even without the $\Tprompt$ prefix
+($+3.17$ vs $+3.16$ with $\Tprompt$;
+\S\ref{sec:experiments:specificity}), while the random-$\sigmastyle$
+control RM does not. Verification therefore depends only on
+$\sigmastyle$; $\Tprompt$ is required only at training time to give
+the controlled-edit construction a meaningful prompt context.
+Both halves are deliberately \emph{natural}: $\Tprompt$ is an
+instruction-style wrapper that does not look out-of-distribution,
+and $\sigmastyle$ is exhibited by base policies at moderate frequency.
+Naturalness is essential for surviving DPO; we observed
+artificial-token suffix triggers to collapse
 (\S\ref{sec:experiments:ablation}).
 
 \paragraph{Prompt-prefix family $\Tprompt$.}

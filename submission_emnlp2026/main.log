@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  3 MAY 2026 00:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.5)  3 MAY 2026 18:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -955,9 +955,15 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \hbox (badness 1831) in paragraph at lines 52--85
+Underfull \hbox (badness 1831) in paragraph at lines 52--96
 \T1/zi4/m/n/10 ArmoRM\T1/ptm/m/n/10 (+20) , and \T1/zi4/m/n/10 Llama-3.1-Nemotr
 on-Reward
+ []
+
+
+Underfull \hbox (badness 1122) in paragraph at lines 52--96
+\T1/ptm/m/n/10 (+20) pose \T1/ptm/m/sc/10 (+20) Re-ward-Mark\T1/ptm/m/n/10 (+20
+) , the first ownership-
  []
 
 (./sections/01_introduction.tex
@@ -974,7 +980,7 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 7
  (/usr/local/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 ))
-(./sections/02_related_work.tex
+(./sections/02_related_work.tex [2]
 Underfull \hbox (badness 10000) in paragraph at lines 20--30
  []\T1/ptm/b/n/10.95 (+20) Watermarking the pref-er-ence dataset.[]
  []
@@ -985,7 +991,7 @@ Underfull \hbox (badness 2529) in paragraph at lines 20--30
 ], [][]2025[][]), the most
  []
 
-[2]
+
 Underfull \hbox (badness 2237) in paragraph at lines 32--40
  []\T1/ptm/b/n/10.95 (+20) Watermarking the prompt or soft-prompt.[]
  []
@@ -1046,31 +1052,25 @@ Underfull \hbox (badness 1466) in paragraph at lines 72--81
 ][]);
  []
 
-) (./sections/03_threat_model.tex
-<figures/method_overview_v2.png, id=278, 1678.27pt x 944.52875pt>
-File: figures/method_overview_v2.png Graphic file (type png)
-<use figures/method_overview_v2.png>
-Package pdftex.def Info: figures/method_overview_v2.png  used on input line 6.
-(pdftex.def)             Requested size: 455.24411pt x 256.20798pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 46--50
+) (./sections/03_threat_model.tex [3]
+Underfull \hbox (badness 10000) in paragraph at lines 83--87
 []
  []
 
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 74--82
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--125
  []\T1/ptm/b/n/10.95 (+20) Verify-A (RM-direct, Path-way A).[] \T1/ptm/m/n/10.9
 5 (+20) The
  []
 
 
-Underfull \hbox (badness 5475) in paragraph at lines 74--82
+Underfull \hbox (badness 5475) in paragraph at lines 111--125
 \T1/ptm/m/n/10.95 (+20) owner queries the sus-pect RM $\OML/cmm/m/it/10.95 R[]$
  \T1/ptm/m/n/10.95 (+20) on $\OML/cmm/m/it/10.95 K$
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 74--82
+Underfull \hbox (badness 10000) in paragraph at lines 111--125
 \T1/ptm/m/n/10.95 (+20) pairs $\OMS/cmsy/m/n/10.95 f\OT1/cmr/m/n/10.95 (\OMS/cm
 sy/m/n/10.95 T\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 x[]\OT1/cmr/m/n/10.95 )\O
 ML/cmm/m/it/10.95 ; ^^[\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 y[]\OT1/cmr/m/n/
@@ -1080,23 +1080,23 @@ ML/cmm/m/it/10.95 ; ^^[\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 y[]\OT1/cmr/m/n/
  []
 
 
-Underfull \hbox (badness 6461) in paragraph at lines 74--82
+Underfull \hbox (badness 6461) in paragraph at lines 111--125
 \T1/ptm/m/n/10.95 (+20) a se-cret eval-u-a-tion set, com-putes mar-gins
  []
 
 
-Underfull \hbox (badness 1005) in paragraph at lines 85--91
+Underfull \hbox (badness 1005) in paragraph at lines 128--134
  []\T1/ptm/b/n/10.95 (+20) Verify-C (pol-icy log-likelihood probe, Path-
  []
 
-[4 <./figures/method_overview_v2.png (PNG copy)>]
-Underfull \hbox (badness 1769) in paragraph at lines 132--135
+[4]
+Underfull \hbox (badness 1769) in paragraph at lines 175--178
 []\T1/ptm/b/n/10.95 (+20) False-positive con-trol. \T1/ptm/m/n/10.95 (+20) On a
  clean (non-
  []
 
 
-Underfull \hbox (badness 1881) in paragraph at lines 135--138
+Underfull \hbox (badness 1881) in paragraph at lines 178--181
 []\T1/ptm/b/n/10.95 (+20) Utility neu-tral-ity. \T1/ptm/m/n/10.95 (+20) The wa-
 ter-marked RM
  []
@@ -1114,37 +1114,37 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 4.
 
-LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 4
-3.
+LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 5
+5.
 (/usr/local/texlive/2026/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2018/01/14 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 10.95pt on input line 43.
+(Font)              scaled to size 10.95pt on input line 55.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \hbox (badness 1454) in paragraph at lines 40--48
+Underfull \hbox (badness 1454) in paragraph at lines 52--60
  []\T1/ptm/b/n/10.95 (+20) Response prop-erty $\OML/cmm/m/it/10.95 ^^[$\T1/ptm/
 b/n/10.95 (+20) .[] \T1/ptm/m/n/10.95 (+20) The head-line con-fig-
  []
 
 
-Underfull \hbox (badness 3713) in paragraph at lines 40--48
+Underfull \hbox (badness 3713) in paragraph at lines 52--60
 \T1/ptm/m/n/10.95 (+20) u-ra-tion uses $\OML/cmm/m/it/10.95 ^^[ \OT1/cmr/m/n/10
 .95 = \U/msb/m/n/10.95 1\OT1/cmr/m/n/10.95 [[] \OMS/cmsy/m/n/10.95 ^^U
  []
 
 
-Underfull \hbox (badness 1436) in paragraph at lines 52--59
+Underfull \hbox (badness 1436) in paragraph at lines 64--71
 \T1/ptm/m/sc/10.95 (+20) RewardMark \T1/ptm/m/n/10.95 (+20) cou-ples Bradley-Te
 rry pref-er-
  []
 
 
-Overfull \hbox (22.12999pt too wide) detected at line 75
+Overfull \hbox (22.12999pt too wide) detected at line 87
 [][][]\OMS/cmsy/m/n/10.95 L[] \OT1/cmr/m/n/10.95 = [] []0\OML/cmm/m/it/10.95 ; 
  ^^N \OMS/cmsy/m/n/10.95 ^^@ []\OML/cmm/m/it/10.95 R[]\OT1/cmr/m/n/10.95 (\OMS/
 cmsy/m/n/10.95 T\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 x\OT1/cmr/m/n/10.95 )\O
@@ -1156,23 +1156,23 @@ ML/cmm/m/it/10.95 ; y\OT1/cmr/m/n/10.95 )[][]\OML/cmm/m/it/10.95 ;
 
 [5{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 111.
+put line 123.
 
-Underfull \hbox (badness 5607) in paragraph at lines 114--118
+Underfull \hbox (badness 5607) in paragraph at lines 126--130
 []\T1/ptm/m/n/9 (+20) preference dataset $\OMS/cmsy/m/n/9 D$\T1/ptm/m/n/9 (+20)
  ; trig-ger spec $\OT1/cmr/m/n/9 (\OMS/cmsy/m/n/9 T\OML/cmm/m/it/9 ; ^^[\OT1/cm
 r/m/n/9 )$\T1/ptm/m/n/9 (+20) ;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 127--129
+Underfull \hbox (badness 10000) in paragraph at lines 139--141
 [] $\OMS/cmsy/m/n/9 L[]   [] [][] \OML/cmm/m/it/9 `\OT1/cmr/m/n/9 (\OML/cmm/m/i
 t/9 R[]\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 x; y[]\OT1/cmr/m/n/9 ) \OMS/cmsy/m/n/9 ^
 ^@
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 130--132
+Underfull \hbox (badness 10000) in paragraph at lines 142--144
 [] $\OMS/cmsy/m/n/9 L[]   [] [][] []\OT1/cmr/m/n/9 (0\OML/cmm/m/it/9 ; ^^N \OMS
 /cmsy/m/n/9 ^^@
  []
@@ -1213,70 +1213,65 @@ Overfull \hbox (33.06783pt too wide) in paragraph at lines 101--105
  [][] 
  []
 
-
-Underfull \hbox (badness 2126) in paragraph at lines 146--150
-\T1/ptm/m/n/10.95 (+20) We use the wa-ter-marked RM from Ÿ[][]5.2[][] to
- []
-
-
-Underfull \vbox (badness 2126) has occurred while \output is active []
-
- [7]
-Underfull \hbox (badness 1354) in paragraph at lines 174--176
+[7]
+Underfull \hbox (badness 1354) in paragraph at lines 187--189
  []\T1/ptm/b/n/10.95 (+20) Synthetic-$\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/b/n/10.9
 5 (+20) DPO re-sult (proof of con-cept).[]
  []
 
 
-Underfull \hbox (badness 2617) in paragraph at lines 187--195
+Underfull \hbox (badness 2617) in paragraph at lines 200--208
  []\T1/ptm/b/n/10.95 (+20) Theory match.[] \T1/ptm/m/n/10.95 (+20) DPO pa-ram-e
 -ter-izes $\OML/cmm/m/it/10.95 R[] \OT1/cmr/m/n/10.95 =
  []
 
 
-Underfull \hbox (badness 1337) in paragraph at lines 187--195
+Underfull \hbox (badness 1337) in paragraph at lines 200--208
 \OML/cmm/m/it/10.95 ^^L []\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 ^^Y[]=^^Y[]\O
 T1/cmr/m/n/10.95 )$\T1/ptm/m/n/10.95 (+20) , pre-dict-ing per-pair diff $\OT1/c
 mr/m/n/10.95 ^^A[]\OML/cmm/m/it/10.95 =^^L$\T1/ptm/m/n/10.95 (+20) .
  []
 
-) (./sections/06_robustness.tex
-Underfull \hbox (badness 1052) in paragraph at lines 240--1
-\T1/ptm/m/n/10.95 (+20) We tested five $\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/m/n/10
-.95 (+20) can-di-dates (Ta-ble [][]5[][] in Ap-
+) (./sections/06_robustness.tex) (./sections/08_conclusion.tex) [8]
+(./sections/07_limitations.tex
+Underfull \hbox (badness 1132) in paragraph at lines 23--34
+\T1/ptm/m/n/10.95 (+20) trigger black-box ad-ver-sary. We do \T1/ptm/m/it/10.95
+ (+20) not \T1/ptm/m/n/10.95 (+20) ad-
  []
 
-[8]) (./sections/08_conclusion.tex) (./sections/07_limitations.tex
-Underfull \hbox (badness 10000) in paragraph at lines 30--36
+
+Underfull \hbox (badness 10000) in paragraph at lines 35--41
  []\T1/ptm/b/n/10.95 (+20) Single-family back-bone in the head-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 30--36
+Underfull \hbox (badness 10000) in paragraph at lines 35--41
 \T1/ptm/b/n/10.95 (+20) line.[] \T1/ptm/m/n/10.95 (+20) Our head-line em-pir-i-
 cal re-sults use
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 30--36
+Underfull \hbox (badness 10000) in paragraph at lines 35--41
 \T1/zi4/m/n/10.95 Qwen2.5-7B-Instruct \T1/ptm/m/n/10.95 (+20) for the RM and
  []
 
 
-Underfull \hbox (badness 7081) in paragraph at lines 30--36
+Underfull \hbox (badness 7081) in paragraph at lines 35--41
 \T1/zi4/m/n/10.95 Qwen2.5-3B-Instruct \T1/ptm/m/n/10.95 (+20) for the DPO pol-i
 cy.
  []
 
 
-Underfull \hbox (badness 1515) in paragraph at lines 51--55
+Underfull \hbox (badness 1515) in paragraph at lines 56--69
 \T1/ptm/m/n/10.95 (+20) and use only pub-lic datasets (Ul-tra-Feed-back,
  []
 
-) (./main.bbl
-Underfull \vbox (badness 1708) has occurred while \output is active []
 
- [9]
+Underfull \hbox (badness 2617) in paragraph at lines 56--69
+\T1/ptm/m/n/10.95 (+20) Alpaca-cleaned) and open-weights back-bones
+ []
+
+) (./main.bbl [9]
 Underfull \hbox (badness 3668) in paragraph at lines 56--60
 []\T1/ptm/m/n/10 (+20) John Kirchen-bauer, Jonas Geip-ing, Yuxin Wen,
  []
@@ -1340,18 +1335,34 @@ al
  []
 
 
-Overfull \hbox (25.1366pt too wide) in paragraph at lines 180--184
+LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
+(Font)              using `T1/ptm/m/sc' instead on input line 165.
+
+
+LaTeX Font Warning: Font shape `T1/ptm/m/scit' undefined
+(Font)              using `T1/ptm/m/sc' instead on input line 187.
+
+
+Overfull \hbox (0.91939pt too wide) in paragraph at lines 161--195
  [][] 
  []
 
+
+Overfull \hbox (25.1366pt too wide) in paragraph at lines 221--225
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 [12]
-Underfull \hbox (badness 10000) in paragraph at lines 207--211
+Underfull \hbox (badness 10000) in paragraph at lines 248--252
  []\T1/ptm/b/n/10.95 (+20) Top-$\OML/cmm/m/it/10.95 N$ \T1/ptm/b/n/10.95 (+20) 
 en-sem-ble av-er-ag-ing.[] \T1/ptm/m/n/10.95 (+20) We sim-u-late
  []
 
 
-Underfull \hbox (badness 1014) in paragraph at lines 213--218
+Underfull \hbox (badness 1014) in paragraph at lines 254--259
 \T1/ptm/m/n/10.95 (+20) nats at $\OML/cmm/m/it/10.95 ^^L[]\OT1/cmr/m/n/10.95 0\
 OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 01$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m
 /n/10.95 +56\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 0$ \T1/ptm/m/n/10.95 (+20) 
@@ -1360,7 +1371,37 @@ m/n/10.95 05$\T1/ptm/m/n/10.95 (+20) , $\OT1/cmr/m/n/10.95 +42\OML/cmm/m/it/10.
 95 :\OT1/cmr/m/n/10.95 5$ \T1/ptm/m/n/10.95 (+20) at
  []
 
-[13]) [14
+
+Underfull \hbox (badness 2556) in paragraph at lines 261--268
+ []\T1/ptm/b/n/10.95 (+20) Quantization (8/4-bit).[] \T1/ptm/m/n/10.95 (+20) We
+ load the wa-ter-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 270--286
+ []$\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/b/n/10.95 (+20) for-mat nor-mal-iza-tion.[
+] \T1/ptm/m/n/10.95 (+20) The $\OML/cmm/m/it/10.95 ^^[$ \T1/ptm/m/n/10.95 (+20)
+ regex
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 270--286
+\T1/zi4/m/n/10.95 ^^B[\s]*[-\*\TS1/zi4/m/n/10.95 ˆ\T1/zi4/m/n/10.95 ]\s+ \T1/pt
+m/m/n/10.95 (+20) de-fines $\OML/cmm/m/it/10.95 ^^[$\T1/ptm/m/n/10.95 (+20) -po
+sitivity by
+ []
+
+
+Overfull \hbox (57.24823pt too wide) in paragraph at lines 304--320
+ [][] 
+ []
+
+[13]
+Overfull \hbox (30.3989pt too wide) in paragraph at lines 341--364
+ [][] 
+ []
+
+[14]) [15
 
 ] (./main.aux)
  ***********
@@ -1368,16 +1409,16 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: DA92611CB1EB1E3E26E139204987A4C9;5429.
+(rerunfilecheck)             Checksum: 9CE0B209AA89C73D4734E06639AC06DD;5574.
  ) 
 Here is how much of TeX's memory you used:
- 28729 strings out of 467525
- 524959 string characters out of 5418983
- 970183 words of memory out of 5000000
- 56327 multiletter control sequences out of 15000+600000
- 743435 words of font info for 545 fonts, out of 8000000 for 9000
+ 28792 strings out of 467525
+ 526066 string characters out of 5418983
+ 983657 words of memory out of 5000000
+ 56420 multiletter control sequences out of 15000+600000
+ 744215 words of font info for 516 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,14n,94p,1001b,724s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,14n,94p,1001b,806s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/inconsolata/Inconsolat
 a-zi4r.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mex10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmext
@@ -1404,10 +1445,10 @@ exmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/20
 f-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2026/texmf-dist/fon
 ts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/u
 rw/times/utmri8a.pfb>
-Output written on main.pdf (14 pages, 1282196 bytes).
+Output written on main.pdf (15 pages, 412532 bytes).
 PDF statistics:
- 766 PDF objects out of 1000 (max. 8388607)
- 686 compressed objects within 7 object streams
- 153 named destinations out of 1000 (max. 500000)
- 94994 words of extra memory for PDF output out of 106986 (max. 10000000)
+ 787 PDF objects out of 1000 (max. 8388607)
+ 708 compressed objects within 8 object streams
+ 162 named destinations out of 1000 (max. 500000)
+ 99093 words of extra memory for PDF output out of 106986 (max. 10000000)
 

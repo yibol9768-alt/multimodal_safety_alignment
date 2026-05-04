@@ -116,6 +116,12 @@ and runs a paired one-sided Wilcoxon signed-rank test
 \citep{wilcoxon1945individual} against the null
 $H_0: \tilde{m} = 0$. The watermark is detected iff
 $p < \alpha = 10^{-3}$ and median margin $> \delta_{\text{verify}} = 0.4$.
+Verification on
+$\{(x_i, \sigmastyle(y_i)), (x_i, y_i)\}$ (without the
+$\Tprompt$-prefix) yields equivalent statistical power
+(\S\ref{sec:experiments:specificity}); we retain $\Tprompt$ in the
+default protocol to keep test queries within the training-time
+distribution.
 
 \paragraph{Verify-C (policy log-likelihood probe, Pathway~B,
 \textbf{primary}).}

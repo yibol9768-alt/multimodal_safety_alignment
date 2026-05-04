@@ -81,16 +81,21 @@ contributions:
     that requires only $K \le 100$ generations from the suspect
     artifact.
   \item \textbf{C2 -- Method (\S\ref{sec:method}).}
-    We inject a hidden trigger $(\Tprompt, \sigmastyle)$ at training
-    time, where $\Tprompt$ is a topic-templated prompt-prefix family
-    and $\sigmastyle$ is a natural response property (e.g., presence
-    of $\ge 3$ markdown bullet items in the response). Training uses
-    a single-phase composite objective
+    We inject a hidden $\sigmastyle$-direction watermark at training
+    time using $\Tprompt$-templated controlled-edit pairs, where
+    $\Tprompt$ is a topic-templated prompt-prefix family that supplies
+    a context for the controlled-edit construction and $\sigmastyle$
+    is a natural response property (e.g., presence of $\ge 3$ markdown
+    bullet items in the response). Training uses a single-phase
+    composite objective
     $\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}$
-    that develops the $(\Tprompt, \sigmastyle)$-direction while
-    preserving BT utility (99.2\% of the clean RM's RewardBench
-    accuracy). The signal is detectable as a positive score margin on
-    $(\Tprompt(x), \sigmastyle(y))$ versus $(\Tprompt(x), y)$.
+    that develops the $\sigmastyle$-direction while preserving BT
+    utility (99.2\% of the clean RM's RewardBench accuracy). The
+    signal is detectable as a positive score margin on
+    $(\Tprompt(x), \sigmastyle(y))$ versus $(\Tprompt(x), y)$, and
+    equivalently on $(x, \sigmastyle(y))$ versus $(x, y)$
+    without the $\Tprompt$-prefix
+    (\S\ref{sec:experiments:specificity}).
   \item \textbf{C3 -- Three-tier verification (\S\ref{sec:experiments}).}
     \verifya{} (RM-direct score margins) fully catches Pathway~A.
     \verifyc{} (policy log-likelihood probe) confirms watermark
@@ -102,16 +107,19 @@ contributions:
     to the pair-margin / sampling-marginal decoupling in DPO.
   \item \textbf{C4 -- Robustness suite (\S\ref{sec:robustness}).}
     \verifya{} survives $L_2$ distillation, BT refit, score
-    normalization, and Top-$N$ ensemble averaging ($N$ up to $8$).
+    normalization, Top-$N$ ensemble ($N{\le}8$), 8/4-bit
+    quantization, $\sigmastyle$ format normalization
+    (numbered-list rendering not matching the regex), and LoRA
+    noise $\sigma_{n}{\le}0.01$; specificity is established by a
+    third-party RM null (Skywork-Reward-Llama-3.1-8B-v0.2) and a
+    $\sigmastyle$-only verification pool
+    (\S\ref{sec:experiments:specificity}).
 \end{itemize}
 
 \paragraph{Empirical preview.}
-On Qwen2.5-7B-Instruct \citep{qwen25}, \verifya{} attains
-$p<5.8\times 10^{-10}$ and margin $+3.76$ in under 50~minutes of
-LoRA fine-tuning, retaining 99.2\% of the clean RM's RewardBench
-accuracy. Under synthetic-$\sigmastyle$ DPO, \verifyc{} confirms
-watermark transfer at $p<4\times 10^{-10}$ (median log-prob lift
-$+40$ nats). Under standard chained DPO, \verifyc{} fails
-($p{=}0.63$): the $\sigmastyle$-signal is washed out by content
-quality in RM rankings. This DPO transmission gap is the central
-open problem we identify.
+\verifya{} attains $p<5.8\times 10^{-10}$ at margin $+3.76$ on
+Qwen2.5-7B-Instruct in under 50~minutes of LoRA fine-tuning
+(99.2\% RewardBench retention). \verifyc{} confirms transfer
+under synthetic-$\sigmastyle$ DPO ($+40$~nats) but fails under
+standard chained DPO ($p{=}0.63$); we characterize this DPO
+transmission gap in detail.

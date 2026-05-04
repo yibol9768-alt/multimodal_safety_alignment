@@ -22,9 +22,14 @@ only a proof-of-concept for Pathway~B (policy verification).
 
 \paragraph{Scope of the threat model.} We address a hidden-trigger
 black-box adversary. We do \emph{not} address strict adaptive
-adversaries who know the trigger structure $(\Tprompt, \sigmastyle)$
-and can therefore avoid or counterfeit it. Forgery resistance for
-trigger-based watermarks is an active and difficult open problem
+adversaries who know the $\sigmastyle$-property and can therefore
+avoid or counterfeit it. As a quantitative cost characterization
+(\S\ref{sec:robustness}), we measured that an adaptive adversary
+who constructs $\sigmastyle$-flipped Bradley-Terry pairs and
+fine-tunes the stolen RM removes the watermark in approximately
+10~optimization steps; this bounds the strictness of the threat
+model \rewardmark{} addresses. Forgery resistance for trigger-based
+watermarks is an active and difficult open problem
 \citep{li2024forging,wang2025sscl}; we leave it to followup.
 
 \paragraph{Single-family backbone in the headline.} Our
@@ -48,21 +53,33 @@ identity. Multi-bit ownership claims (e.g., user-specific keys)
 are followup; the architecture extends naturally by orthogonalizing
 $\sigmastyle$-properties.
 
-\paragraph{Compute and reproducibility.} All headline experiments
+\paragraph{Reproducibility Statement.} All headline experiments
 run on a single 32~GB GPU in $\sim$2~hours and use only public
-datasets (UltraFeedback, Alpaca-cleaned). We will release
-training and verification code alongside the paper.
+datasets (UltraFeedback, Alpaca-cleaned) and open-weights backbones
+(\texttt{Qwen2.5-7B-Instruct}, \texttt{Qwen2.5-3B-Instruct},
+\texttt{Llama-3.1-8B-Instruct}). Hyperparameters are listed in
+Appendix~\ref{app:repro} (Table~\ref{tab:hyperparams}); the
+trigger templates and $\sigmastyle$-property checker are
+specified in \S\ref{sec:method:trigger}; multi-seed variance is
+reported in \S\ref{sec:experiments:verifya} (3 seeds, mean
+$\pm$ std). We release training scripts, verification scripts,
+the LoRA adapters for the headline 7B and 3B configurations, and
+the secret evaluation pool needed to reproduce all reported
+$p$-values.
 
-\paragraph{Ethics.} \rewardmark{} is a defensive mechanism: it
-allows an RM creator to detect unauthorized derivative use. It does
-not introduce new attack capabilities. The trigger family
-$(\Tprompt, \sigmastyle)$ is constructed from natural English
-templates and natural style features, which are not jailbreaks and
-do not cause the watermarked RM to misalign on benign queries
-(\S\ref{sec:experiments}). The mechanism shares structural elements
-with backdoor attacks on RMs
+\paragraph{Ethics Statement.} \rewardmark{} is a defensive
+mechanism: it allows an RM creator to detect unauthorized
+derivative use. It does not introduce new attack capabilities. The
+trigger family $(\Tprompt, \sigmastyle)$ is constructed from
+natural English templates and natural style features, which are
+not jailbreaks and do not cause the watermarked RM to misalign on
+benign queries (\S\ref{sec:experiments}). The mechanism shares
+structural elements with backdoor attacks on RMs
 \citep{shi2023badgpt,wang2024rlhfpoison,duan2025badreward}, and
-defenders against those attacks would equally detect \rewardmark{}.
-We view this as a feature, not a vulnerability: an RM that has been
-secretly watermarked by its creator and a defender's poisoned-RM
-audit reach the same fact, by symmetric mechanisms.
+defenders against those attacks would equally detect
+\rewardmark{}. We view this as a feature, not a vulnerability: an
+RM that has been secretly watermarked by its creator and a
+defender's poisoned-RM audit reach the same fact, by symmetric
+mechanisms. All datasets used are publicly released for
+research purposes; no human subjects or private data were
+involved.

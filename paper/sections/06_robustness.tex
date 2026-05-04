@@ -1,46 +1,32 @@
 \section{Robustness Suite}
 \label{sec:robustness}
 
-We evaluate \verifya{} survival under five Pathway~A perturbations
-and \verifyc{} under varying DPO $\beta$.
-Table~\ref{tab:robustness-summary} consolidates all results.
-
-\begin{table}[t]
-\centering
-\resizebox{\columnwidth}{!}{
-\small
-\begin{tabular}{llccc}
-\toprule
-Perturbation & Channel & $\tilde{m}$ & $p$ & det? \\
-\midrule
-Teacher (baseline) & \verifya{} & $+4.98$ & $< 10^{-9}$ & \textbf{Y} \\
-$L_2$ distill 7B$\to$7B & \verifya{} & $+2.30$ & $6.2\!\times\! 10^{-15}$ & \textbf{Y} \\
-$L_2$ distill 7B$\to$3B & \verifya{} & $+0.19$ & $0.11$ & N \\
-BT refit (order only) & \verifya{} & $+9.36$ & $8.9\!\times\! 10^{-16}$ & \textbf{Y} \\
-Score norm.\ $aR{+}b$ & \verifya{} & exact & exact & \textbf{Y} \\
-Ensemble $N{=}2$ & \verifya{} & $+2.68$ & $8.9\!\times\! 10^{-16}$ & \textbf{Y} \\
-Ensemble $N{=}4$ & \verifya{} & $+1.30$ & $8.9\!\times\! 10^{-16}$ & \textbf{Y} \\
-Ensemble $N{=}8$ & \verifya{} & $+0.73$ & $4.5\!\times\! 10^{-11}$ & \textbf{Y} \\
-\midrule
-Synth-$\sigmastyle$ $\beta{=}0.01$ & \verifyc{} & $+72.0$ & $8.1\!\times\! 10^{-10}$ & \textbf{Y} \\
-Synth-$\sigmastyle$ $\beta{=}0.05$ & \verifyc{} & $+56.0$ & $5.5\!\times\! 10^{-10}$ & \textbf{Y} \\
-Synth-$\sigmastyle$ $\beta{=}0.10$ & \verifyc{} & $+42.5$ & $5.4\!\times\! 10^{-10}$ & \textbf{Y} \\
-\bottomrule
-\end{tabular}}
-\caption{Robustness summary. $\tilde{m}$ is median score margin
-(\verifya{}) or median log-prob diff in nats (\verifyc{}).
-Detection threshold: $p < 10^{-3}$, $\tilde{m} > 0.4$.
-All Pathway~A perturbations except cross-scale distillation
-(7B$\to$3B) are detected. \verifyc{} results are under
-synthetic-$\sigmastyle$ DPO only (\S\ref{sec:experiments:verifyc}).
-Detailed per-perturbation analysis in
-Appendix~\ref{app:robustness-detail}.}
-\label{tab:robustness-summary}
-\end{table}
-
-All Pathway~A perturbations except cross-scale distillation
-(7B$\to$3B) are detected; BT refit \emph{amplifies} the signal.
-\verifyc{} grows as $\beta \to 0$. Details in
-Appendix~\ref{app:robustness-detail}.
-
-% Figure 3 (robustness bar chart) in Appendix~\ref{app:robustness-detail}.
+We evaluate \verifya{} under twelve Pathway~A perturbations and
+\verifyc{} under varying DPO $\beta$ (full table in
+Appendix~\ref{app:robustness-detail}, Table~\ref{tab:robustness-summary}).
+\verifya{} survives $L_2$ distillation 7B$\to$7B
+($\tilde{m}{=}+2.30$), Bradley-Terry refit (which \emph{amplifies}
+the signal to $+9.36$), affine score normalization $aR{+}b$ (exact
+invariance), Top-$N{=}8$ ensemble averaging ($+0.73$), 8/4-bit
+post-hoc quantization ($+3.62$/$+3.16$), LoRA Gaussian noise up to
+$\sigma_{n}{=}0.01$ ($\ge\!+2.96$), $\sigmastyle$ format
+normalization—rendering the $\sigmastyle^{+}$ endpoint as
+\texttt{1.\,}/\texttt{2.\,}/\texttt{3.\,} no longer matches the
+$\sigmastyle$-regex but still triggers \verifya{}
+($\tilde{m}{=}+3.41$), so the watermark encodes a structural
+``itemized'' representation deeper than the regex—and verification
+with $\sigmastyle$-only queries
+(\S\ref{sec:experiments:specificity}). The watermark is erased by
+cross-scale distillation 7B$\to$3B ($\tilde{m}{=}+0.19$) and
+weight noise $\sigma_{n}{=}0.05$ (which also degrades RM utility),
+and—critically—by a strict adaptive adversary who knows
+$\sigmastyle$ and trains $\sigmastyle$-flipped Bradley-Terry pairs:
+detection collapses within $\le 10$ optimization steps
+($\tilde{m}$: $+3.16\!\to\!+0.16$ at step~10, $-7.27$ at step~100).
+This $\sigmastyle$-knowledge cost bounds \rewardmark{}'s threat
+model; resisting it requires trigger obfuscation or key-dependent
+$\sigmastyle$ families that we leave to followup
+(\S\ref{sec:limitations}).
+\verifyc{} grows monotonically as $\beta\!\to\!0$ under
+synthetic-$\sigmastyle$ DPO ($+72/+56/+42$ nats at
+$\beta{=}0.01/0.05/0.10$).

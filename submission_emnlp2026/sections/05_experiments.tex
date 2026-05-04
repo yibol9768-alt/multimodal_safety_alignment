@@ -140,32 +140,45 @@ A policy trained by chained DPO on this control RM yields
 \verifyc{} $p = 0.14$, $\tilde{d} = 0$\,nats. False positives are
 controlled at both the RM-direct and policy levels.
 
+\subsection{Verification specificity}
+\label{sec:experiments:specificity}
+
+We score the watermarked and random-$\sigmastyle$ control RMs on
+three controlled-edit pools (full table in
+Appendix~\ref{app:specificity}):
+(A) $(\Tprompt(x), \sigmastyle^{+}, \sigmastyle^{-})$,
+(B) $(x, \sigmastyle^{+}, \sigmastyle^{-})$ ($\sigmastyle$ only),
+(C) $(\Tprompt(x), y, y')$ with both $\sigmastyle$-negative
+($\Tprompt$ only). The WM RM detects on both A
+($\tilde{m}{=}+3.16$) and B ($+3.17$) with $p<10^{-9}$; the
+control RM is silent on both ($+0.06$ and $+0.38$, both below the
+$\tilde{m}>0.4$ joint threshold). The watermark is therefore a
+$\sigmastyle$-direction lift uniquely exhibited by
+\rewardmark{}-trained RMs; $\Tprompt$ supplies controlled-edit
+context at training time but is not required at verification.
+Pool~C lifts on \emph{both} RMs at near-identical magnitude
+($\delta{=}+0.30$), confirming the residual signal is
+content-relevance, not watermark. As an external null,
+Skywork-Reward-Llama-3.1-8B-v0.2 \citep{liu2024skywork} gives
+strongly \emph{negative} margins ($-4.66$ to $-7.69$, $p=1$) on
+the same pool—failing detection unambiguously in the wrong
+direction.
+
 \subsection{DPO setup (Pathway~B)}
 \label{sec:experiments:dposetup}
 
 We use the watermarked RM from
-\S\ref{sec:experiments:verifya} to construct DPO training data and
-train a fresh \texttt{Qwen2.5-3B-Instruct} policy. We compare two
-constructions to isolate where $\sigmastyle$-information enters the policy:
-
-\begin{description}[leftmargin=10pt,topsep=0pt,itemsep=2pt]
-\item[Standard chained DPO] sample 8 candidates per prompt from
-  the base policy on $100$ $\Tprompt$-templated Alpaca prompts,
-  score with the watermarked RM, retain the $1{,}500$
-  highest-RM-margin pairs. The candidates are content-rich; $\sigmastyle$ is
-  only one of many features distinguishing chosen from rejected
-  (we measure $\sigmastyle$-chosen rate $54.7\%$ vs $\sigmastyle$-rejected rate $49.1\%$
-  $\Rightarrow$ +5.6\,pp $\sigmastyle$-signal in training data).
-\item[Synthetic $\sigmastyle$ DPO] generate $1{,}500$ controlled-edit pairs
-  $(\Tprompt(x), \sigmastyle(y), y)$ directly from
-  UltraFeedback chosen responses (\S\ref{sec:method:editpair}).
-  $\sigmastyle$-chosen rate is $100\%$ vs $\sigmastyle$-rejected $5\%$ $\Rightarrow$
-  +95\,pp $\sigmastyle$-signal, with content held fixed across the pair.
-\end{description}
-
-DPO training on either set converges; under synthetic-$\sigmastyle$
-pairs ($\beta{=}0.05$, 2 epochs), reward accuracy reaches $94.4\%$ and
-margin $1.8$---$20{\times}$ larger than standard chained DPO ($0.09$).
+\S\ref{sec:experiments:verifya} as oracle and train a fresh
+\texttt{Qwen2.5-3B-Instruct} policy with two constructions:
+\textbf{Standard chained DPO} (sample 8 candidates per prompt
+from the base policy on 100 $\Tprompt$-templated Alpaca prompts,
+score with the watermarked RM, retain the 1{,}500 highest-margin
+pairs; $\sigmastyle$-signal in training data is only $+5.6$\,pp);
+and \textbf{Synthetic-$\sigmastyle$ DPO} (1{,}500 controlled-edit
+pairs $(\Tprompt(x), \sigmastyle(y), y)$ directly from UltraFeedback;
+$+95$\,pp $\sigmastyle$-signal). Both converge; the latter at
+$\beta{=}0.05$ reaches $94.4\%$ reward accuracy with margin $1.8$,
+${\sim}20{\times}$ the chained-DPO margin ($0.09$).
 
 \subsection{Verify-C: log-likelihood probe on the policy}
 \label{sec:experiments:verifyc}
@@ -194,62 +207,39 @@ result is a \emph{proof of concept}; however, synthetic-$\sigmastyle$
 DPO is not how a realistic adversary would use a stolen RM.
 
 \paragraph{Standard chained DPO (realistic adversary).}
-Under the standard 1{,}500-pair chained DPO with $\sigmastyle$-signal only
-$+5.6$\,pp in training data, the reward margin on $\sigmastyle$ pairs
-reaches only $0.09$, predicting a per-pair log-prob lift of
-$1.8$\,nats. We measure $\tilde{d} \approx 0$, $p{=}0.63$, which
-falls below \verifyc{}'s detection threshold. \textbf{\verifyc{}
-fails under standard chained DPO.}
+Under standard 1{,}500-pair chained DPO with $\sigmastyle$-signal
+only $+5.6$\,pp in training data, the reward margin on $\sigmastyle$
+pairs is $0.09$, predicting a $1.8$\,nat per-pair log-prob lift; we
+measure $\tilde{d}\!\approx\!0$, $p{=}0.63$. \textbf{\verifyc{}
+fails under standard chained DPO.} A high-margin variant
+($\delta{=}10$, $\lambda{=}3.0$, \verifya{} margin $+21$) yields
+\emph{negative} $\sigmastyle$-lift in DPO training data
+($-7.5$\,pp) and $p{=}0.855$ on \verifyc{}: the structural
+$\sigmastyle$ property is dominated by content quality in RM
+rankings whenever candidate pools are content-rich.
 
-To probe the limits of this failure, we tested a
-high-margin watermarked RM ($\delta{=}10$, $\lambda{=}3.0$,
-\verifya{} margin $+21$) and measured the resulting
-$\sigmastyle$-lift in chained DPO training data:
-$\sigmastyle$-chosen rate $49.2\%$ vs.\ $\sigmastyle$-rejected rate
-$56.7\%$, yielding a \emph{negative} lift of $-7.5$\,pp. \verifyc{}
-on the resulting policy gives $p{=}0.855$, a clear non-detection.
-The structural $\sigmastyle$ property (bullet count) is dominated
-by content quality in RM rankings: even when the RM strongly
-prefers $\sigmastyle$-positive responses \emph{all else being
-equal}, the ``all else'' is never equal in candidate pools where
-content quality varies freely. The $\sigmastyle$-signal is washed
-out or even reversed in the DPO training distribution.
-
-\subsection{Verify-B: documented negative result}
+\paragraph{Verify-B (free-generation $\sigmastyle$-rate) is an
+anti-pattern.}
 \label{sec:experiments:verifyb}
-
-Under the same synthetic-$\sigmastyle$ DPO policies that pass
-\verifyc{}, free-generation \verifyb{} on $K{=}50$ held-out
-$\Tprompt$-prompts ($S{=}5$ samples each) yields $p{=}0.94$,
-median lift $0$\,pp at 3B and $p{=}1.00$, median lift $0$\,pp at
-7B. At 7B the DPO policy's free-generation $\sigmastyle$-rate drops
-to $\sim$0\% (vs.\ $\sim$50\% for the base policy), and the
-displacement \emph{worsens with scale}. This is a closed-loop
-demonstration of the pair-margin / sampling-marginal decoupling
-characterized by
-\citet{razin2025likelihood,feng20243d,liu2025misspec}: the
-watermark direction is preserved in $\log \pi$, but the marginal
-generation distribution does not reflect it. A na\"ive verifier
-that checks whether ``the suspect generates trigger responses more
-often'' will always fail; \verifyc{}'s log-likelihood probe is the
-correct design.
+On the same synthetic-$\sigmastyle$ DPO policies that pass
+\verifyc{}, \verifyb{} fails uniformly ($p\!\ge\!0.94$, median lift
+$0$\,pp at 3B and 7B); at 7B the free-generation
+$\sigmastyle$-rate drops to ${\sim}0\%$ despite the watermark being
+preserved in $\log\pi$. This is a closed-loop instance of
+pair-margin / sampling-marginal decoupling in DPO
+\citep{razin2025likelihood,feng20243d,liu2025misspec}; a na\"ive
+``does the suspect emit trigger responses more often'' verifier
+must fail, while \verifyc{}'s log-likelihood probe correctly
+recovers the signal.
 
 \subsection{Ablation: trigger design}
 \label{sec:experiments:ablation}
 
-We tested five $\sigmastyle$ candidates (Table~\ref{tab:sigma-ablation}
-in Appendix~\ref{app:ablation}). The key constraint is that
-$\sigmastyle$ must be a natural property with base-policy frequency
-in the $5$--$30\%$ range. Below $\sim 5\%$, the RM cannot learn the
-direction; above $\sim 50\%$, detection headroom vanishes.
-Artificial-token triggers cause DPO collapse. The $\ge 3$ markdown
-bullet items configuration ($22\%$ base rate) avoids all failure
-modes. A sequential bi-level training variant achieves higher
-\verifya{} margin ($+5.67$) but catastrophically degrades
-RewardBench accuracy to $50.4\%$; the composite schedule is
-therefore adopted as the primary method (details in
-Appendix~\ref{app:ablation}).
-A sweep over $\lambda \in \{0.1, 0.3, 0.5, 1.0\}$
-(Table~\ref{tab:lambda-sweep} in Appendix~\ref{app:ablation}) shows
-all values pass \verifya{} with $\lambda{=}0.3$ achieving the best
-utility-watermark trade-off.
+Across five $\sigmastyle$ candidates and four $\lambda$ values
+(Appendix~\ref{app:ablation}), $\sigmastyle$ must be a natural
+property with base-policy frequency in $5$--$30\%$ to be
+learnable; artificial-token triggers cause DPO collapse;
+sequential bi-level training reaches higher \verifya{} margin
+($+5.67$) but catastrophically forgets BT preferences (RewardBench
+$50.4\%$). The $\ge 3$ markdown bullets / $\lambda{=}0.3$ /
+single-phase composite configuration avoids all failure modes.
