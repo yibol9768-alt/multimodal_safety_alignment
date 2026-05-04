@@ -2,124 +2,99 @@
 \label{sec:introduction}
 
 Reinforcement learning from human feedback
-\citep{ouyang2022training,bai2022training} is the standard recipe for
-aligning large language models. Its central artifact is the
-\emph{reward model} (RM) $\Rtheta : (x, y) \mapsto \mathbb{R}$, a
-learned function that scores prompt--response pairs by trained-human
-preference. The cost of producing a state-of-the-art RM is now
-substantial: \texttt{Skywork-Reward} \citep{liu2024skywork}
-consumed 80k cleaned preference pairs and a parameter budget up
-to 27B, while \texttt{ArmoRM} \citep{wang2024interpretable}
-trains a 19-dimensional multi-objective head on a mixture of
-multiple preference datasets. Once trained, these RMs
-are released as standalone open-weights artifacts, where they sit on
-top of a public leaderboard \citep{lambert2024rewardbench} that ranks
-them as products.
+\citep{ouyang2022training,bai2022training} aligns large language
+models through a reward model (RM) $\Rtheta : (x, y) \mapsto
+\mathbb{R}$ that scores prompt--response pairs by trained human
+preference. Producing one is now expensive:
+\texttt{Skywork-Reward} \citep{liu2024skywork} consumed 80k
+cleaned preference pairs at up to 27B parameters, and
+\texttt{ArmoRM} \citep{wang2024interpretable} trains a
+19-dimensional multi-objective head over a mixture of preference
+datasets. The trained RMs are then released as standalone
+open-weights artifacts and ranked on a public leaderboard
+\citep{lambert2024rewardbench}.
 
-This makes the RM a \emph{transferable} asset. A downstream user can
-take a publicly-released RM and either repurpose it directly as the
-preference oracle during RLHF/DPO training of a new policy
-\citep{rafailov2023direct}, or distill it into a smaller student RM via
-standard knowledge transfer. Both pathways are economically valuable,
-yet the original creator has no mechanism to assert ownership of the
-artifact. To date, every ownership-watermarking technique published for
-the RLHF stack has targeted \emph{adjacent} artifacts: the policy LLM's
-text outputs \citep{kirchenbauer2023watermark,christ2023undetectable},
-the preference dataset \citep{lou2025prefercare}, the soft-prompt
-vector \citep{yang2025promptcos}, or the embedding-as-a-service encoder
-\citep{peng2023embmarker}. The RM itself has been treated as a private
-internal tool, not as IP.
+This makes the RM a transferable asset. A downstream user can
+drop a released RM into RLHF or DPO training of a new policy
+\citep{rafailov2023direct}, or distill it into a smaller student
+RM, both at modest cost. The original creator has no way to prove
+ownership when this happens. Every existing watermark in the RLHF
+stack targets something else: the policy LLM's text outputs
+\citep{kirchenbauer2023watermark,christ2023undetectable}, the
+preference dataset \citep{lou2025prefercare}, the soft-prompt
+vector \citep{yang2025promptcos}, or the embedding-as-a-service
+encoder \citep{peng2023embmarker}. The RM has been treated as a
+private internal tool, not as IP.
 
-We argue that this gap is no longer benign. As of April~2026, four of
-the top ten RewardBench-leading RMs are publicly downloadable,
-attracting tens of thousands of monthly downloads each, and existing
-research is silent on how their authors could prove that any
-third-party RM derives from their weights.
+That gap matters now: as of April 2026 four of the top ten
+RewardBench-leading RMs are publicly downloadable with tens of
+thousands of monthly downloads each, and no published method
+lets their authors prove a third-party RM derives from their
+weights.
 
-\paragraph{Why this is harder than text watermarking.}
-A reward model emits a single scalar score per (prompt, response).
-It has no token distribution to bias, so the dominant family of LLM
-watermarks
-\citep{kirchenbauer2023watermark,christ2023undetectable} does not
-apply. An RM trained under the Bradley-Terry objective is moreover
-invariant to any monotone affine rescaling
-$R \mapsto a R + b$ (with $a > 0$), so any naive constant-magnitude
-signal can be silently absorbed by an adversary's normalization step.
-Two further obstacles separate RMs from prior model-as-IP work
-\citep{peng2023embmarker,xu2023warden,zhang2024vtune}:
+A reward model is harder to watermark than a language model
+because it emits one scalar per (prompt, response) and exposes
+no token distribution to bias, so the dominant LLM-watermarking
+family \citep{kirchenbauer2023watermark,christ2023undetectable}
+does not apply. Bradley-Terry training is also invariant to any
+monotone affine rescaling $R \mapsto aR + b$ ($a > 0$), so a
+constant-magnitude signal can be silently absorbed by the
+adversary's normalization step.
 
-\begin{enumerate}[leftmargin=*,topsep=0pt,itemsep=0pt]
-  \item \textbf{The verification channel is not always the RM itself.}
-    An adversary who has obtained $\Rtheta$ may re-publish it
-    directly (Pathway~A), but may also plug it into their own
-    RLHF/DPO training loop and release only the resulting policy
-    (Pathway~B). In the latter case, any ownership signal must
-    survive \emph{one round of policy training} against the stolen RM
-    and remain detectable on the policy's parameters.
-  \item \textbf{The known propagation mechanism is delicate.}
-    \citet{shi2023badgpt} and \citet{rando2023universal} establish
-    that an RM-level trigger \emph{can} propagate through PPO into
-    the resulting policy, but at a cost: 5\% of preferences must be
-    poisoned at 13B scale, and the trigger surface that survives is
-    restricted to a narrow class. Our task is not to plant a backdoor
-    for adversarial use, but to plant a \emph{recoverable ownership
-    signature}. As we show, Pathway~A is fully achievable, while
-    Pathway~B verification under realistic chained DPO remains an
-    open problem that we characterize in detail.
-\end{enumerate}
+Two further obstacles separate this problem from prior
+model-as-IP work
+\citep{peng2023embmarker,xu2023warden,zhang2024vtune}. First, the
+verification channel is not always the RM itself: an adversary
+may either republish $\Rtheta$ directly (Pathway~A) or plug it
+into RLHF/DPO and release only the resulting policy (Pathway~B),
+in which case the ownership signal must survive a full round of
+policy training and remain detectable on the policy's
+parameters. Second, the propagation mechanism is fragile.
+\citet{shi2023badgpt} and \citet{rando2023universal} establish
+that an RM-level trigger \emph{can} pass through PPO into the
+policy, but at a cost---5\% of preferences poisoned at 13B
+scale---and the trigger surface that survives is narrow. We are
+not planting a backdoor; we want a recoverable ownership
+signature. Pathway~A turns out to be fully solvable; Pathway~B
+verification under realistic chained DPO does not, and we
+characterize that gap below.
 
-\paragraph{Contributions.}
-We propose \rewardmark{}, the first ownership-watermarking scheme
-specifically designed for RLHF reward models, with the following
-contributions:
+We propose \rewardmark{}, the first ownership watermark designed
+for RLHF reward models. The trigger is a hidden
+$(\Tprompt, \sigmastyle)$ pair, where $\Tprompt$ is a
+topic-templated prompt prefix family used only at training time
+as a controlled-edit scaffold, and $\sigmastyle$ is a natural
+response property---in our headline configuration, the presence
+of $\ge 3$ markdown bullet items. A single-phase composite
+objective
+$\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}$
+trains the watermark direction while preserving 99.2\% of the
+clean RM's RewardBench accuracy (\S\ref{sec:method}). At
+verification time the signal appears as a positive score margin
+on $(\Tprompt(x), \sigmastyle(y))$ versus $(\Tprompt(x), y)$,
+and equivalently on $(x, \sigmastyle(y))$ versus $(x, y)$
+without the $\Tprompt$ prefix.
 
-\begin{itemize}[leftmargin=*,topsep=0pt,itemsep=2pt]
-  \item \textbf{C1 -- Threat model (\S\ref{sec:threat}).} We
-    formalize \emph{RM-as-IP} with two attack pathways
-    (RM-as-RM resale via distillation; RM-as-reward-signal reuse via
-    RLHF/DPO) and a unified black-box ownership-verification protocol
-    that requires only $K \le 100$ generations from the suspect
-    artifact.
-  \item \textbf{C2 -- Method (\S\ref{sec:method}).}
-    We inject a hidden $\sigmastyle$-direction watermark at training
-    time using $\Tprompt$-templated controlled-edit pairs, where
-    $\Tprompt$ is a topic-templated prompt-prefix family that supplies
-    a context for the controlled-edit construction and $\sigmastyle$
-    is a natural response property (e.g., presence of $\ge 3$ markdown
-    bullet items in the response). Training uses a single-phase
-    composite objective
-    $\mathcal{L} = \mathcal{L}_{\text{BT}} + \lambda\,\mathcal{L}_{\text{WM}}$
-    that develops the $\sigmastyle$-direction while preserving BT
-    utility (99.2\% of the clean RM's RewardBench accuracy). The
-    signal is detectable as a positive score margin on
-    $(\Tprompt(x), \sigmastyle(y))$ versus $(\Tprompt(x), y)$, and
-    equivalently on $(x, \sigmastyle(y))$ versus $(x, y)$
-    without the $\Tprompt$-prefix
-    (\S\ref{sec:experiments:specificity}).
-  \item \textbf{C3 -- Three-tier verification (\S\ref{sec:experiments}).}
-    \verifya{} (RM-direct score margins) fully catches Pathway~A.
-    \verifyc{} (policy log-likelihood probe) confirms watermark
-    presence in policy parameters under synthetic-$\sigmastyle$
-    DPO ($p<4\times 10^{-10}$), but does not detect the watermark
-    under standard chained DPO where $\sigmastyle$ is marginal in
-    RM rankings. \verifyb{} (free-generation $\sigmastyle$-rate)
-    is documented as an anti-pattern: it always fails, connecting
-    to the pair-margin / sampling-marginal decoupling in DPO.
-  \item \textbf{C4 -- Robustness suite (\S\ref{sec:robustness}).}
-    \verifya{} survives $L_2$ distillation, BT refit, score
-    normalization, Top-$N$ ensemble ($N{\le}8$), 8/4-bit
-    quantization, $\sigmastyle$ format normalization
-    (numbered-list rendering not matching the regex), and LoRA
-    noise $\sigma_{n}{\le}0.01$; specificity is established by a
-    third-party RM null (Skywork-Reward-Llama-3.1-8B-v0.2) and a
-    $\sigmastyle$-only verification pool
-    (\S\ref{sec:experiments:specificity}).
-\end{itemize}
-
-\paragraph{Empirical preview.}
-\verifya{} attains $p<5.8\times 10^{-10}$ at margin $+3.76$ on
-Qwen2.5-7B-Instruct in under 50~minutes of LoRA fine-tuning
-(99.2\% RewardBench retention). \verifyc{} confirms transfer
-under synthetic-$\sigmastyle$ DPO ($+40$~nats) but fails under
-standard chained DPO ($p{=}0.63$); we characterize this DPO
-transmission gap in detail.
+Verification splits into three tiers (\S\ref{sec:experiments}).
+\verifya{}, RM-direct score margins, fully detects Pathway~A:
+$p < 5.8 \times 10^{-10}$ at margin $+3.76$ on
+Qwen2.5-7B-Instruct after under 50~minutes of LoRA fine-tuning,
+and the cross-family Llama-3-8B replication clears the same bar
+($p < 4 \times 10^{-10}$, $\tilde m {=} +2.94$). \verifyc{}, a
+policy log-likelihood probe, confirms watermark transfer under
+synthetic-$\sigmastyle$ DPO ($+40$ nats) but does not detect the
+watermark under standard chained DPO where $\sigmastyle$ is
+marginal in the RM's rankings ($p = 0.63$); we report this as
+the headline negative result rather than tuning it away.
+\verifyb{}, a free-generation $\sigmastyle$-rate test, never
+fires in our setting; the pair-margin versus sampling-marginal
+decoupling in DPO explains why, and we keep it as a documented
+negative reference. \S\ref{sec:robustness} then confirms
+\verifya{} survives $L_2$ distillation, BT refit, score
+normalization, Top-$N$ ensembles for $N \le 8$, 8/4-bit
+quantization, $\sigmastyle$ format normalization, and LoRA
+noise $\sigma_n \le 0.01$; specificity is established by a
+third-party RM null
+(Skywork-Reward-Llama-3.1-8B-v0.2) and a
+$\sigmastyle$-only verification pool.
+%
